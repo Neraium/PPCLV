@@ -1,6 +1,6 @@
 # Professional Pool Care LLC Website
 
-Static website for Professional Pool Care LLC, a commercial pool and spa service company serving Las Vegas, Nevada.
+Static marketing website for Professional Pool Care LLC, a Las Vegas-based commercial pool and spa maintenance company serving Southern Nevada.
 
 Live site target:
 
@@ -8,29 +8,40 @@ https://neraium.github.io/PPCLV/
 
 ## Files
 
-- `index.html` - Website structure and content
-- `styles.css` - Responsive layout, visual design, and animations
-- `script.js` - Mobile navigation, form handling, active navigation, and scroll effects
+- `index.html` - Website content and structure.
+- `styles.css` - Responsive layout, branding, placeholders, and animations.
+- `script.js` - Mobile navigation, sticky header state, and reveal animations.
+- `images/README.md` - Placeholder image replacement guide.
 
 ## GitHub Pages Deployment
 
 1. Push this repository to GitHub.
-2. In GitHub, open `Settings`.
+2. In GitHub, open `Settings` for the repository.
 3. Select `Pages`.
-4. Under `Build and deployment`, set `Source` to `Deploy from a branch`.
-5. Select the `main` branch and `/ (root)` folder.
+4. Under `Build and deployment`, choose `Deploy from a branch`.
+5. Select the `main` branch and the `/ (root)` folder.
 6. Save the settings.
 
 GitHub Pages will publish the site at:
 
 https://neraium.github.io/PPCLV/
 
-## Local Preview
+## Content To Replace
 
-Because this is a static site, it can be opened directly in a browser:
+The website intentionally uses placeholders where verified company information is unavailable:
 
-```bash
-open index.html
-```
+- Add years in business.
+- Add company history.
+- Add company phone.
+- Add company email.
+- Add business address.
+- Add company differentiators.
+- Add testimonials.
 
-Or served locally with any static file server.
+The quote form currently uses a placeholder `mailto:` action. Replace `Add company email` in `index.html` with the correct business email address before launch.
+
+## Image Replacement
+
+The current site uses designed CSS placeholders so the page never shows broken image icons. Replace them with real commercial-quality photography when available.
+
+Recommended image notes are in `images/README.md`.
