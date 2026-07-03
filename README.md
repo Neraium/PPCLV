@@ -18,9 +18,8 @@ https://neraium.github.io/PPCLV/
 1. Push this repository to GitHub.
 2. In GitHub, open `Settings` for the repository.
 3. Select `Pages`.
-4. Under `Build and deployment`, choose `Deploy from a branch`.
-5. Select the `main` branch and the `/ (root)` folder.
-6. Save the settings.
+4. Under `Build and deployment`, choose `GitHub Actions`.
+5. The `.github/workflows/pages.yml` workflow deploys the static site whenever `main` is updated.
 
 GitHub Pages will publish the site at:
 
