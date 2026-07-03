@@ -43,7 +43,7 @@ revealItems.forEach((item) => observer.observe(item));
 
 quoteForm?.addEventListener("submit", () => {
   if (!formStatus) return;
-  formStatus.textContent = "Opening your email app. Replace the placeholder company email before launch.";
+  formStatus.textContent = "Opening your email app.";
 });
 
 updateHeader();

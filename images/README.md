@@ -1,10 +1,16 @@
 # Image Replacement Guide
 
-The website currently uses CSS-based placeholders instead of linked image files. This avoids broken image icons while making the required photography locations easy to identify.
+The website now uses generated commercial pool imagery for the hero, primary service panel, resort panel, spa panel, and equipment-room panel. Remaining image slots use styled CSS fallback panels so the page does not show broken image icons.
+
+Current generated assets:
+
+- `hero-pool.png` - Premium commercial resort pool hero and resort section image.
+- `commercial-service.png` - Commercial maintenance service image used for service and spa panels.
+- `equipment-room.png` - Commercial pool mechanical-room image.
 
 Recommended future image assets:
 
-- `hero.jpg` - Premium hero image of a commercial or resort pool.
+- `hero.jpg` - Real Professional Pool Care or client-approved commercial pool hero image.
 - `commercial-pool.jpg` - Commercial pool maintenance image.
 - `resort-pool.jpg` - Resort or hospitality pool image.
 - `spa-maintenance.jpg` - Commercial spa maintenance image.
@@ -14,4 +20,4 @@ Recommended future image assets:
 - `team.jpg` - Professional Pool Care LLC team image.
 - `company-vehicle.jpg` - Branded company vehicle image.
 
-When real photography is available, update `index.html` to use `<img>` tags or update the corresponding placeholder classes in `styles.css` with `background-image` values.
+When real photography is available, replace the generated PNG references in `styles.css` with approved photography. Keep the same class names so the current layout and responsive behavior continue to work.
