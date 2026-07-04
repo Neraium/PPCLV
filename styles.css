@@ -70,7 +70,7 @@ textarea { font: inherit; }
 
 .nav {
   width: min(1260px, calc(100% - 32px));
-  min-height: 58px;
+  min-height: 76px;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -81,23 +81,16 @@ textarea { font: inherit; }
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   min-width: max-content;
 }
 
-.brand-mark {
-  width: 38px;
-  height: 38px;
-  display: grid;
-  place-items: center;
+.brand-logo {
+  display: block;
+  width: auto;
+  height: 56px;
   flex: 0 0 auto;
-  border-radius: var(--radius);
-  color: var(--white);
-  background: linear-gradient(135deg, var(--navy), var(--blue));
-  box-shadow: 0 8px 18px rgba(0, 118, 188, 0.18);
-  font-size: 0.76rem;
-  font-weight: 900;
-  letter-spacing: 0.04em;
+  object-fit: contain;
 }
 
 .brand-copy { display: grid; gap: 3px; line-height: 1.08; }
@@ -696,12 +689,12 @@ select:focus {
   .nav {
     position: relative;
     width: min(100% - 24px, 1260px);
-    min-height: 58px;
+    min-height: 64px;
     align-items: center;
     padding-right: 50px;
   }
-  .brand { max-width: none; gap: 9px; }
-  .brand-mark { width: 34px; height: 34px; font-size: 0.7rem; }
+  .brand { max-width: none; gap: 10px; }
+  .brand-logo { height: 44px; }
   .brand-name { white-space: nowrap; font-size: 1rem; line-height: 1.05; }
   .brand-tagline { font-size: 0.66rem; line-height: 1.1; }
   .nav-toggle {
@@ -714,7 +707,7 @@ select:focus {
   }
   .nav-links {
     position: absolute;
-    top: 58px;
+    top: calc(100% + 8px);
     left: 0;
     right: 0;
     display: none;
