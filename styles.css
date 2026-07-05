@@ -97,7 +97,9 @@ p { margin-bottom: 14px; }
 .home-hero-copy { padding: clamp(10px, 3vw, 34px) 0; }
 .hero-lead { max-width: 660px; }
 .hero-line {
-  display: inline-block;
+  display: inline-flex;
+  flex-wrap: nowrap;
+  gap: 0.28em;
   margin: 8px 0 0;
   border-top: 3px solid var(--aqua);
   padding-top: 12px;
@@ -105,6 +107,9 @@ p { margin-bottom: 14px; }
   font-size: clamp(1.04rem, 1.45vw, 1.28rem);
   font-weight: 800;
   line-height: 1.38;
+}
+.hero-line span {
+  white-space: nowrap;
 }
 .hero-image-panel, .service-image-panel, .about-image-panel, .image-panel {
   position: relative;
@@ -337,6 +342,14 @@ input:focus, textarea:focus, select:focus { outline: 3px solid rgba(15, 163, 163
   .hero-image-panel, .hero-image-panel img, .service-image-panel, .service-image-panel img, .about-image-panel, .image-panel { min-height: 220px; }
   .contact-panel { padding: 20px; }
   .gallery-card { min-height: 138px; }
+}
+@media (max-width: 469px) {
+  .hero-line {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.16em;
+    text-align: center;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
