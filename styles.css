@@ -155,11 +155,15 @@ p { margin-bottom: 14px; }
   background: var(--surface-aqua);
   color: var(--aqua);
 }
-.service-icon::before { content: ""; display: block; width: 18px; height: 18px; border: 2px solid currentColor; }
-.icon-pool::before { height: 10px; border-top: 0; border-radius: 0 0 12px 12px; }
-.icon-spa::before { width: 16px; height: 16px; border-radius: 50%; box-shadow: 8px -6px 0 -5px currentColor; }
-.icon-equipment::before { border-radius: 3px; transform: rotate(45deg); }
-.icon-surface::before { height: 14px; border-radius: 50% 50% 2px 2px; }
+.service-icon svg, .detail-icon svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 .split-layout { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: clamp(28px, 5vw, 68px); align-items: center; }
 .industries-preview, .process-band, .differentiators-band, .service-photo-section { background: var(--surface); }
 .pill-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
@@ -202,6 +206,19 @@ p { margin-bottom: 14px; }
 .service-list { display: grid; gap: 0; border-top: 1px solid var(--border); }
 .detail-row { display: grid; grid-template-columns: minmax(220px, 0.42fr) minmax(0, 1fr); gap: clamp(20px, 4vw, 50px); padding: 34px 0; border-bottom: 1px solid var(--border); }
 .detail-row p { color: var(--muted); }
+.detail-heading { display: grid; justify-items: start; }
+.detail-icon {
+  width: 36px;
+  height: 36px;
+  display: inline-grid;
+  place-items: center;
+  margin-bottom: 12px;
+  border: 1px solid rgba(15, 163, 163, 0.35);
+  border-radius: 50%;
+  background: var(--surface-aqua);
+  color: var(--aqua);
+}
+.detail-icon svg { width: 21px; height: 21px; }
 .number { display: inline-flex; margin-bottom: 10px; color: var(--aqua); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.08em; }
 .check-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 18px; margin: 16px 0 0; padding: 0; list-style: none; }
 .check-list li { position: relative; padding-left: 17px; color: var(--muted); font-weight: 700; line-height: 1.4; }
@@ -263,7 +280,14 @@ input:focus, textarea:focus, select:focus { outline: 3px solid rgba(15, 163, 163
 .cta-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: center; border-left: 5px solid var(--aqua); padding-left: clamp(18px, 3vw, 30px); }
 .footer { padding: 28px 0; color: rgba(255, 255, 255, 0.74); background: #041522; }
 .footer-grid { display: flex; justify-content: space-between; gap: 28px; align-items: center; }
-.footer-logo { width: 92px; height: auto; margin-bottom: 8px; }
+.footer .footer-brand-name {
+  margin: 0 0 2px;
+  color: var(--white);
+  font-family: "Manrope", "Inter", sans-serif;
+  font-size: 1.18rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
 .footer p { margin: 4px 0 0; }
 .footer-info { text-align: right; }
 .footer-links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px 16px; margin: 8px 0; color: var(--white); font-size: 0.9rem; font-weight: 700; }
@@ -279,13 +303,17 @@ input:focus, textarea:focus, select:focus { outline: 3px solid rgba(15, 163, 163
 }
 @media (max-width: 820px) {
   .container { width: min(100% - 28px, var(--container)); }
-  .brand-masthead { padding: 24px 0 24px; }
+  .brand-masthead { padding: 18px 0 14px; }
   .masthead-inner { justify-content: center; }
-  .site-logo { width: clamp(180px, 52vw, 220px); }
+  .site-logo { width: clamp(168px, 47vw, 202px); }
   h1 { font-size: clamp(2rem, 9vw, 3rem); }
   h2 { font-size: clamp(1.45rem, 6vw, 2rem); }
-  .home-hero { padding-bottom: 34px; }
+  .home-hero { padding-bottom: 28px; }
+  .home-hero-grid { gap: 20px; }
   .home-hero-copy { padding-top: 0; }
+  .home-hero-copy h1 { margin-bottom: 12px; }
+  .hero-lead { margin-bottom: 10px; }
+  .button-row { margin-top: 16px; }
   .hero-image-panel, .hero-image-panel img { min-height: 250px; }
   .trust-band { grid-template-columns: 1fr; margin-top: 24px; }
   .trust-band span { text-align: left; padding: 13px 14px; }
@@ -306,7 +334,9 @@ input:focus, textarea:focus, select:focus { outline: 3px solid rgba(15, 163, 163
 @media (max-width: 520px) {
   body { font-size: 15.5px; }
   .container { width: min(100% - 24px, var(--container)); }
-  .button-row { display: grid; }
+  .brand-masthead { padding: 14px 0 10px; }
+  .home-hero-grid { gap: 14px; }
+  .button-row { display: grid; gap: 10px; }
   .btn { width: 100%; min-width: 0; }
   .section { padding: 44px 0; }
   .page-hero { padding: 38px 0; }
