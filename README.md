@@ -36,3 +36,5 @@ Verified company details are still needed before launch:
 - Real gallery photography.
 
 The quote form currently uses a placeholder `mailto:` action. Add the correct business email address in `contact.html` when available.
+
+<!-- GitHub Pages redeploy trigger -->
