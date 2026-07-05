@@ -38,3 +38,4 @@ Verified company details are still needed before launch:
 The quote form currently uses a placeholder `mailto:` action. Add the correct business email address in `contact.html` when available.
 
 <!-- GitHub Pages redeploy trigger -->
+<!-- Redeploy trigger 2 -->
