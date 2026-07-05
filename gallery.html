@@ -5,33 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="PPC LLC gallery placeholders for future commercial pool service, spa maintenance, equipment room, and surface restoration photography.">
   <title>Gallery | PPC LLC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body data-page="gallery.html">
-  <header class="site-header" data-header>
-    <nav class="nav" aria-label="Main navigation">
-      <a class="brand" href="index.html" aria-label="PPC LLC home">
-        <img class="brand-logo" src="images/logo.png" width="1536" height="1024" alt="PPC LLC logo" onerror="this.hidden=true; this.closest('.brand').classList.add('brand-text-only');">
-        <span class="brand-copy">
-          <span class="brand-name">PPC LLC</span>
-          <span class="brand-tagline">The Difference Is Clear.</span>
-        </span>
+  <header class="brand-masthead">
+    <div class="container masthead-inner">
+      <a class="logo-link" href="index.html" aria-label="PPC LLC home">
+        <img class="site-logo" src="images/logo.png" width="1536" height="1024" alt="PPC LLC logo">
       </a>
-      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" data-nav-toggle>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span class="sr-only">Toggle navigation</span>
-      </button>
-      <div class="nav-links" id="primary-navigation" data-nav-menu>
-        <a href="services.html" data-nav-link="services.html">Services</a>
-        <a href="industries.html" data-nav-link="industries.html">Industries</a>
-        <a href="about.html" data-nav-link="about.html">About</a>
-        <a href="gallery.html" data-nav-link="gallery.html">Gallery</a>
-        <a href="contact.html" data-nav-link="contact.html">Contact</a>
-        <a class="nav-cta" href="contact.html#quote">Request a Quote</a>
-      </div>
-    </nav>
+    </div>
   </header>
   <main>
     <section class="page-hero">
@@ -57,14 +42,21 @@
   </main>
   <footer class="footer">
     <div class="container footer-grid">
-      <div>
-        <strong>PPC LLC</strong>
-        <p>Professional Pool Care LLC</p>
+      <div class="footer-brand">
+        <img class="footer-logo" src="images/logo.png" width="1536" height="1024" alt="PPC LLC logo">
         <p>The Difference Is Clear.</p>
-      </div>
-      <div>
         <p>Las Vegas, Nevada</p>
+      </div>
+      <div class="footer-info">
         <p>Commercial Pool &amp; Spa Maintenance</p>
+        <nav class="footer-links" aria-label="Footer navigation">
+          <a href="index.html">Home</a>
+          <a href="services.html">Services</a>
+          <a href="industries.html">Industries</a>
+          <a href="about.html">About</a>
+          <a href="gallery.html">Gallery</a>
+          <a href="contact.html">Contact</a>
+        </nav>
         <p>&copy; 2026 Professional Pool Care LLC. All rights reserved.</p>
       </div>
     </div>

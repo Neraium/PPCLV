@@ -14,8 +14,8 @@ https://neraium.github.io/PPCLV/
 - `about.html` - Company positioning and differentiators.
 - `gallery.html` - Image placeholders for verified company photography.
 - `contact.html` - Contact details and quote request form.
-- `styles.css` - Shared responsive styling.
-- `script.js` - Mobile navigation, active navigation state, sticky header state, and reveal animations.
+- `styles.css` - Shared responsive design system, layout, and visual styling.
+- `script.js` - Scroll reveal animations and quote form status text.
 
 ## GitHub Pages Deployment
 
