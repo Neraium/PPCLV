@@ -3,246 +3,146 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="PPC LLC provides commercial pool and spa maintenance for Las Vegas resorts, hotels, apartment communities, HOAs, municipal facilities, and commercial facilities.">
+  <meta name="description" content="PPC LLC provides commercial pool and spa maintenance for Las Vegas commercial properties, with scheduled service and health department compliance support.">
   <title>PPC LLC | Commercial Pool & Spa Maintenance in Las Vegas</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body data-page="index.html">
   <header class="site-header" data-header>
     <nav class="nav" aria-label="Main navigation">
-      <a class="brand" href="#top" aria-label="PPC LLC home">
-        <img class="brand-logo" src="images/logo.png" width="1536" height="1024" alt="PPC LLC logo">
+      <a class="brand" href="index.html" aria-label="PPC LLC home">
+        <img class="brand-logo" src="images/logo.png" width="1536" height="1024" alt="PPC LLC logo" onerror="this.hidden=true; this.closest('.brand').classList.add('brand-text-only');">
         <span class="brand-copy">
           <span class="brand-name">PPC LLC</span>
           <span class="brand-tagline">The Difference Is Clear.</span>
         </span>
       </a>
-
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" data-nav-toggle>
         <span></span>
         <span></span>
         <span></span>
         <span class="sr-only">Toggle navigation</span>
       </button>
-
       <div class="nav-links" id="primary-navigation" data-nav-menu>
-        <a href="#services">Services</a>
-        <a href="#industries">Industries</a>
-        <a href="#about">About</a>
-        <a href="#gallery">Gallery</a>
-        <a href="#contact">Contact</a>
-        <a class="nav-cta" href="#quote">Request a Quote</a>
+        <a href="index.html" data-nav-link="index.html">Home</a>
+        <a href="services.html" data-nav-link="services.html">Services</a>
+        <a href="industries.html" data-nav-link="industries.html">Industries</a>
+        <a href="about.html" data-nav-link="about.html">About</a>
+        <a href="gallery.html" data-nav-link="gallery.html">Gallery</a>
+        <a href="contact.html" data-nav-link="contact.html">Contact</a>
+        <a class="nav-cta" href="contact.html#quote">Request a Quote</a>
       </div>
     </nav>
   </header>
-
-  <main id="top">
-    <section class="hero section-dark">
-      <div class="hero-media" role="img" aria-label="Commercial resort pool in Las Vegas"></div>
-      <div class="hero-overlay"></div>
-      <div class="container hero-layout">
-        <div class="hero-content reveal">
+  <main>
+    <section class="hero hero-simple">
+      <div class="container hero-grid">
+        <div class="hero-copy-block reveal">
+          <p class="eyebrow">Las Vegas Commercial Pool Care</p>
           <h1>The Difference Is Clear.</h1>
-          <p class="hero-subtitle">Commercial Pool & Spa Maintenance</p>
-          <p class="hero-location">Las Vegas, Nevada</p>
-          <p class="hero-copy">PPC LLC provides reliable commercial pool and spa maintenance for resort properties, hotels, apartment communities, HOAs, municipal facilities, and commercial facilities throughout Southern Nevada.</p>
-          <p class="hero-support">Helping clients maintain clean, safe aquatic facilities while supporting Southern Nevada Health District compliance requirements.</p>
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="#quote">Request a Quote</a>
-            <a class="btn btn-secondary" href="#services">View Services</a>
+          <p class="lead">PPC LLC provides commercial pool and spa maintenance for Las Vegas properties that need clean water, reliable equipment attention, and clear communication.</p>
+          <p class="supporting">Professional Pool Care LLC supports resort, hospitality, multifamily, HOA, municipal, and commercial aquatic facilities across Southern Nevada.</p>
+          <div class="button-row">
+            <a class="btn btn-primary" href="contact.html#quote">Request a Quote</a>
+            <a class="btn btn-secondary" href="services.html">View Services</a>
           </div>
         </div>
+        <aside class="hero-panel reveal" aria-label="Service highlights">
+          <div>
+            <span>Commercial Focus</span>
+            <strong>Pools, spas, equipment rooms, and high-use aquatic areas.</strong>
+          </div>
+          <div>
+            <span>Service Area</span>
+            <strong>Las Vegas and Southern Nevada commercial properties.</strong>
+          </div>
+          <div>
+            <span>Compliance Support</span>
+            <strong>Routine care aligned with inspection readiness needs.</strong>
+          </div>
+        </aside>
       </div>
     </section>
 
-    <section class="trust-strip" aria-label="Service highlights">
-      <div class="container trust-grid">
-        <div><span>Commercial</span><strong>Built for high-use aquatic facilities</strong></div>
-        <div><span>Local</span><strong>Las Vegas and Southern Nevada</strong></div>
-        <div><span>Maintenance</span><strong>Scheduled service and inspections</strong></div>
-        <div><span>Compliance</span><strong>SNHD requirement support</strong></div>
-      </div>
-    </section>
-
-    <section class="section" id="services">
+    <section class="section section-compact">
       <div class="container">
-        <div class="section-heading reveal">
+        <div class="section-heading align-left reveal">
           <p class="eyebrow">Services</p>
-          <h2>Reliable maintenance for commercial pools and spas.</h2>
-          <p>Practical service for properties that need clean water, working equipment, and clear communication.</p>
+          <h2>Practical maintenance for commercial aquatic facilities.</h2>
         </div>
-
-        <div class="services-grid">
-          <article class="service-card service-card-feature reveal">
-            <div class="service-media service-media-pool" aria-hidden="true"></div>
-            <div>
-              <h3>Commercial Pool Maintenance</h3>
-              <p>Scheduled service for commercial pools with attention to water chemistry, filtration, equipment condition, and presentation.</p>
-              <ul class="check-list">
-                <li>Water chemistry management</li>
-                <li>Equipment inspections</li>
-                <li>Filter cleaning and backwashing</li>
-                <li>Preventative maintenance</li>
-                <li>Chemical feeder checks</li>
-                <li>Water clarity support</li>
-              </ul>
-            </div>
+        <div class="card-grid three">
+          <article class="card reveal">
+            <h3>Pool Maintenance</h3>
+            <p>Scheduled water care, cleaning, filtration attention, and visual inspections for commercial pools.</p>
           </article>
-
-          <article class="service-card reveal">
-            <h3>Commercial Spa Maintenance</h3>
-            <p>Sanitization, water balance, circulation checks, filtration care, and cleaning for high-use spas.</p>
+          <article class="card reveal">
+            <h3>Spa Maintenance</h3>
+            <p>Sanitization, water balance, cleaning, circulation checks, and high-use spa service routines.</p>
           </article>
-
-          <article class="service-card reveal">
-            <h3>Equipment Repair & Troubleshooting</h3>
-            <p>Inspection and repair support for pumps, filters, heaters, automation, feeders, and circulation systems.</p>
-          </article>
-
-          <article class="service-card reveal">
-            <h3>Acid Washing & Surface Restoration</h3>
-            <p>Surface cleaning and restoration when a pool needs a cleaner, more professional appearance.</p>
-          </article>
-
-          <article class="service-card reveal">
-            <h3>Emergency Service</h3>
-            <p>Responsive service for pool or spa issues affecting safety, access, water quality, or equipment operation.</p>
+          <article class="card reveal">
+            <h3>Equipment Support</h3>
+            <p>Repair and troubleshooting support for pumps, filters, heaters, feeders, valves, and automation.</p>
           </article>
         </div>
+        <p class="section-link reveal"><a href="services.html">See all services</a></p>
       </div>
     </section>
 
-    <section class="section section-muted" id="industries">
-      <div class="container">
-        <div class="section-heading reveal">
+    <section class="section section-muted section-compact">
+      <div class="container split-layout">
+        <div class="reveal">
           <p class="eyebrow">Industries</p>
-          <h2>Commercial pool care across Southern Nevada.</h2>
-          <p>Serving property teams that need dependable maintenance and direct communication.</p>
+          <h2>Built for managed commercial properties.</h2>
+          <p>PPC LLC works with teams responsible for guest, resident, member, and public aquatic areas.</p>
+          <p class="section-link"><a href="industries.html">View industries served</a></p>
         </div>
-
-        <div class="industry-grid reveal">
-          <div>Resort & Hospitality Properties</div>
-          <div>Hotels</div>
-          <div>Apartment Communities</div>
-          <div>HOAs</div>
-          <div>Municipal Facilities</div>
-          <div>Commercial Facilities</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="why">
-      <div class="container">
-        <div class="section-heading reveal">
-          <p class="eyebrow">Why Choose PPC LLC</p>
-          <h2>Commercial specialists with disciplined service routines.</h2>
-        </div>
-
-        <div class="feature-grid">
-          <article class="feature-card reveal"><h3>Commercial specialists</h3><p>Focused on commercial properties, high-use pools, spas, and aquatic facilities.</p></article>
-          <article class="feature-card reveal"><h3>CPO-certified professionals</h3><p>Service informed by commercial pool operation standards and field experience.</p></article>
-          <article class="feature-card reveal"><h3>Reliable scheduled maintenance</h3><p>Consistent service routines for water care, cleaning, inspection, and reporting.</p></article>
-          <article class="feature-card reveal"><h3>Water chemistry expertise</h3><p>Balanced water, sanitizer management, and clear recommendations when conditions change.</p></article>
-          <article class="feature-card reveal"><h3>Preventative maintenance</h3><p>Routine attention to pumps, filters, feeders, heaters, valves, and circulation systems.</p></article>
-          <article class="feature-card reveal"><h3>Equipment repair</h3><p>Troubleshooting and repair support when equipment needs attention.</p></article>
-          <article class="feature-card reveal"><h3>SNHD compliance support</h3><p>Support for Southern Nevada Health District requirements and inspection readiness.</p></article>
-          <article class="feature-card reveal"><h3>Responsive communication</h3><p>Clear updates so managers and engineers know what was found and what comes next.</p></article>
+        <div class="pill-grid reveal" aria-label="Industries preview">
+          <span>Resorts</span>
+          <span>Hotels</span>
+          <span>Apartments</span>
+          <span>HOAs</span>
+          <span>Municipal</span>
+          <span>Commercial</span>
         </div>
       </div>
     </section>
 
-    <section class="section section-muted" id="about">
-      <div class="container about-grid">
-        <div class="about-media reveal" role="img" aria-label="Commercial pool equipment room"></div>
-        <div class="about-copy reveal">
-          <p class="eyebrow">About</p>
-          <h2>Las Vegas-based commercial pool and spa maintenance.</h2>
-          <p>Professional Pool Care LLC works with commercial properties that need dependable pool and spa service, careful water chemistry, equipment awareness, and practical communication.</p>
-          <p>Service is built around clean water, reliable equipment, preventative maintenance, and support for Southern Nevada Health District requirements.</p>
+    <section class="section section-compact">
+      <div class="container callout reveal">
+        <div>
+          <p class="eyebrow">Compliance Support</p>
+          <h2>Health department readiness matters.</h2>
+          <p>PPC LLC supports Southern Nevada Health District compliance needs through consistent maintenance, water chemistry attention, equipment awareness, and practical communication with property teams.</p>
         </div>
+        <a class="btn btn-secondary-dark" href="services.html#compliance">Learn More</a>
       </div>
     </section>
 
-    <section class="section" id="gallery">
-      <div class="container">
-        <div class="section-heading reveal">
-          <p class="eyebrow">Gallery</p>
-          <h2>Future company photography.</h2>
-          <p>Reserved for verified field photos, equipment rooms, service vehicles, and completed work.</p>
-        </div>
-
-        <div class="gallery-grid">
-          <div class="gallery-placeholder reveal"><span>Pool Service</span></div>
-          <div class="gallery-placeholder reveal"><span>Spa Maintenance</span></div>
-          <div class="gallery-placeholder reveal"><span>Equipment Rooms</span></div>
-          <div class="gallery-placeholder reveal"><span>Surface Restoration</span></div>
-          <div class="gallery-placeholder reveal"><span>Filter Cleaning</span></div>
-          <div class="gallery-placeholder reveal"><span>Company Vehicle</span></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="quote section-dark" id="quote">
-      <div class="container quote-grid">
-        <div class="quote-copy reveal">
+    <section class="cta-band">
+      <div class="container cta-grid reveal">
+        <div>
           <p class="eyebrow">Request a Quote</p>
-          <h2>Request commercial pool and spa service.</h2>
-          <p>Share the property type, pool and spa count, service needs, and timeline. PPC LLC can follow up with next steps.</p>
-          <div class="quote-note">
-            <strong>Commercial service only</strong>
-            <span>For resort properties, hotels, apartment communities, HOAs, municipal facilities, and commercial facilities.</span>
-          </div>
+          <h2>Need commercial pool or spa service in Las Vegas?</h2>
+          <p>Share your property type, pool and spa count, and the service support you need.</p>
         </div>
-
-        <form class="quote-form reveal" action="mailto:" method="post" enctype="text/plain" data-quote-form>
-          <label>Name<input type="text" name="name" placeholder="Your name"></label>
-          <label>Company / Property<input type="text" name="company" placeholder="Property or organization"></label>
-          <label>Email<input type="email" name="email" placeholder="name@company.com"></label>
-          <label>Phone<input type="tel" name="phone" placeholder="(702) 555-0148"></label>
-          <label>Property Type<select name="property_type"><option value="">Select property type</option><option>Resort or hospitality</option><option>Hotel</option><option>Apartment community</option><option>HOA</option><option>Municipal facility</option><option>Commercial facility</option></select></label>
-          <label>Service Need<textarea name="message" rows="5" placeholder="Tell us about your pool, spa, equipment, and service needs"></textarea></label>
-          <button class="btn btn-primary" type="submit">Request a Quote</button>
-          <p class="form-status" data-form-status aria-live="polite"></p>
-        </form>
-      </div>
-    </section>
-
-    <section class="section contact" id="contact">
-      <div class="container">
-        <div class="section-heading reveal">
-          <p class="eyebrow">Contact</p>
-          <h2>PPC LLC</h2>
-          <p>Commercial Pool & Spa Maintenance in Las Vegas, Nevada.</p>
-        </div>
-
-        <div class="contact-grid">
-          <article class="contact-card reveal"><span>Phone</span><strong>Phone placeholder</strong></article>
-          <article class="contact-card reveal"><span>Email</span><strong>Email placeholder</strong></article>
-          <article class="contact-card reveal"><span>Business Address</span><strong>Las Vegas, Nevada</strong></article>
-          <article class="contact-card reveal"><span>Business Hours</span><strong>Business hours placeholder</strong></article>
-          <article class="contact-card contact-card-wide reveal"><span>Request a Quote</span><strong>Use the quote form for commercial pool and spa maintenance inquiries.</strong></article>
-        </div>
+        <a class="btn btn-primary" href="contact.html#quote">Request a Quote</a>
       </div>
     </section>
   </main>
-
   <footer class="footer">
     <div class="container footer-grid">
       <div>
-        <strong>Professional Pool Care LLC</strong>
+        <strong>PPC LLC</strong>
+        <p>Professional Pool Care LLC</p>
         <p>The Difference Is Clear.</p>
       </div>
       <div>
         <p>Las Vegas, Nevada</p>
-        <p>Commercial Pool & Spa Maintenance</p>
+        <p>Commercial Pool &amp; Spa Maintenance</p>
         <p>&copy; 2026 Professional Pool Care LLC. All rights reserved.</p>
       </div>
     </div>
   </footer>
-
   <script src="script.js"></script>
 </body>
 </html>
