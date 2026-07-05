@@ -96,7 +96,16 @@ p { margin-bottom: 14px; }
 }
 .home-hero-copy { padding: clamp(10px, 3vw, 34px) 0; }
 .hero-lead { max-width: 660px; }
-.hero-line { margin-bottom: 0; color: var(--navy); font-weight: 800; }
+.hero-line {
+  display: inline-block;
+  margin: 8px 0 0;
+  border-top: 3px solid var(--aqua);
+  padding-top: 12px;
+  color: var(--deep-navy);
+  font-size: clamp(1.04rem, 1.45vw, 1.28rem);
+  font-weight: 800;
+  line-height: 1.38;
+}
 .hero-image-panel, .service-image-panel, .about-image-panel, .image-panel {
   position: relative;
   overflow: hidden;
