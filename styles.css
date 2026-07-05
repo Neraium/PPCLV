@@ -168,26 +168,41 @@ p { margin-bottom: 14px; }
 .industries-preview, .process-band, .differentiators-band, .service-photo-section { background: var(--surface); }
 .pill-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .pill-grid span {
-  position: relative;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
   border: 1px solid var(--border);
   border-left: 4px solid var(--aqua);
   border-radius: var(--radius);
-  padding: 14px 16px 14px 38px;
+  padding: 14px 16px 14px 14px;
   background: rgba(255, 255, 255, 0.72);
   color: var(--navy);
   font-weight: 800;
 }
-.pill-grid span::before {
-  content: "";
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--aqua);
-  transform: translateY(-50%);
+.industry-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--aqua);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
+.industry-heading {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 10px;
+}
+.industry-heading .industry-icon {
+  width: 25px;
+  height: 25px;
+  margin-top: 2px;
+}
+.industry-heading h2 { margin-bottom: 0; }
 .compliance-section { background: var(--deep-navy); color: rgba(255, 255, 255, 0.78); }
 .compliance-section h2 { color: var(--white); }
 .compliance-section .eyebrow { color: #8fe2df; }
