@@ -1,23 +1,20 @@
-# Image Replacement Guide
+# PPC LLC Website Images
 
-The website now uses generated commercial pool imagery for the hero, primary service panel, resort panel, spa panel, and equipment-room panel. Remaining image slots use styled CSS fallback panels so the page does not show broken image icons.
+Local image assets used by the PPC LLC static website.
 
-Current generated assets:
+## Brand Assets
 
-- `hero-pool.png` - Premium commercial resort pool hero and resort section image.
-- `commercial-service.png` - Commercial maintenance service image used for service and spa panels.
-- `equipment-room.png` - Commercial pool mechanical-room image.
+- `logo.png` - PPC LLC logo.
 
-Recommended future image assets:
+## Current Photography
 
-- `hero.jpg` - Real Professional Pool Care or client-approved commercial pool hero image.
-- `commercial-pool.jpg` - Commercial pool maintenance image.
-- `resort-pool.jpg` - Resort or hospitality pool image.
-- `spa-maintenance.jpg` - Commercial spa maintenance image.
-- `equipment-room.jpg` - Pool equipment room or mechanical system image.
-- `acid-washing.jpg` - Acid washing or surface restoration image.
-- `before-after.jpg` - Before and after service image.
-- `team.jpg` - Professional Pool Care LLC team image.
-- `company-vehicle.jpg` - Branded company vehicle image.
+These are temporary stock images saved locally so PPC LLC can replace them later with verified company photography using the same filenames.
 
-When real photography is available, replace the generated PNG references in `styles.css` with approved photography. Keep the same class names so the current layout and responsive behavior continue to work.
+- `hero-resort-pool.webp` - Resort-style hospitality pool hero image. Source: Pexels photo 8839767.
+- `pool-maintenance.webp` - Clean commercial pool lanes / maintenance operations image. Source: Pexels photo 8028662.
+- `spa-maintenance.webp` - Spa maintenance / spa environment image. Source: Pexels photo 3101547.
+- `equipment-room.webp` - Service technician and mechanical equipment image. Source: Pexels photo 6720526.
+- `water-testing.webp` - Water testing chemistry image. Source: Pexels photo 8028684.
+- `acid-washing.webp` - Surface preparation / cleaning technician image. Source: Pexels photo 6471914.
+- `commercial-pool-deck.webp` - Commercial property pool deck image. Source: Pexels photo 29851842.
+- `emergency-service.webp` - Service technician / response vehicle image. Source: Pexels photo 32863789.
