@@ -8,13 +8,13 @@ Local image assets used by the PPC LLC static website.
 
 ## Current Photography
 
-These are temporary stock images saved locally so PPC LLC can replace them later with verified company photography using the same filenames.
+These are temporary royalty-free Pexels images saved locally in compressed, web-sized JPEG format so PPC LLC can replace them later with verified company photography using the same filenames.
 
-- `hero-resort-pool.webp` - Resort-style hospitality pool hero image. Source: Pexels photo 8839767.
-- `pool-maintenance.webp` - Clean commercial pool lanes / maintenance operations image. Source: Pexels photo 8028662.
-- `spa-maintenance.webp` - Spa maintenance / spa environment image. Source: Pexels photo 3101547.
-- `equipment-room.webp` - Service technician and mechanical equipment image. Source: Pexels photo 6720526.
-- `water-testing.webp` - Water testing chemistry image. Source: Pexels photo 8028684.
-- `acid-washing.webp` - Surface preparation / cleaning technician image. Source: Pexels photo 6471914.
-- `commercial-pool-deck.webp` - Commercial property pool deck image. Source: Pexels photo 29851842.
-- `emergency-service.webp` - Service technician / response vehicle image. Source: Pexels photo 32863789.
+- `resort-hotel-pool-deck.jpg` - Large resort / hospitality pool deck hero image. Source: Pexels photo 8839767.
+- `municipal-lap-pool-lanes.jpg` - Commercial lap pool lanes / maintenance operations image. Source: Pexels photo 8028662.
+- `commercial-hotel-spa.jpg` - Commercial hotel spa environment image. Source: Pexels photo 3101547.
+- `commercial-equipment-room-service.jpg` - Commercial equipment room and service technician image. Source: Pexels photo 6720526.
+- `commercial-water-testing.jpg` - Water testing chemistry image. Source: Pexels photo 8028684.
+- `commercial-surface-cleaning.jpg` - Surface preparation / cleaning technician image. Source: Pexels photo 6471914.
+- `apartment-community-pool-deck.jpg` - Managed apartment community / commercial amenity pool deck image. Source: Pexels photo 29851842.
+- `pool-service-response-vehicle.jpg` - Service technician / response vehicle image. Source: Pexels photo 32863789.
