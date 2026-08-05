@@ -4,6 +4,27 @@ const primaryMenu = document.querySelector("#primary-menu");
 const quoteForm = document.querySelector("[data-quote-form]");
 const formStatus = document.querySelector("[data-form-status]");
 
+const siteHeader = document.querySelector("[data-site-header]");
+const heroSection = document.querySelector(".home-hero-art, .hero, .page-hero");
+const compactHeaderQuery = window.matchMedia("(max-width: 767px)");
+
+const setCompactHeader = () => {
+  if (!siteHeader || !heroSection) return;
+
+  const shouldCompact = compactHeaderQuery.matches && window.scrollY > heroSection.offsetHeight - siteHeader.offsetHeight;
+  siteHeader.classList.toggle("is-compact", shouldCompact);
+
+  if (shouldCompact) {
+    menuToggle?.setAttribute("aria-expanded", "false");
+    primaryMenu?.classList.remove("is-open");
+  }
+};
+
+setCompactHeader();
+window.addEventListener("scroll", setCompactHeader, { passive: true });
+compactHeaderQuery.addEventListener?.("change", setCompactHeader);
+window.addEventListener("resize", setCompactHeader);
+
 menuToggle?.addEventListener("click", () => {
   const expanded = menuToggle.getAttribute("aria-expanded") === "true";
   menuToggle.setAttribute("aria-expanded", String(!expanded));
