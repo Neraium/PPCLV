@@ -516,14 +516,32 @@ details p { margin: 12px 0 0; color: #3d5263; }
   .final-contact-inner { display: grid; }
 }
 
-@media (max-width: 620px) {
-  .masthead-inner {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 10px;
+@media (max-width: 767px) {
+  .masthead-inner,
+  .masthead-sticky-row {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    column-gap: 10px;
     padding: 4px 0;
   }
-  .menu-toggle { padding: 7px 9px; }
-  .site-logo { width: clamp(176px, 50vw, 210px); }
+
+  .masthead-sticky-row { grid-column: 1 / -1; }
+
+  .logo-link {
+    grid-column: 2;
+    justify-self: center;
+  }
+
+  .menu-toggle {
+    grid-column: 3;
+    justify-self: end;
+    padding: 7px 9px;
+  }
+
+  .primary-nav { grid-column: 1 / -1; }
+  .site-logo { width: clamp(210px, 50vw, 218px); }
+}
+
+@media (max-width: 620px) {
   .home-hero-art {
     min-height: 620px;
     align-items: center;
