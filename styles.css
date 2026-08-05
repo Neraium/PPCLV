@@ -570,6 +570,47 @@ details p { margin: 12px 0 0; color: #3d5263; }
     width: clamp(210px, 54vw, 220px);
     height: auto;
   }
+
+  .brand-masthead.is-compact .masthead-inner {
+    grid-template-columns: auto 1fr auto;
+    min-height: 58px;
+    padding: 6px 0;
+  }
+
+  .brand-masthead.is-compact .masthead-sticky-row {
+    display: contents;
+  }
+
+  .brand-masthead.is-compact .masthead-inner::before,
+  .brand-masthead.is-compact .masthead-sticky-row::before,
+  .brand-masthead.is-compact .menu-toggle,
+  .brand-masthead.is-compact .primary-nav,
+  .brand-masthead.is-compact .mobile-call {
+    display: none;
+  }
+
+  .brand-masthead.is-compact .logo-link {
+    grid-column: 1;
+    justify-self: start;
+  }
+
+  .brand-masthead.is-compact .site-logo {
+    width: clamp(132px, 38vw, 158px);
+  }
+
+  .brand-masthead.is-compact .header-actions {
+    grid-column: 3;
+    display: flex;
+    justify-content: end;
+    padding: 0;
+  }
+
+  .brand-masthead.is-compact .header-cta {
+    width: auto;
+    min-height: 40px;
+    padding: 9px 13px;
+    white-space: nowrap;
+  }
 }
 
 @media (max-width: 620px) {
