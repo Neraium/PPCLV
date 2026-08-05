@@ -554,41 +554,46 @@ details p { margin: 12px 0 0; color: #3d5263; }
 
 @media (max-width: 620px) {
   .home-hero-art {
-    min-height: 620px;
+    min-height: 650px;
     align-items: center;
   }
-  .hero-image-panel img { object-position: 52% center; }
+  .hero-image-panel img { object-position: 57% center; }
   .hero-image-panel::after {
     background:
       radial-gradient(ellipse at center, rgba(3, 24, 41, 0.92) 0%, rgba(3, 24, 41, 0.82) 37%, rgba(3, 24, 41, 0.42) 72%, rgba(3, 24, 41, 0.22) 100%),
       linear-gradient(180deg, rgba(3, 24, 41, 0.32) 0%, rgba(3, 24, 41, 0.78) 48%, rgba(3, 24, 41, 0.66) 100%);
   }
   .hero-art-copy {
-    width: min(100%, 430px);
-    max-width: 430px;
+    width: min(100%, 452px);
+    max-width: 452px;
     margin-right: auto;
     margin-left: auto;
-    padding: 76px 24px 42px;
+    padding: 82px 26px 48px;
     text-align: center;
   }
   .hero-art-copy .eyebrow {
     margin-right: auto;
     margin-left: auto;
-    font-size: 0.68rem;
-    letter-spacing: 0.12em;
+    margin-bottom: 20px;
+    font-size: 0.66rem;
+    letter-spacing: 0.105em;
+    line-height: 1.25;
   }
   .hero-art-copy h1 {
-    max-width: 11ch;
+    max-width: 8.6em;
     margin-right: auto;
+    margin-bottom: 0;
     margin-left: auto;
-    font-size: clamp(2.6rem, 11vw, 3.6rem);
-    line-height: 1;
-    letter-spacing: -0.055em;
+    font-size: clamp(2.6rem, 10vw, 3.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.048em;
     text-wrap: balance;
   }
   .hero-art-copy .lead {
-    max-width: 33ch;
+    max-width: 31ch;
+    margin-top: 28px;
     margin-right: auto;
+    margin-bottom: 0;
     margin-left: auto;
     color: rgba(231, 244, 245, 0.9);
     font-size: 0.98rem;
@@ -597,13 +602,13 @@ details p { margin: 12px 0 0; color: #3d5263; }
   }
   .button-row {
     justify-content: center;
-    gap: 9px;
-    margin-top: 22px;
+    gap: 14px;
+    margin-top: 28px;
   }
   .hero-art-copy .btn {
-    width: min(100%, 320px);
-    min-height: 42px;
-    padding: 10px 16px;
+    width: min(100%, 310px);
+    min-height: 44px;
+    padding: 9px 16px;
   }
   .hero-art-copy .btn-secondary {
     color: var(--white);
