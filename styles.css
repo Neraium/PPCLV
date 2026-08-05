@@ -499,6 +499,7 @@ details p { margin: 12px 0 0; color: #3d5263; }
 .simple-footer-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 0.85fr); gap: 26px; align-items: start; }
 .simple-footer .footer-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .footer-meta p { margin-bottom: 10px; }
+.footer-service-link { display: inline-flex; align-items: center; border-bottom: 2px solid var(--gold); color: var(--white); font-weight: 900; }
 
 @media (max-width: 960px) {
   .brand-masthead { position: sticky; top: 0; z-index: 50; border-bottom: 1px solid rgba(207, 225, 232, 0.9); background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(16px); }
@@ -618,9 +619,11 @@ details p { margin: 12px 0 0; color: #3d5263; }
     box-shadow: none;
   }
   .final-contact-inner .btn { width: 100%; }
-  .primary-nav.is-open, .simple-footer .footer-links { grid-template-columns: 1fr; }
+  .primary-nav.is-open { grid-template-columns: 1fr; }
   .industry-photo-strip figure { min-height: 250px; }
   .simple-footer { padding-top: 28px; }
+  .simple-footer-grid { gap: 18px; }
+  .simple-footer .footer-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 /* Premium commercial art-direction refinements */
