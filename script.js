@@ -29,6 +29,7 @@ if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
 quoteForm?.addEventListener("submit", (event) => {
   if (!formStatus) return;
   formStatus.className = "form-status";
+
   const spamField = quoteForm.querySelector('[name="website"]');
   if (spamField?.value) {
     event.preventDefault();
@@ -36,6 +37,7 @@ quoteForm?.addEventListener("submit", (event) => {
     formStatus.classList.add("error");
     return;
   }
+
   if (!quoteForm.checkValidity()) {
     event.preventDefault();
     formStatus.textContent = "Please complete the required fields before submitting.";
@@ -43,9 +45,10 @@ quoteForm?.addEventListener("submit", (event) => {
     quoteForm.reportValidity();
     return;
   }
-  if (quoteForm.action.includes("FORM_ENDPOINT_PLACEHOLDER")) {
+
+  if (quoteForm.dataset.endpointConfigured !== "true") {
     event.preventDefault();
-    formStatus.textContent = "Form endpoint placeholder is not connected yet. PPC must configure Formspree, Netlify Forms, Basin, or a custom endpoint before launch.";
+    formStatus.textContent = "Online request submission will be available at launch. PPC must connect the form endpoint before production use.";
     formStatus.classList.add("success");
   }
 });

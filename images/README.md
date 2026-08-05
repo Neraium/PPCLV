@@ -21,4 +21,4 @@ These are temporary royalty-free Pexels images saved locally in compressed, web-
 
 ## Replacement requirement
 
-Every current photo should be treated as temporary unless PPC verifies ownership, approval, and use rights. The Our Work page includes HTML comments marking images that must be replaced before claiming they show PPC projects.
+Every current photo should be treated as representative unless PPC verifies ownership, approval, and use rights. The Our Work page includes HTML comments marking images that should be replaced before implying they show PPC projects.

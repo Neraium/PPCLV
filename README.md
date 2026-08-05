@@ -6,83 +6,91 @@ Live site target: `https://neraium.github.io/PPCLV/`
 
 ## Site structure
 
-- `index.html`: Homepage with hero, trust strip, services, industries, proof placeholders, testimonials placeholders, FAQ preview, and CTA.
-- `services.html`: Commercial pool, spa, equipment, acid washing, emergency service, emergency bio cleanup, and SNHD-readiness support.
-- `industries.html`: Resorts, apartments, HOAs, municipal and public facilities, and commercial properties.
-- `our-work.html`: Renamed gallery experience with labels for temporary imagery and future verified PPC photography.
-- `gallery.html`: Compatibility page linking visitors to `our-work.html`.
-- `about.html`: Commercial focus, operating approach, and verification placeholders for leadership, certifications, licensing, insurance, and years in operation.
-- `faq.html`: Accessible FAQ content with JSON-LD FAQPage schema.
-- `contact.html`: Provider-neutral service request form with validation and a placeholder endpoint.
-- `commercial-pool-service-las-vegas.html`: Focused commercial landing page.
-- `privacy.html` and `terms.html`: General website policy pages that are not attorney-reviewed.
+- `index.html`: Homepage with commercial hero, operational subheadline, trust strip, editorial service overview, industry split section, why-PPC section, anonymized proof examples, FAQ preview, and CTA.
+- `services.html`: Full commercial pool, spa, equipment, restoration, emergency, bio cleanup, and SNHD inspection-readiness service details.
+- `industries.html`: Specific industry guidance for resorts, apartments, HOAs, municipal and public facilities, and commercial properties.
+- `our-work.html`: Public page for Commercial Service Environments using representative imagery until verified PPC photography is available.
+- `gallery.html`: Compatibility URL that redirects and canonicalizes to `our-work.html`; it is not included in `sitemap.xml`.
+- `about.html`: PPC commercial focus, property types served, maintenance approach, communication style, Southern Nevada operating conditions, emergency coordination, and inspection-readiness support.
+- `faq.html`: Commercial service FAQ with FAQPage JSON-LD.
+- `contact.html`: Provider-neutral service request form with validation, spam protection, and launch notice until a live endpoint is connected.
+- `commercial-pool-service-las-vegas.html`: Dedicated landing page for Commercial Pool Service Las Vegas search intent.
+- `privacy.html`: Privacy policy focused on form information, processor configuration, analytics and cookies if enabled, information requests, and external links.
+- `terms.html`: Website terms focused on informational content, availability limits, regulatory limitations, search-results limitations, acceptable use, IP, external links, liability, and changes.
 - `robots.txt` and `sitemap.xml`: Search crawler and sitemap files.
 - `styles.css`: Shared responsive design system.
-- `script.js`: Mobile navigation, reveal behavior, accessible form validation support.
+- `script.js`: Accessible mobile navigation, reduced-motion aware reveal behavior, form validation, spam-field handling, and endpoint-not-configured messaging.
 
-## Centralized placeholders to replace before launch
+## Verified PPC information still needed
 
-Replace these visible placeholders throughout the HTML and schema where applicable:
+Do not add these items visibly until PPC verifies and approves them:
 
-- Phone: `[PPC phone number placeholder]`
-- Email: `[PPC email placeholder]`
-- Business hours: `[Business hours placeholder]`
-- Service areas: `Las Vegas and Southern Nevada commercial properties`, then add any verified cities.
-- Form endpoint: `FORM_ENDPOINT_PLACEHOLDER`
-- License: `[License and insurance details placeholder, do not publish as verified until confirmed]`
-- Insurance: use verified language only.
-- Emergency availability: `[Emergency availability placeholder, verify before publishing]`
-- Social links: add only verified profiles.
-- Canonical domain: currently `https://neraium.github.io/PPCLV/`. Update every canonical tag, Open Graph URL, `robots.txt`, and `sitemap.xml` if the production domain changes.
-
-## Placeholder images
-
-The images in `images/` are temporary royalty-free Pexels images documented in `images/README.md`. Replace them with verified PPC photography before making project claims. Keep width, height, alt text, and licensing notes updated.
-
-Priority replacement images:
-
-- Commercial pools
-- Commercial spas
-- Equipment rooms
-- Restoration work
-- Water testing
-- Service vehicles or technicians
-- Before-and-after areas where approved
+- Phone number.
+- Email address.
+- Business hours.
+- Emergency availability language.
+- Detailed service areas beyond Las Vegas and Southern Nevada.
+- License information.
+- Insurance information.
+- Certifications.
+- Leadership or team details.
+- Years in business.
+- Social profile links.
+- Testimonials.
+- Real PPC project photography.
+- Final production canonical domain if different from GitHub Pages.
 
 ## Contact form setup
 
-`contact.html` uses a provider-neutral form with `action="FORM_ENDPOINT_PLACEHOLDER"`. Before launch, connect it to one of these options:
+The contact form currently uses `action="#"` and `data-endpoint-configured="false"`. It is intentionally not presented as a live submission endpoint. Before production launch:
 
-1. Formspree endpoint.
-2. Netlify Forms endpoint and related attributes if hosting on Netlify.
-3. Basin endpoint.
-4. A custom endpoint.
+1. Connect the form to Formspree, Netlify Forms, Basin, or a custom endpoint.
+2. Update `action` with the provider endpoint.
+3. Set `data-endpoint-configured="true"`.
+4. Submit a test request and confirm PPC receives every field.
+5. Update `privacy.html` with the selected third-party form processor.
 
-After connecting, submit a real test request and confirm the business receives all fields.
+## Image replacement guidance
+
+Current imagery is representative and documented in `images/README.md`. The website avoids calling these photos PPC projects. Replace images with verified PPC-owned or properly licensed photography when available, especially for:
+
+- Commercial pools.
+- Commercial spas.
+- Equipment rooms.
+- Surface restoration.
+- Water testing.
+- Service coordination or technician imagery.
+- Approved before-and-after areas.
+
+The `our-work.html` file includes HTML comments identifying images that should be replaced before implying PPC project ownership.
 
 ## SEO and schema maintenance
 
-Each page includes a unique title, meta description, canonical URL, Open Graph metadata, Twitter card metadata, one H1, internal links, and local commercial-service language. `faq.html` includes FAQPage JSON-LD. Add Organization, LocalBusiness, ProfessionalService, Service, WebSite, WebPage, and BreadcrumbList schema only when verified details such as phone, URL, logo, service area, and contact endpoints are final. Do not add reviews, ratings, prices, coordinates, addresses, licenses, or hours until verified.
+Each public page includes a unique title, meta description, canonical URL, Open Graph metadata, Twitter card metadata, one H1, internal links, and local commercial-service language. `faq.html` includes FAQPage JSON-LD.
+
+Add Organization, LocalBusiness, ProfessionalService, Service, WebSite, WebPage, and BreadcrumbList schema only after verified details are available. Do not add ratings, reviews, price ranges, opening hours, coordinates, address information, credentials, license data, or insurance language until verified.
 
 ## Analytics
 
-No analytics script is enabled. If analytics are added, document the provider in `privacy.html`, confirm cookie behavior, and avoid slowing initial page load.
+No analytics script is enabled. If analytics are added, update `privacy.html`, document cookie behavior if applicable, and keep scripts lightweight.
 
 ## GitHub Pages deployment
 
-The existing `.github/workflows/pages.yml` workflow uploads the static site from the repository root and deploys GitHub Pages after pushes to `main`. No deployment configuration changes were required.
+The existing `.github/workflows/pages.yml` workflow uploads the static site from the repository root and deploys GitHub Pages after pushes to `main`. The current site remains static and GitHub Pages compatible.
 
 ## Launch checklist
 
-- Verify phone, email, business hours, service area, emergency availability, social links, license, insurance, certifications, and years in operation.
-- Replace temporary images with verified PPC-owned or properly licensed photography.
+- Verify and add approved phone, email, business hours, emergency availability, service areas, license, insurance, certifications, leadership details, years in business, and social links.
+- Replace representative images with verified PPC photography where possible.
 - Connect and test the contact form endpoint.
-- Update canonical URLs and `sitemap.xml` if the domain changes.
-- Review every claim for proof and remove unsupported claims.
+- Update canonical URLs and `sitemap.xml` if the production domain changes.
+- Review every claim for support and remove unsupported claims.
 - Test all internal links.
 - Confirm every page has exactly one H1.
-- Test mobile navigation at 360px, 390px, 768px, and desktop widths.
+- Test desktop, tablet, and mobile layouts in a real browser.
 - Test keyboard navigation, focus states, FAQ disclosure controls, and form validation.
+- Confirm `gallery.html` redirects or canonicalizes to `our-work.html` and remains absent from `sitemap.xml`.
+- Confirm no visible development placeholders appear on public pages.
 - Run an HTML validation pass before production launch.
 
 ## Accessibility and performance notes
