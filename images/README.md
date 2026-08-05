@@ -18,3 +18,7 @@ These are temporary royalty-free Pexels images saved locally in compressed, web-
 - `commercial-surface-cleaning.jpg` - Surface preparation / cleaning technician image. Source: Pexels photo 6471914.
 - `apartment-community-pool-deck.jpg` - Managed apartment community / commercial amenity pool deck image. Source: Pexels photo 29851842.
 - `pool-service-response-vehicle.jpg` - Service technician / response vehicle image. Source: Pexels photo 32863789.
+
+## Replacement requirement
+
+Every current photo should be treated as temporary unless PPC verifies ownership, approval, and use rights. The Our Work page includes HTML comments marking images that must be replaced before claiming they show PPC projects.
