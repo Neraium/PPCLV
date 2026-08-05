@@ -17,7 +17,6 @@ These are temporary royalty-free Pexels images saved locally in compressed, web-
 - `commercial-water-testing.jpg` - Water testing chemistry image. Source: Pexels photo 8028684.
 - `commercial-surface-cleaning.jpg` - Surface preparation / cleaning technician image. Source: Pexels photo 6471914.
 - `apartment-community-pool-deck.jpg` - Managed apartment community / commercial amenity pool deck image. Source: Pexels photo 29851842.
-- `pool-service-response-vehicle.jpg` - Service technician / response vehicle image. Source: Pexels photo 32863789.
 
 ## Replacement requirement
 
