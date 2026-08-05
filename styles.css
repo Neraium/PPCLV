@@ -88,13 +88,13 @@ p { margin-bottom: 15px; }
 .masthead-inner {
   display: grid;
   grid-template-columns: auto auto minmax(0, 1fr) auto;
-  gap: clamp(12px, 2vw, 24px);
+  gap: clamp(14px, 2.2vw, 28px);
   align-items: center;
-  padding: 9px 0;
+  padding: 13px 0;
 }
 .masthead-sticky-row { display: contents; }
 .logo-link { display: inline-flex; border-radius: var(--radius); }
-.site-logo { width: clamp(142px, 13vw, 202px); object-fit: contain; }
+.site-logo { width: clamp(202px, 15.5vw, 286px); object-fit: contain; }
 .menu-toggle { display: none; }
 .primary-nav {
   display: flex;
@@ -436,7 +436,7 @@ details p { margin: 12px 0 0; color: #3d5263; }
 .nav-service-link { display: inline-flex; }
 .home-hero-art {
   position: relative;
-  min-height: clamp(620px, 86vh, 840px);
+  min-height: clamp(620px, 84vh, 820px);
   display: grid;
   align-items: end;
   overflow: hidden;
@@ -454,13 +454,14 @@ details p { margin: 12px 0 0; color: #3d5263; }
   position: relative;
   z-index: 1;
   max-width: none;
-  padding-top: clamp(120px, 18vh, 180px);
-  padding-bottom: clamp(58px, 9vw, 110px);
+  padding-top: clamp(150px, 21vh, 220px);
+  padding-bottom: clamp(58px, 8vw, 96px);
 }
-.hero-art-copy h1 { max-width: 880px; color: var(--white); font-size: clamp(2.45rem, 5.7vw, 5.15rem); letter-spacing: -0.045em; }
+.hero-art-copy h1 { max-width: 840px; margin-bottom: 14px; color: var(--white); font-size: clamp(2.35rem, 4.65vw, 4.25rem); line-height: 1.08; letter-spacing: -0.032em; }
 .text-keep { white-space: nowrap; }
-.hero-art-copy .lead { max-width: 690px; color: #e7f4f5; }
+.hero-art-copy .lead { max-width: 650px; margin-bottom: 0; color: #e7f4f5; font-size: clamp(1.15rem, 1.35vw, 1.22rem); line-height: 1.62; }
 .hero-art-copy .eyebrow { color: var(--gold); }
+.hero-art-copy .button-row { margin-top: 20px; }
 .hero-art-copy .btn-secondary { background: rgba(255,255,255,0.93); }
 .services-row-section { background: var(--white); }
 .services-row-intro { max-width: 620px; margin-bottom: clamp(28px, 5vw, 56px); }
@@ -501,12 +502,12 @@ details p { margin: 12px 0 0; color: #3d5263; }
 
 @media (max-width: 960px) {
   .brand-masthead { position: sticky; top: 0; z-index: 50; border-bottom: 1px solid rgba(207, 225, 232, 0.9); background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(16px); }
-  .masthead-inner { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; padding: 7px 0; }
+  .masthead-inner { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; padding: 10px 0; }
   .primary-nav { grid-column: 1 / -1; display: none; grid-template-columns: 1fr 1fr; gap: 6px; padding-bottom: 10px; }
   .primary-nav.is-open { display: grid; }
   .primary-nav a { padding: 10px; }
   .nav-service-link { color: var(--white); background: var(--navy); }
-  .site-logo { width: clamp(176px, 34vw, 224px); }
+  .site-logo { width: clamp(220px, 38vw, 286px); }
   .home-hero-art { min-height: 680px; }
   .hero-image-panel::after { background: linear-gradient(0deg, rgba(3, 24, 41, 0.9) 0%, rgba(3, 24, 41, 0.48) 64%, rgba(3, 24, 41, 0.18) 100%); }
   .service-row, .credibility-split, .industry-photo-strip, .simple-footer-grid { grid-template-columns: 1fr; }
@@ -568,42 +569,42 @@ details p { margin: 12px 0 0; color: #3d5263; }
     max-width: 452px;
     margin-right: auto;
     margin-left: auto;
-    padding: 82px 26px 48px;
+    padding: 98px 26px 48px;
     text-align: center;
   }
   .hero-art-copy .eyebrow {
     margin-right: auto;
     margin-left: auto;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     font-size: 0.66rem;
     letter-spacing: 0.105em;
     line-height: 1.25;
   }
   .hero-art-copy h1 {
-    max-width: 8.6em;
+    max-width: 9.4em;
     margin-right: auto;
     margin-bottom: 0;
     margin-left: auto;
-    font-size: clamp(2.6rem, 10vw, 3.5rem);
-    line-height: 1.05;
-    letter-spacing: -0.048em;
+    font-size: clamp(3rem, 11vw, 3.6rem);
+    line-height: 1.08;
+    letter-spacing: -0.032em;
     text-wrap: balance;
   }
   .hero-art-copy .lead {
-    max-width: 31ch;
-    margin-top: 28px;
+    max-width: 34ch;
+    margin-top: 16px;
     margin-right: auto;
     margin-bottom: 0;
     margin-left: auto;
     color: rgba(231, 244, 245, 0.9);
-    font-size: 0.98rem;
-    line-height: 1.55;
+    font-size: clamp(1.15rem, 4.2vw, 1.2rem);
+    line-height: 1.6;
     text-wrap: pretty;
   }
   .button-row {
     justify-content: center;
     gap: 14px;
-    margin-top: 28px;
+    margin-top: 20px;
   }
   .hero-art-copy .btn {
     width: min(100%, 310px);
