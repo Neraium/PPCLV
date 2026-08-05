@@ -394,3 +394,7 @@ details p { margin: 12px 0 0; color: #3d5263; }
   }
   .reveal { opacity: 1; transform: none; }
 }
+
+.section-link { margin-top: 18px; font-weight: 800; }
+.section-link a { color: var(--teal); border-bottom: 2px solid rgba(15, 163, 163, 0.25); }
+.compact-cta { padding: 44px 0; }
