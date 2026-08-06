@@ -14,7 +14,7 @@
   <title>Contact PPC LLC | Request Commercial Pool Service</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 
 </head>
@@ -72,19 +72,35 @@
         <form class="quote-form reveal" action="#" method="post" data-quote-form data-endpoint-configured="false">
           <!-- Replace action and set data-endpoint-configured to true when Formspree, Netlify Forms, Basin, or a custom endpoint is configured. -->
           <input type="hidden" name="form-name" value="commercial-service-request">
-          <label>Name <input required name="name" autocomplete="name"></label>
-          <label>Company <input required name="company" autocomplete="organization"></label>
-          <label>Email <input required type="email" name="email" autocomplete="email"></label>
-          <label>Phone <input required type="tel" name="phone" autocomplete="tel"></label>
-          <label>Property type <select required name="property_type"><option value="">Select</option><option>Resort or hospitality</option><option>Apartment or multifamily</option><option>HOA</option><option>Municipal or public facility</option><option>Commercial property</option></select></label>
-          <label>Property name <input name="property_name"></label>
-          <label>Number of pools <input type="number" min="0" name="pools"></label>
-          <label>Number of spas <input type="number" min="0" name="spas"></label>
-          <label>Service needed <select required name="service_needed"><option value="">Select</option><option>Commercial pool maintenance</option><option>Commercial spa maintenance</option><option>Equipment support</option><option>Emergency bio cleanup</option><option>Acid washing</option><option>SNHD inspection-readiness support</option></select></label>
-          <label>Urgency <select required name="urgency"><option value="">Select</option><option>Routine quote</option><option>Current issue</option><option>Urgent request</option></select></label>
-          <label class="full">Message <textarea required name="message" rows="5"></textarea></label>
-          <label>Preferred contact method <select name="preferred_contact"><option>Email</option><option>Phone</option></select></label>
-          <label class="full consent"><input required type="checkbox" name="privacy_consent"> I consent to PPC using this information to respond to my service request.</label>
+          <div class="form-heading">
+            <p class="eyebrow">Request Details</p>
+            <h2>Start a service conversation.</h2>
+            <p>Required fields are marked <span aria-hidden="true">*</span>.</p>
+          </div>
+          <fieldset>
+            <legend>Contact information</legend>
+            <div class="form-grid">
+              <label>Name <span class="required" aria-hidden="true">*</span><input required name="name" autocomplete="name"></label>
+              <label>Company <span class="required" aria-hidden="true">*</span><input required name="company" autocomplete="organization"></label>
+              <label>Email <span class="required" aria-hidden="true">*</span><input required type="email" name="email" autocomplete="email"></label>
+              <label>Phone <span class="required" aria-hidden="true">*</span><input required type="tel" name="phone" autocomplete="tel"></label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Property and service</legend>
+            <div class="form-grid">
+              <label>Property type <span class="required" aria-hidden="true">*</span><select required name="property_type"><option value="">Select property type</option><option>Resort or hospitality</option><option>Apartment or multifamily</option><option>HOA</option><option>Municipal or public facility</option><option>Commercial property</option></select></label>
+              <label>Property name <input name="property_name"></label>
+              <label>Number of pools <input type="number" min="0" name="pools" inputmode="numeric"></label>
+              <label>Number of spas <input type="number" min="0" name="spas" inputmode="numeric"></label>
+              <label>Service needed <span class="required" aria-hidden="true">*</span><select required name="service_needed"><option value="">Select service</option><option>Commercial pool maintenance</option><option>Commercial spa maintenance</option><option>Equipment support</option><option>Emergency bio cleanup</option><option>Acid washing</option><option>SNHD inspection-readiness support</option></select></label>
+              <label>Urgency <span class="required" aria-hidden="true">*</span><select required name="urgency"><option value="">Select urgency</option><option>Routine quote</option><option>Current issue</option><option>Urgent request</option></select></label>
+              <label class="full">Message <span class="required" aria-hidden="true">*</span><textarea required name="message" rows="5"></textarea></label>
+              <label>Preferred contact method <select name="preferred_contact"><option>Email</option><option>Phone</option></select></label>
+            </div>
+          </fieldset>
+          <p class="form-demo-note">This concept form would be connected to PPC’s preferred email, CRM, or lead-management system during production setup.</p>
+          <label class="full consent"><input required type="checkbox" name="privacy_consent"> <span>I consent to PPC using this information to respond to my service request. <span class="required" aria-hidden="true">*</span></span></label>
           <label class="hp" aria-hidden="true">Leave this field blank <input name="website" tabindex="-1" autocomplete="off"></label>
           <button class="btn btn-primary" type="submit">Request Service</button>
           <p class="form-status" data-form-status role="status" aria-live="polite"></p>
@@ -116,6 +132,7 @@
     </div>
     <div class="container footer-bottom">
       <p>&copy; 2026 PPC LLC. All rights reserved.</p>
+      <p class="concept-note">Website concept prepared for PPC LLC</p>
     </div>
   </footer>
   <script src="script.js"></script>

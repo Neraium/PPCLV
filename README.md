@@ -4,9 +4,13 @@ Static GitHub Pages website for PPC LLC, the public brand for Professional Pool 
 
 Live site target: `https://neraium.github.io/PPCLV/`
 
+## Presentation concept
+
+This repository is a client-presentation concept showing a possible future direction for the PPC website. A production launch would include verified business details, verified PPC project photography, live form integration, analytics and domain configuration, and final legal and accessibility review.
+
 ## Site structure
 
-- `index.html`: Homepage with commercial hero, operational subheadline, trust strip, editorial service overview, industry split section, why-PPC section, anonymized proof examples, FAQ preview, and CTA.
+- `index.html`: Homepage with commercial hero, editorial service overview, commercial credibility section, managed-property imagery, and decisive service CTA.
 - `services.html`: Full commercial pool, spa, equipment, restoration, emergency, bio cleanup, and SNHD inspection-readiness service details.
 - `industries.html`: Specific industry guidance for resorts, apartments, HOAs, municipal and public facilities, and commercial properties.
 - `our-work.html`: Public page for Commercial Service Environments using representative imagery until verified PPC photography is available.
@@ -62,7 +66,7 @@ Current imagery is representative and documented in `images/README.md`. The webs
 - Service coordination or technician imagery.
 - Approved before-and-after areas.
 
-The `our-work.html` file includes HTML comments identifying images that should be replaced before implying PPC project ownership.
+The `our-work.html` file includes visible framing and HTML comments identifying images that should be replaced before implying PPC project ownership.
 
 ## SEO and schema maintenance
 
@@ -83,13 +87,13 @@ The existing `.github/workflows/pages.yml` workflow uploads the static site from
 Use Node.js 20 or newer, then run:
 
 ```sh
-npm install
+npm ci
 npx playwright install --with-deps chromium
 npm run build
 npm test
 ```
 
-The build copies the production static files to `dist/` without changing the root-based GitHub Pages deployment. Playwright starts a local HTTP server and tests navigation, CTAs, form validation, the mobile menu, headings, keyboard focus, internal links, images, console errors, horizontal overflow, and the requested responsive widths. Review screenshots are written to `test-artifacts/screenshots/`.
+The build copies the production static files to `dist/` without changing the root-based GitHub Pages deployment. Playwright starts a local HTTP server and tests navigation, CTAs, form validation, the mobile menu, headings, keyboard focus, internal links, images, console errors, horizontal overflow, sticky-header behavior, footer links, and the requested responsive widths. Final review screenshots are written to `test-artifacts/screenshots/final-review/`.
 
 ## Launch checklist
 

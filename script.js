@@ -1,10 +1,14 @@
-const revealItems = document.querySelectorAll(".reveal");
 const menuToggle = document.querySelector(".menu-toggle");
 const primaryMenu = document.querySelector("#primary-menu");
 const quoteForm = document.querySelector("[data-quote-form]");
 const formStatus = document.querySelector("[data-form-status]");
 
-document.documentElement.classList.add("js");
+const closeMenu = ({ restoreFocus = false } = {}) => {
+  if (!menuToggle || !primaryMenu) return;
+  menuToggle.setAttribute("aria-expanded", "false");
+  primaryMenu.classList.remove("is-open");
+  if (restoreFocus) menuToggle.focus();
+};
 
 menuToggle?.addEventListener("click", () => {
   const expanded = menuToggle.getAttribute("aria-expanded") === "true";
@@ -12,37 +16,26 @@ menuToggle?.addEventListener("click", () => {
   primaryMenu?.classList.toggle("is-open", !expanded);
 });
 
+primaryMenu?.addEventListener("click", (event) => {
+  if (event.target.closest("a")) closeMenu();
+});
+
 document.addEventListener("click", (event) => {
   if (!menuToggle || !primaryMenu || !primaryMenu.classList.contains("is-open")) return;
   if (!event.target.closest("[data-site-header]")) {
-    menuToggle.setAttribute("aria-expanded", "false");
-    primaryMenu.classList.remove("is-open");
+    closeMenu();
   }
 });
 
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && menuToggle && primaryMenu) {
-    menuToggle.setAttribute("aria-expanded", "false");
-    primaryMenu.classList.remove("is-open");
-    menuToggle.focus();
+  if (event.key === "Escape" && primaryMenu?.classList.contains("is-open")) {
+    closeMenu({ restoreFocus: true });
   }
 });
 
-if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-  revealItems.forEach((item) => item.classList.add("is-visible"));
-} else if ("IntersectionObserver" in window) {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("is-visible");
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.12 });
-  revealItems.forEach((item) => observer.observe(item));
-} else {
-  revealItems.forEach((item) => item.classList.add("is-visible"));
-}
+window.addEventListener("resize", () => {
+  if (window.innerWidth > 1040) closeMenu();
+});
 
 quoteForm?.addEventListener("submit", (event) => {
   if (!formStatus) return;
@@ -67,7 +60,7 @@ quoteForm?.addEventListener("submit", (event) => {
 
   if (quoteForm.dataset.endpointConfigured !== "true") {
     event.preventDefault();
-    formStatus.textContent = "This form is not yet connected. Please try again once online requests are enabled.";
+    formStatus.textContent = "This concept form is not yet connected to a live inbox. PPC’s preferred system would be configured for production.";
     formStatus.classList.add("error");
   }
 });
