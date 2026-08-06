@@ -1,0 +1,13 @@
+{
+  "name": "ppclv-website",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "playwright test",
+    "test:e2e": "playwright test",
+    "test:screenshots": "playwright test tests/visual.spec.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1"
+  }
+}

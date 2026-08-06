@@ -78,6 +78,19 @@ No analytics script is enabled. If analytics are added, update `privacy.html`, d
 
 The existing `.github/workflows/pages.yml` workflow uploads the static site from the repository root and deploys GitHub Pages after pushes to `main`. The current site remains static and GitHub Pages compatible.
 
+## Local development and validation
+
+Use Node.js 20 or newer, then run:
+
+```sh
+npm install
+npx playwright install --with-deps chromium
+npm run build
+npm test
+```
+
+The build copies the production static files to `dist/` without changing the root-based GitHub Pages deployment. Playwright starts a local HTTP server and tests navigation, CTAs, form validation, the mobile menu, headings, keyboard focus, internal links, images, console errors, horizontal overflow, and the requested responsive widths. Review screenshots are written to `test-artifacts/screenshots/`.
+
 ## Launch checklist
 
 - Verify and add approved phone, email, business hours, emergency availability, service areas, license, insurance, certifications, leadership details, years in business, and social links.
