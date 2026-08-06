@@ -1,115 +1,110 @@
-# PPC LLC Website
+# PPC LLC Essential Business Website
 
-Static GitHub Pages website for PPC LLC, the public brand for Professional Pool Care LLC, a Las Vegas commercial pool and spa maintenance company.
+Static GitHub Pages website for Professional Pool Care LLC, also known as PPC LLC. The public delivery is intentionally scoped as a concise four-page commercial website for the $1,250 Essential Business Website package.
 
 Live site target: `https://neraium.github.io/PPCLV/`
 
-## Presentation concept
+## Public site structure
 
-This repository is a client-presentation concept showing a possible future direction for the PPC website. A production launch would include verified business details, verified PPC project photography, live form integration, analytics and domain configuration, and final legal and accessibility review.
+The only promoted marketing pages are:
 
-## Site structure
+- `index.html`: image-led homepage with commercial positioning, a concise service overview, credibility content, the Properties We Serve showcase, and a final service call to action.
+- `services.html`: PPC's approved service categories organized into Maintenance, Equipment & Restoration, and Urgent & Operational Support.
+- `about.html`: company identity, commercial focus, Southern Nevada service context, maintenance approach, and property-team communication.
+- `contact.html`: accessible service-request form collecting only the information needed to start a conversation.
 
-- `index.html`: Homepage with commercial hero, editorial service overview, commercial credibility section, managed-property imagery, and decisive service CTA.
-- `services.html`: Full commercial pool, spa, equipment, restoration, emergency, bio cleanup, and SNHD inspection-readiness service details.
-- `industries.html`: Specific industry guidance for resorts, apartments, HOAs, municipal and public facilities, and commercial properties.
-- `our-work.html`: Public page for Commercial Service Environments using representative imagery until verified PPC photography is available.
-- `gallery.html`: Compatibility URL that redirects and canonicalizes to `our-work.html`; it is not included in `sitemap.xml`.
-- `about.html`: PPC commercial focus, property types served, maintenance approach, communication style, Southern Nevada operating conditions, emergency coordination, and inspection-readiness support.
-- `faq.html`: Commercial service FAQ with FAQPage JSON-LD.
-- `contact.html`: Provider-neutral service request form with validation, spam protection, and launch notice until a live endpoint is connected.
-- `commercial-pool-service-las-vegas.html`: Dedicated landing page for Commercial Pool Service Las Vegas search intent.
-- `privacy.html`: Privacy policy focused on form information, processor configuration, analytics and cookies if enabled, information requests, and external links.
-- `terms.html`: Website terms focused on informational content, availability limits, regulatory limitations, search-results limitations, acceptable use, IP, external links, liability, and changes.
-- `robots.txt` and `sitemap.xml`: Search crawler and sitemap files.
-- `styles.css`: Shared responsive design system.
-- `script.js`: Accessible mobile navigation, reduced-motion aware reveal behavior, form validation, spam-field handling, and endpoint-not-configured messaging.
+`privacy.html` and `terms.html` are concise legal utility pages. They are linked only in the footer, marked `noindex`, and are not promoted as marketing pages.
 
-## Verified PPC information still needed
+Primary navigation and the compact footer promote only Home, Services, About, and Contact.
 
-Do not add these items visibly until PPC verifies and approves them:
+## Expanded-tier material retained
 
-- Phone number.
-- Email address.
+Expanded-package source work is preserved in `archive/expanded/`:
+
+- Industries page.
+- Our Work and gallery-style pages.
+- Expanded FAQ page and FAQPage schema.
+- Dedicated Commercial Pool Service Las Vegas search landing page.
+
+These files are marked `noindex`, have no links from the Essential site, are absent from `sitemap.xml`, and are excluded from the production `dist/` artifact. They remain available in source control for a possible future package upgrade.
+
+The public Essential site does not ship a standalone Industries, Our Work, Gallery, FAQ, case-study, industry-specific SEO, advanced schema, GEO, or AI-search deliverable.
+
+## PPC Information Required Before Launch
+
+PPC must provide and approve the following before final launch:
+
+- Main phone number.
+- Main email address.
 - Business hours.
-- Emergency availability language.
-- Detailed service areas beyond Las Vegas and Southern Nevada.
-- License information.
-- Insurance information.
-- Certifications.
-- Leadership or team details.
-- Years in business.
-- Social profile links.
-- Testimonials.
-- Real PPC project photography.
-- Final production canonical domain if different from GitHub Pages.
+- Approved service area wording.
+- Approved final service list and descriptions.
+- Approved company background and year established.
+- Any license, certification, or insurance wording PPC wants shown.
+- Contact-form destination and selected form processor.
+- Final production domain.
+- Customer or property names approved for display.
+- Customer or property photography PPC owns or has permission to publish.
+- Written permission to publish each named property and its photography.
+
+The site does not invent or visibly substitute any of this information. Source comments identify the relevant insertion points.
+
+## Customer and property approval rules
+
+The homepage Properties We Serve section currently uses licensed representative commercial imagery with property-type labels only. It does not identify the photographs as PPC projects or pair stock images with real customer names.
+
+Before adding a named property, confirm that PPC currently services it or is otherwise authorized to reference it, that PPC has permission to display the name, and that PPC owns or has permission to publish the paired photo. If photo use is approved but name use is not, retain a generic property-type label.
+
+## Photo replacement map
+
+| Public placement | Current file | PPC replacement needed |
+| --- | --- | --- |
+| Homepage hero | `images/resort-hotel-pool-deck.webp` plus 960px derivative | One approved, high-impact commercial resort, hotel, multifamily, HOA, municipal, or large aquatic-deck photo |
+| Homepage credibility | `images/commercial-surface-cleaning.jpg` | One approved commercial technician or field-service photo |
+| Properties We Serve, Apartment Community | `images/apartment-community-pool-deck.jpg` | Approved customer/property photo and optional approved property name |
+| Properties We Serve, Commercial Spa | `images/commercial-hotel-spa.jpg` | Approved customer/property spa photo and optional approved property name |
+| Properties We Serve, Municipal Facility | `images/municipal-lap-pool-lanes.jpg` | Approved customer/property photo and optional approved property name |
+| Properties We Serve, Commercial Facility | `images/commercial-equipment-room-service.jpg` | Approved customer/property photo and optional approved property name |
+| Services, Maintenance | `images/commercial-water-testing.jpg` | One to two approved commercial pool or spa maintenance photos; water-testing photography is not required |
+| Services, Equipment & Restoration | `images/commercial-equipment-room-service.jpg` | Two to three approved equipment or equipment-room photos |
+| Services, Urgent & Operational Support | `images/municipal-lap-pool-lanes.jpg` | One approved commercial facility or operational-support photo |
+| About | `images/commercial-equipment-room-service.jpg` | One approved company, team, equipment-room, or field-service photo |
+
+The current homepage uses six unique image files and does not repeat photography within the page. When PPC photography arrives, use meaningful filenames, preserve intrinsic dimensions, create WebP derivatives where appropriate, add responsive `srcset` for large images, use meaningful alt text, load below-the-fold images lazily, and keep the hero image high priority.
 
 ## Contact form setup
 
-The contact form currently uses `action="#"` and `data-endpoint-configured="false"`. It is intentionally not presented as a live submission endpoint. Before production launch:
+The form remains provider-neutral and includes accessible labels, native validation, an email-or-phone requirement, privacy consent, and a honeypot. It intentionally exposes no setup or development notice on the public page.
 
-1. Connect the form to Formspree, Netlify Forms, Basin, or a custom endpoint.
-2. Update `action` with the provider endpoint.
-3. Set `data-endpoint-configured="true"`.
-4. Submit a test request and confirm PPC receives every field.
-5. Update `privacy.html` with the selected third-party form processor.
+Before launch:
 
-## Image replacement guidance
+1. Set the `action` in `contact.html` to the approved provider endpoint.
+2. Set `data-endpoint-configured="true"`.
+3. Confirm each field arrives at PPC's approved destination.
+4. Test validation, spam handling, success behavior, and failure behavior.
+5. Update `privacy.html` with the selected processor and PPC's approved privacy contact details.
 
-Current imagery is representative and documented in `images/README.md`. The website avoids calling these photos PPC projects. Replace images with verified PPC-owned or properly licensed photography when available, especially for:
+## Basic SEO
 
-- Commercial pools.
-- Commercial spas.
-- Equipment rooms.
-- Surface restoration.
-- Water testing.
-- Service coordination or technician imagery.
-- Approved before-and-after areas.
+The four core pages retain unique titles and meta descriptions, canonical URLs, basic Open Graph metadata, one H1 each, logical heading order, crawlable HTML, and meaningful image alt text. `sitemap.xml` lists only the four indexable marketing pages.
 
-The `our-work.html` file includes visible framing and HTML comments identifying images that should be replaced before implying PPC project ownership.
+No active FAQPage schema, industry-specific landing-page architecture, enhanced local SEO package, advanced schema strategy, GEO package, or AI-answer optimization package is included in the Essential build.
 
-## SEO and schema maintenance
+Update the canonical URLs, Open Graph URLs, `robots.txt`, and `sitemap.xml` after PPC supplies the final domain.
 
-Each public page includes a unique title, meta description, canonical URL, Open Graph metadata, Twitter card metadata, one H1, internal links, and local commercial-service language. `faq.html` includes FAQPage JSON-LD.
+## Deployment and validation
 
-Add Organization, LocalBusiness, ProfessionalService, Service, WebSite, WebPage, and BreadcrumbList schema only after verified details are available. Do not add ratings, reviews, price ranges, opening hours, coordinates, address information, credentials, license data, or insurance language until verified.
+The GitHub Pages workflow installs dependencies, runs `npm run build`, and deploys only `dist/`. The build uses an explicit allowlist for the four marketing pages, two utility pages, shared assets, crawler files, and `.nojekyll`. Source archives, tests, reports, and project files are not published.
 
-## Analytics
-
-No analytics script is enabled. If analytics are added, update `privacy.html`, document cookie behavior if applicable, and keep scripts lightweight.
-
-## GitHub Pages deployment
-
-The existing `.github/workflows/pages.yml` workflow uploads the static site from the repository root and deploys GitHub Pages after pushes to `main`. The current site remains static and GitHub Pages compatible.
-
-## Local development and validation
-
-Use Node.js 20 or newer, then run:
+Local checks:
 
 ```sh
 npm ci
-npx playwright install --with-deps chromium
 npm run build
 npm test
+npm run test:screenshots
+git diff --check
+node --check script.js
 ```
 
-The build copies the production static files to `dist/` without changing the root-based GitHub Pages deployment. Playwright starts a local HTTP server and tests navigation, CTAs, form validation, the mobile menu, headings, keyboard focus, internal links, images, console errors, horizontal overflow, sticky-header behavior, footer links, and the requested responsive widths. Final review screenshots are written to `test-artifacts/screenshots/final-review/`.
-
-## Launch checklist
-
-- Verify and add approved phone, email, business hours, emergency availability, service areas, license, insurance, certifications, leadership details, years in business, and social links.
-- Replace representative images with verified PPC photography where possible.
-- Connect and test the contact form endpoint.
-- Update canonical URLs and `sitemap.xml` if the production domain changes.
-- Review every claim for support and remove unsupported claims.
-- Test all internal links.
-- Confirm every page has exactly one H1.
-- Test desktop, tablet, and mobile layouts in a real browser.
-- Test keyboard navigation, focus states, FAQ disclosure controls, and form validation.
-- Confirm `gallery.html` redirects or canonicalizes to `our-work.html` and remains absent from `sitemap.xml`.
-- Confirm no visible development placeholders appear on public pages.
-- Run an HTML validation pass before production launch.
-
-## Accessibility and performance notes
-
-The site uses semantic sections, accessible labels, visible focus states, keyboard-friendly disclosure elements, reduced-motion handling, explicit image dimensions, lazy loading below the fold, and no large framework. Keep future changes static and GitHub Pages compatible unless deployment requirements change.
+Playwright covers navigation scope, headings, links, image loading and alt text, form accessibility and validation, mobile-menu behavior, stable sticky-header dimensions, overflow, archive exclusion, sitemap scope, and the requested responsive widths.

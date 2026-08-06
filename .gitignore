@@ -2,3 +2,4 @@ node_modules/
 dist/
 test-artifacts/playwright-report/
 test-artifacts/playwright-results/
+test-artifacts/screenshots/essential-review/

@@ -17,7 +17,6 @@ menuToggle?.addEventListener("click", () => {
   menuToggle.setAttribute("aria-expanded", String(!expanded));
   primaryMenu?.classList.toggle("is-open", !expanded);
 });
-
 primaryMenu?.addEventListener("click", (event) => {
   if (event.target.closest("a")) closeMenu();
 });
@@ -86,7 +85,7 @@ quoteForm?.addEventListener("submit", (event) => {
 
   if (quoteForm.dataset.endpointConfigured !== "true") {
     event.preventDefault();
-    formStatus.textContent = "We could not send your request. Please try again later.";
+    formStatus.textContent = "This concept form is not yet connected to a live inbox. PPC’s preferred system would be configured for production.";
     formStatus.classList.add("error");
   }
 });
