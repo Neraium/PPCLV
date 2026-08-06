@@ -16,7 +16,7 @@ These are temporary royalty-free Pexels images saved locally in compressed, web-
 - `commercial-hotel-spa.jpg` - Commercial hotel spa environment image. Source: Pexels photo 3101547.
 - `commercial-equipment-room-service.jpg` - Commercial equipment room and service technician image. Source: Pexels photo 6720526.
 - `commercial-water-testing.jpg` - Pool thermometer and water-condition image. Source: Pexels photo 8028684.
-- `commercial-surface-cleaning.jpg` - Field equipment / diagnostic technician image (legacy filename). Source: Pexels photo 6471914.
+- `commercial-surface-cleaning.jpg` - Representative commercial pool-cleaning technician image (legacy filename). AI-generated for this presentation concept on 2026-08-06.
 - `apartment-community-pool-deck.jpg` - Managed apartment community / commercial amenity pool deck image. Source: Pexels photo 29851842.
 
 ## Replacement requirement
