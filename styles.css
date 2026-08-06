@@ -444,9 +444,9 @@ p { margin-bottom: 16px; }
 }
 .credibility-image img {
   width: 100%;
-  aspect-ratio: 5 / 4;
+  aspect-ratio: 4 / 5;
   object-fit: cover;
-  object-position: 52% center;
+  object-position: center 46%;
 }
 .credibility-copy { max-width: 590px; }
 .credibility-copy h2 { color: var(--white); }
@@ -1072,7 +1072,7 @@ details p { max-width: 72ch; margin: 0; padding: 0 48px 20px 0; color: var(--mut
   .service-line-item::before { right: 100%; left: 0; }
   .service-line-item.featured-service::before { right: 72%; }
   .credibility-split { gap: 36px; }
-  .credibility-image img { aspect-ratio: 4 / 3; }
+  .credibility-image img { aspect-ratio: 4 / 5; }
   .trust-cards,
   .property-type-list { grid-template-columns: 1fr; }
   .property-type-list li:last-child { grid-column: auto; }
