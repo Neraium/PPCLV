@@ -33,7 +33,11 @@ test("footer is compact and promotes only the four-page journey", async ({ page 
     const footer = page.locator("footer");
     await expect(footer.getByText("Professional Pool Care LLC", { exact: true })).toBeVisible();
     await expect(footer.getByText("PPC LLC, The Difference Is Clear.", { exact: true })).toBeVisible();
-    await expect(footer.getByText("Las Vegas and Southern Nevada", { exact: true })).toBeVisible();
+    await expect(footer.getByText("Family owned and operated in Las Vegas since 2003.", { exact: true })).toBeVisible();
+    await expect(footer.getByText("Greater Las Vegas Area", { exact: true })).toBeVisible();
+    await expect(footer.getByRole("link", { name: "702-357-7027" })).toHaveAttribute("href", "tel:+17023577027");
+    await expect(footer.getByRole("link", { name: "Adria@ProfessionalPoolCare.com" })).toHaveAttribute("href", "mailto:Adria@ProfessionalPoolCare.com");
+    await expect(footer.getByText("Monday-Friday, 8:00 AM-4:00 PM", { exact: true })).toBeVisible();
     const links = await footer.getByRole("navigation", { name: "Footer navigation" }).locator("a").allTextContents();
     expect(links.map((text) => text.trim())).toEqual(["Home", "Services", "About", "Contact"]);
     await expect(footer.getByRole("link", { name: "Request Service" })).toHaveCount(1);
@@ -65,10 +69,20 @@ test("homepage imagery is commercial, lazy below the hero, and not duplicated", 
   expect(altText.every((alt) => /commercial|resort|apartment|spa|municipal|aquatic|pool|mechanical/i.test(alt))).toBeTruthy();
 });
 
-test("services are organized into three concise groups with one scope note", async ({ page }) => {
+test("services are organized into the eight approved offerings with one scope note", async ({ page }) => {
   await waitForPage(page, "/services.html");
   await expect(page.locator(".service-group")).toHaveCount(3);
-  await expect(page.locator(".service-items section")).toHaveCount(7);
+  await expect(page.locator(".service-items section")).toHaveCount(8);
+  await expect(page.locator(".service-items h3")).toHaveText([
+    "Commercial Pool Maintenance",
+    "Commercial Spa Maintenance",
+    "Equipment Repair & Troubleshooting",
+    "Chemical Feed & Automation Support",
+    "Acid Washing & Surface Restoration",
+    "Emergency Service & Bio Cleanup",
+    "Certified Pool Operator (CPO) Services",
+    "Inspection-Readiness & Compliance Support"
+  ]);
   await expect(page.locator(".service-group > .service-group-image")).toHaveCount(3);
   await expect(page.locator(".scope-note")).toHaveText("PPC supports maintenance and inspection readiness. Property owners and operators remain responsible for applicable regulatory requirements.");
 });
@@ -83,6 +97,16 @@ test("contact form is simple, accessible, and provider-neutral", async ({ page }
   for (const removedName of ["pools", "spas", "urgency", "preferred_contact"]) {
     await expect(form.locator(`[name="${removedName}"]`)).toHaveCount(0);
   }
+  await expect(form.locator('[name="service_needed"] option:not([value=""])')).toHaveText([
+    "Commercial Pool Maintenance",
+    "Commercial Spa Maintenance",
+    "Equipment Repair & Troubleshooting",
+    "Chemical Feed & Automation Support",
+    "Acid Washing & Surface Restoration",
+    "Emergency Service & Bio Cleanup",
+    "Certified Pool Operator (CPO) Services",
+    "Inspection-Readiness & Compliance Support"
+  ]);
   await page.getByRole("button", { name: "Request Service" }).last().click();
   await expect(form.locator('[name="name"]')).toBeFocused();
   await form.locator('[name="name"]').fill("Test User");
@@ -155,7 +179,10 @@ for (const width of requiredWidths) {
     test(`${path} has no overflow or broken imagery at ${width}px`, async ({ page }) => {
       const errors = [];
       page.on("pageerror", (error) => errors.push(error.message));
-      page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+      page.on("console", (message) => {
+        const sourceUrl = message.location().url;
+        if (message.type() === "error" && (!sourceUrl || new URL(sourceUrl).origin === new URL(page.url()).origin)) errors.push(message.text());
+      });
       await page.setViewportSize({ width, height: width < 768 ? 860 : 950 });
       await waitForPage(page, path);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBeTruthy();

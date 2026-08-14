@@ -9,8 +9,8 @@ Live site target: `https://neraium.github.io/PPCLV/`
 The only promoted marketing pages are:
 
 - `index.html`: image-led homepage with commercial positioning, a concise service overview, credibility content, the Properties We Serve showcase, and a final service call to action.
-- `services.html`: PPC's approved service categories organized into Maintenance, Equipment & Restoration, and Urgent & Operational Support.
-- `about.html`: company identity, commercial focus, Southern Nevada service context, maintenance approach, and property-team communication.
+- `services.html`: PPC's eight approved service categories organized into Maintenance, Equipment & Restoration, and Urgent & Operational Support.
+- `about.html`: company identity, history, Greater Las Vegas service context, maintenance approach, and property-team communication.
 - `contact.html`: accessible service-request form collecting only the information needed to start a conversation.
 
 `privacy.html` and `terms.html` are concise legal utility pages. They are linked only in the footer, marked `noindex`, and are not promoted as marketing pages.
@@ -30,16 +30,20 @@ These files are marked `noindex`, have no links from the Essential site, are abs
 
 The public Essential site does not ship a standalone Industries, Our Work, Gallery, FAQ, case-study, industry-specific SEO, advanced schema, GEO, or AI-search deliverable.
 
-## PPC Information Required Before Launch
+## Approved PPC information
 
-PPC must provide and approve the following before final launch:
+The public site uses the following approved information:
 
-- Main phone number.
-- Main email address.
-- Business hours.
-- Approved service area wording.
-- Approved final service list and descriptions.
-- Approved company background and year established.
+- Professional Pool Care LLC.
+- Phone: 702-357-7027.
+- Email: Adria@ProfessionalPoolCare.com.
+- Office hours: Monday-Friday, 8:00 AM-4:00 PM.
+- Service area: Greater Las Vegas Area.
+- Family owned and operated in Las Vegas since 2003.
+- Eight approved commercial service categories, including Certified Pool Operator (CPO) Services.
+
+PPC must still provide and approve the following before final launch:
+
 - Any license, certification, or insurance wording PPC wants shown.
 - Contact-form destination and selected form processor.
 - Final production domain.
@@ -47,7 +51,7 @@ PPC must provide and approve the following before final launch:
 - Customer or property photography PPC owns or has permission to publish.
 - Written permission to publish each named property and its photography.
 
-The site does not invent or visibly substitute any of this information. Source comments identify the relevant insertion points.
+The site does not invent or visibly substitute missing information. Source comments identify the remaining insertion points.
 
 ## Customer and property approval rules
 
@@ -67,7 +71,7 @@ Before adding a named property, confirm that PPC currently services it or is oth
 | Properties We Serve, Commercial Facility | `images/commercial-equipment-room-service.jpg` | Approved customer/property photo and optional approved property name |
 | Services, Maintenance | `images/commercial-water-testing.jpg` | One to two approved commercial pool or spa maintenance photos; water-testing photography is not required |
 | Services, Equipment & Restoration | `images/commercial-equipment-room-service.jpg` | Two to three approved equipment or equipment-room photos |
-| Services, Urgent & Operational Support | `images/municipal-lap-pool-lanes.jpg` | One approved commercial facility or operational-support photo |
+| Services, Urgent & Operational Support | `images/municipal-lap-pool-lanes.jpg` | One approved commercial facility, CPO, or operational-support photo |
 | About | `images/commercial-equipment-room-service.jpg` | One approved company, team, equipment-room, or field-service photo |
 
 The current homepage uses six unique image files and does not repeat photography within the page. When PPC photography arrives, use meaningful filenames, preserve intrinsic dimensions, create WebP derivatives where appropriate, add responsive `srcset` for large images, use meaningful alt text, load below-the-fold images lazily, and keep the hero image high priority.
