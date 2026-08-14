@@ -2,17 +2,17 @@
 
 > Generated: 2026-08-14
 > Mode: extracted and refined
-> Source: `styles.css`, PPC logo, and the four Essential public pages
+> Source: `styles.css`, PPC logo, the four Essential public pages, and commercial-brand refinement criteria
 
 ## Colors
 
 ### Primary Palette
 
-- primary: `#006da8` — buttons, links, navigation indicators, and interactive accents
-- primary-hover: `#005c91`
+- primary: `#0b5c82` — buttons, links, navigation indicators, and interactive accents
+- primary-hover: `#084667`
 - primary-muted: `#e3f0f6`
-- secondary: `#00766f` — large service calls to action and success states
-- secondary-hover: `#008d84`
+- secondary: `#0b6763` — large service calls to action and success states
+- secondary-hover: `#137a74`
 - focus: `#26b7ca`
 - decorative-accent: `#d2ad55`
 - accent-text: `#8b681b`
@@ -34,10 +34,10 @@
 
 ### Semantic
 
-- success: `#00766f`
+- success: `#0b6763`
 - warning: `#8b681b`
 - error: `#98382d`
-- info: `#006da8`
+- info: `#0b5c82`
 
 ## Typography
 
@@ -59,7 +59,7 @@
 
 - Border radius: button `3px`, input `4px`, default `6px`
 - Default radius: `6px`
-- Shadow scale: soft `0 12px 30px rgba(3, 26, 45, 0.1)`, standard `0 24px 54px rgba(3, 26, 45, 0.17)`, image-dark `0 28px 64px rgba(0, 0, 0, 0.32)`
+- Shadow scale: soft `0 8px 22px rgba(3, 26, 45, 0.08)`, standard `0 18px 38px rgba(3, 26, 45, 0.12)`, image-dark `0 20px 46px rgba(0, 0, 0, 0.26)`
 
 ## Layout
 
@@ -73,14 +73,16 @@
 - Button: minimum `48px` height, `12px 21px` padding, `3px` radius, weight `800`, pool-blue primary fill, 160ms transition
 - Card: `6px` radius, pale blue surface or white background, subtle navy shadow, gold decorative rule where appropriate
 - Input: minimum `50px` height, `11px 13px` padding, `4px` radius, `#aebfca` border, aqua focus ring
-- Dark section: navy gradient, white headings, muted blue-gray body copy, warm gold eyebrow or decorative accent
-- CTA band: teal-to-pool-blue gradient with white action controls
+- Dark section: solid deep navy, white headings, muted blue-gray body copy, warm gold eyebrow or decorative accent
+- CTA band: solid restrained teal with white action controls
 
 ## Anti-Patterns (things to flag)
 
 - Colors outside this palette without an accessibility or content-specific reason
 - Gold decorative shades used for small text on light backgrounds; use `#8b681b` instead
 - Teal replacing the logo-aligned pool blue as the primary interaction color
+- Gradients, glow effects, or saturated cyan used without a functional hierarchy reason
+- Large or dark shadows that make cards and images appear to float
 - Font sizes outside the documented type scale without a responsive typography reason
 - Spacing values outside the documented rhythm without a layout constraint
 - Border radii that do not match the `3px`, `4px`, or `6px` shape system
