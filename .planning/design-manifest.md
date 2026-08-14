@@ -11,9 +11,8 @@
 - primary: `#0b5c82` — buttons, links, navigation indicators, and interactive accents
 - primary-hover: `#084667`
 - primary-muted: `#e3f0f6`
-- secondary: `#0b6763` — large service calls to action and success states
-- secondary-hover: `#137a74`
-- focus: `#26b7ca`
+- secondary: `#0a4b73` — large service calls to action and section transitions
+- focus: `#8b681b`
 - decorative-accent: `#d2ad55`
 - accent-text: `#8b681b`
 - accent-on-dark: `#f0d38a`
@@ -34,7 +33,7 @@
 
 ### Semantic
 
-- success: `#0b6763`
+- success: `#0b5c82`
 - warning: `#8b681b`
 - error: `#98382d`
 - info: `#0b5c82`
@@ -72,16 +71,17 @@
 
 - Button: minimum `48px` height, `12px 21px` padding, `3px` radius, weight `800`, pool-blue primary fill, 160ms transition
 - Card: `6px` radius, pale blue surface or white background, subtle navy shadow, gold decorative rule where appropriate
-- Input: minimum `50px` height, `11px 13px` padding, `4px` radius, `#aebfca` border, aqua focus ring
+- Input: minimum `50px` height, `11px 13px` padding, `4px` radius, `#aebfca` border, dark-gold focus ring
 - Dark section: solid deep navy, white headings, muted blue-gray body copy, warm gold eyebrow or decorative accent
-- CTA band: solid restrained teal with white action controls
+- CTA band: solid navy-blue with white action controls and restrained gold eyebrow text
+- Header logo: centered within the existing fixed-height header, with the image canvas scaled to reduce built-in white margins (`1.45` desktop, `1.6` tablet, `1.65` compact mobile)
 
 ## Anti-Patterns (things to flag)
 
 - Colors outside this palette without an accessibility or content-specific reason
 - Gold decorative shades used for small text on light backgrounds; use `#8b681b` instead
-- Teal replacing the logo-aligned pool blue as the primary interaction color
-- Gradients, glow effects, or saturated cyan used without a functional hierarchy reason
+- Teal, aqua, cyan, or turquoise used as a section background or primary interaction color
+- Gradients, glow effects, or saturated pool blue used without a functional hierarchy reason
 - Large or dark shadows that make cards and images appear to float
 - Font sizes outside the documented type scale without a responsive typography reason
 - Spacing values outside the documented rhythm without a layout constraint

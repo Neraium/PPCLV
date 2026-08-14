@@ -201,7 +201,11 @@ test("mobile header is centered, stable, and keeps Request Service inside the me
     const header = page.locator("[data-site-header]");
     const initial = await header.boundingBox();
     const logo = await page.locator(".logo-link").boundingBox();
+    const logoImage = await page.locator(".site-logo").boundingBox();
     expect(Math.abs((logo.x + logo.width / 2) - width / 2)).toBeLessThanOrEqual(1);
+    expect(Math.abs((logoImage.x + logoImage.width / 2) - width / 2)).toBeLessThanOrEqual(1);
+    expect(logoImage.width).toBeGreaterThanOrEqual(210);
+    expect(logoImage.height).toBeLessThanOrEqual(initial.height * 1.35);
     await expect(page.locator(".header-cta")).toBeHidden();
     const toggle = page.getByRole("button", { name: "Menu" });
     await toggle.click();
@@ -224,6 +228,9 @@ test("desktop header remains stable during scroll", async ({ page }) => {
     await waitForPage(page, "/index.html");
     const header = page.locator("[data-site-header]");
     const initial = await header.boundingBox();
+    const logoImage = await page.locator(".site-logo").boundingBox();
+    expect(logoImage.width).toBeGreaterThanOrEqual(220);
+    expect(logoImage.height).toBeLessThanOrEqual(initial.height * 1.3);
     await page.evaluate(() => window.scrollTo(0, 600));
     const scrolled = await header.boundingBox();
     expect(Math.abs(scrolled.height - initial.height)).toBeLessThanOrEqual(1);
