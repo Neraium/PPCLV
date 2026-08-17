@@ -151,6 +151,11 @@ p { margin-bottom: 16px; }
 
 .btn:hover,
 .header-cta:hover { transform: translateY(-1px); }
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
+  transform: none;
+}
 .btn-primary,
 .header-cta { color: var(--white); background: var(--pool-blue-700); }
 .btn-primary:hover,

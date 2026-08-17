@@ -1,23 +1,112 @@
 # PPC LLC Essential Business Website
 
-Static GitHub Pages website for Professional Pool Care LLC, also known as PPC LLC. The public delivery is intentionally scoped as a concise four-page commercial website for the $1,250 Essential Business Website package.
+Static four-page Essential website for Professional Pool Care LLC, also known as PPC LLC.
 
-Live site target: `https://neraium.github.io/PPCLV/`
+Production domain: `https://professionalpoolcare.com`
 
-## Public site structure
+Canonical host: `professionalpoolcare.com`
+
+Cloudflare should redirect `https://www.professionalpoolcare.com` to `https://professionalpoolcare.com`. Do this at the Cloudflare edge; do not add a client-side redirect.
+
+## Public Site Structure
 
 The only promoted marketing pages are:
 
-- `index.html`: image-led homepage with commercial positioning, a concise service overview, credibility content, the Properties We Serve showcase, and a final service call to action.
+- `index.html`: homepage with commercial positioning, concise service overview, credibility content, Properties We Serve, and service request call to action.
 - `services.html`: PPC's eight approved service categories organized into Maintenance, Equipment & Restoration, and Urgent & Operational Support.
-- `about.html`: company identity, history, Greater Las Vegas service context, maintenance approach, and property-team communication.
-- `contact.html`: accessible service-request form collecting only the information needed to start a conversation.
+- `about.html`: company identity, Las Vegas history, commercial focus, and property-team communication.
+- `contact.html`: accessible commercial service-request form.
 
 `privacy.html` and `terms.html` are concise legal utility pages. They are linked only in the footer, marked `noindex`, and are not promoted as marketing pages.
 
 Primary navigation and the compact footer promote only Home, Services, About, and Contact.
 
-## Expanded-tier material retained
+## Approved PPC Information
+
+The public site uses the following approved information:
+
+- Company: Professional Pool Care LLC.
+- Brand: PPC LLC.
+- Tagline: PPC LLC, The Difference Is Clear.
+- Phone: 702-357-7027.
+- Email: Adria@ProfessionalPoolCare.com.
+- Office hours: Monday-Friday, 8:00 AM-4:00 PM.
+- Service area: Greater Las Vegas Area.
+- Company background: Family owned and operated in Las Vegas since 2003.
+
+The site does not publish a street address, license number, certification number, insurance claim, bonding claim, 24/7 availability claim, response-time guarantee, regulatory guarantee, inspection approval guarantee, or reopening guarantee.
+
+## Services
+
+The Services page includes exactly these approved commercial services:
+
+- Commercial Pool Maintenance.
+- Commercial Spa Maintenance.
+- Equipment Repair & Troubleshooting.
+- Chemical Feed & Automation Support.
+- Acid Washing & Surface Restoration.
+- Emergency Service & Bio Cleanup.
+- Certified Pool Operator (CPO) Services.
+- Inspection-Readiness & Compliance Support.
+
+One concise regulatory scope note remains: PPC supports maintenance and inspection readiness. Property owners and operators remain responsible for applicable regulatory requirements.
+
+## Contact Form
+
+The contact form posts to the Cloudflare Worker route `/contact-request`.
+
+Repository-side implementation is complete:
+
+- Accepts only POST submissions from the PPC contact form.
+- Validates required fields server-side.
+- Requires name, company/property, either email or phone, service needed, message, and privacy consent.
+- Preserves the honeypot field.
+- Rejects invalid submissions.
+- Does not expose secrets client-side.
+- Does not create an open email relay.
+- Sends notifications only to `Adria@ProfessionalPoolCare.com`.
+- Returns JSON for JavaScript submissions and simple HTML for conventional POST fallback.
+- Fails gracefully with PPC phone/email fallback if Cloudflare Email Service is not available.
+
+The Wrangler binding is named `PPC_CONTACT_EMAIL` and is restricted to the destination `Adria@ProfessionalPoolCare.com`.
+
+Required Cloudflare dashboard action before public launch: configure Cloudflare Email Service for `professionalpoolcare.com` and verify that the Worker `send_email` binding can send from and to `Adria@ProfessionalPoolCare.com`.
+
+## SEO And Domain
+
+Canonical URLs, Open Graph URLs, `sitemap.xml`, and `robots.txt` use `https://professionalpoolcare.com`.
+
+Core canonical URLs:
+
+- Home: `https://professionalpoolcare.com/`
+- Services: `https://professionalpoolcare.com/services.html`
+- About: `https://professionalpoolcare.com/about.html`
+- Contact: `https://professionalpoolcare.com/contact.html`
+- Privacy: `https://professionalpoolcare.com/privacy.html`
+- Terms: `https://professionalpoolcare.com/terms.html`
+
+`sitemap.xml` lists only the four indexable marketing pages. The utility legal pages are intentionally `noindex`.
+
+No active FAQPage schema, industry-specific landing-page architecture, expanded local SEO package, advanced schema strategy, GEO package, or AI-answer optimization package is included in the Essential build.
+
+## Photography
+
+The current site uses representative commercial photography. It does not identify the photographs as PPC projects and does not pair them with real customer names.
+
+The only remaining normal content task is replacing representative photography with approved PPC/customer photos. See `images/README.md` for the placement-by-placement replacement map.
+
+Customer/property showcase rules:
+
+- Use a real customer or property name only with written approval.
+- Use website/customer-provided photos only with permission.
+- If naming permission is unavailable, use neutral property-type labels.
+- Do not imply PPC owns customer properties.
+- Do not imply representative stock photos are PPC customers.
+- All future photos must be commercial.
+- No residential backyard pools.
+- Water-testing photography is not required.
+
+## Expanded-Tier Material Retained
 
 Expanded-package source work is preserved in `archive/expanded/`:
 
@@ -28,87 +117,43 @@ Expanded-package source work is preserved in `archive/expanded/`:
 
 These files are marked `noindex`, have no links from the Essential site, are absent from `sitemap.xml`, and are excluded from the production `dist/` artifact. They remain available in source control for a possible future package upgrade.
 
-The public Essential site does not ship a standalone Industries, Our Work, Gallery, FAQ, case-study, industry-specific SEO, advanced schema, GEO, or AI-search deliverable.
+The public Essential site does not ship standalone Industries, Our Work, Gallery, FAQ, case-study, industry-specific SEO, advanced schema, GEO, or AI-search deliverables.
 
-## Approved PPC information
+## Build And Deployment
 
-The public site uses the following approved information:
-
-- Professional Pool Care LLC.
-- Phone: 702-357-7027.
-- Email: Adria@ProfessionalPoolCare.com.
-- Office hours: Monday-Friday, 8:00 AM-4:00 PM.
-- Service area: Greater Las Vegas Area.
-- Family owned and operated in Las Vegas since 2003.
-- Eight approved commercial service categories, including Certified Pool Operator (CPO) Services.
-
-PPC must still provide and approve the following before final launch:
-
-- Any license, certification, or insurance wording PPC wants shown.
-- Contact-form destination and selected form processor.
-- Final production domain.
-- Customer or property names approved for display.
-- Customer or property photography PPC owns or has permission to publish.
-- Written permission to publish each named property and its photography.
-
-The site does not invent or visibly substitute missing information. Source comments identify the remaining insertion points.
-
-## Customer and property approval rules
-
-The homepage Properties We Serve section currently uses licensed representative commercial imagery with property-type labels only. It does not identify the photographs as PPC projects or pair stock images with real customer names.
-
-Before adding a named property, confirm that PPC currently services it or is otherwise authorized to reference it, that PPC has permission to display the name, and that PPC owns or has permission to publish the paired photo. If photo use is approved but name use is not, retain a generic property-type label.
-
-## Photo replacement map
-
-| Public placement | Current file | PPC replacement needed |
-| --- | --- | --- |
-| Homepage hero | `images/resort-hotel-pool-deck.webp` plus 960px derivative | One approved, high-impact commercial resort, hotel, multifamily, HOA, municipal, or large aquatic-deck photo |
-| Homepage credibility | `images/commercial-surface-cleaning.jpg` | One approved commercial technician or field-service photo |
-| Properties We Serve, Apartment Community | `images/apartment-community-pool-deck.jpg` | Approved customer/property photo and optional approved property name |
-| Properties We Serve, Commercial Spa | `images/commercial-hotel-spa.jpg` | Approved customer/property spa photo and optional approved property name |
-| Properties We Serve, Municipal Facility | `images/municipal-lap-pool-lanes.jpg` | Approved customer/property photo and optional approved property name |
-| Properties We Serve, Commercial Facility | `images/commercial-equipment-room-service.jpg` | Approved customer/property photo and optional approved property name |
-| Services, Maintenance | `images/commercial-water-testing.jpg` | One to two approved commercial pool or spa maintenance photos; water-testing photography is not required |
-| Services, Equipment & Restoration | `images/commercial-equipment-room-service.jpg` | Two to three approved equipment or equipment-room photos |
-| Services, Urgent & Operational Support | `images/municipal-lap-pool-lanes.jpg` | One approved commercial facility, CPO, or operational-support photo |
-| About | `images/commercial-equipment-room-service.jpg` | One approved company, team, equipment-room, or field-service photo |
-
-The current homepage uses six unique image files and does not repeat photography within the page. When PPC photography arrives, use meaningful filenames, preserve intrinsic dimensions, create WebP derivatives where appropriate, add responsive `srcset` for large images, use meaningful alt text, load below-the-fold images lazily, and keep the hero image high priority.
-
-## Contact form setup
-
-The form remains provider-neutral and includes accessible labels, native validation, an email-or-phone requirement, privacy consent, and a honeypot. It intentionally exposes no setup or development notice on the public page.
-
-Before launch:
-
-1. Set the `action` in `contact.html` to the approved provider endpoint.
-2. Set `data-endpoint-configured="true"`.
-3. Confirm each field arrives at PPC's approved destination.
-4. Test validation, spam handling, success behavior, and failure behavior.
-5. Update `privacy.html` with the selected processor and PPC's approved privacy contact details.
-
-## Basic SEO
-
-The four core pages retain unique titles and meta descriptions, canonical URLs, basic Open Graph metadata, one H1 each, logical heading order, crawlable HTML, and meaningful image alt text. `sitemap.xml` lists only the four indexable marketing pages.
-
-No active FAQPage schema, industry-specific landing-page architecture, enhanced local SEO package, advanced schema strategy, GEO package, or AI-answer optimization package is included in the Essential build.
-
-Update the canonical URLs, Open Graph URLs, `robots.txt`, and `sitemap.xml` after PPC supplies the final domain.
-
-## Deployment and validation
-
-The GitHub Pages workflow installs dependencies, runs `npm run build`, and deploys only `dist/`. The build uses an explicit allowlist for the four marketing pages, two utility pages, shared assets, crawler files, and `.nojekyll`. Source archives, tests, reports, and project files are not published.
+The Cloudflare Worker serves the static asset directory `./dist` and handles only the form route separately.
 
 Local checks:
 
 ```sh
-npm ci
+npm clean-install
 npm run build
 npm test
 npm run test:screenshots
-git diff --check
 node --check script.js
+git diff --check
+npx wrangler deploy --dry-run
 ```
 
-Playwright covers navigation scope, headings, links, image loading and alt text, form accessibility and validation, mobile-menu behavior, stable sticky-header dimensions, overflow, archive exclusion, sitemap scope, and the requested responsive widths.
+The build uses an explicit allowlist for the four marketing pages, two utility pages, shared assets, crawler files, and `.nojekyll`. Source archives, tests, reports, internal screenshots, and project files are not published.
+
+## FINAL PPC LAUNCH CHECKLIST
+
+PHOTOS:
+
+- Receive approved PPC/customer commercial images.
+- Replace representative images according to `images/README.md`.
+- Optimize images and responsive derivatives.
+- Verify alt text.
+- Verify written naming and photo-use permissions.
+
+External launch actions:
+
+- Configure/verify the Cloudflare Email Service domain and Worker email binding for `Adria@ProfessionalPoolCare.com`.
+- Verify Adria receives a real test submission.
+- Remove or disable the PPC Preview Access application or policy in Cloudflare Access.
+- Confirm anonymous visitors can load the public site.
+- Verify `https://professionalpoolcare.com`.
+- Verify `https://www.professionalpoolcare.com` redirects to `https://professionalpoolcare.com`.
+- Verify HTTPS.
+- Submit the sitemap/search-console later if desired.

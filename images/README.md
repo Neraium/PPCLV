@@ -1,24 +1,44 @@
-# PPC LLC website images
+# PPC LLC Website Image Replacement Map
 
-## Brand assets
+## Brand Assets
 
-- `logo.png`: original PPC LLC logo.
+- `logo.png`: original PPC LLC logo source.
 - `logo.webp`: optimized public logo.
 
-## Current licensed representative photography
+## Current Representative Photography
 
-These images communicate a commercial visual direction while PPC gathers approved company and customer/property photography. They are never paired with real customer names or presented as completed PPC work.
+The current public images communicate a commercial visual direction while PPC gathers approved company and customer/property photography. They are not presented as PPC customer properties or completed PPC work.
 
-- `resort-hotel-pool-deck.jpg`: Pexels photo 8839767.
-- `resort-hotel-pool-deck.webp`: 1440px WebP derivative used by the homepage hero.
-- `resort-hotel-pool-deck-960.webp`: responsive 960px WebP hero derivative.
-- `municipal-lap-pool-lanes.jpg`: Pexels photo 8028662.
-- `commercial-hotel-spa.jpg`: Pexels photo 3101547.
-- `commercial-equipment-room-service.jpg`: Pexels photo 6720526.
-- `commercial-water-testing.jpg`: Pexels photo 8028684.
-- `commercial-surface-cleaning.jpg`: AI-generated commercial pool-service image created for PPC visual development on 2026-08-06.
-- `apartment-community-pool-deck.jpg`: Pexels photo 29851842.
+All replacement photos must be commercial. Do not use residential backyard pool photography. Water-testing photography is not required.
 
-## Replacement requirement
+| Current filename | Page / section | PPC photo needed | Recommended orientation / aspect ratio | Property-name approval required? | May remain generic if naming permission is not granted? |
+| --- | --- | --- | --- | --- | --- |
+| `resort-hotel-pool-deck.webp` and `resort-hotel-pool-deck-960.webp` | Home hero | One high-impact PPC-approved commercial pool, resort, hotel, multifamily, HOA, municipal, or large aquatic-deck image | Portrait or tall crop, about 3:4 to 4:5, with room for responsive cropping | Yes, if the property name will be shown or implied | Yes, use a neutral commercial facility label or no label |
+| `commercial-surface-cleaning.jpg` | Home / Commercial Focus | PPC technician, service activity, or commercial field-service photo | Portrait or vertical crop, about 4:5 | Yes, if a customer/property is recognizable and named | Yes |
+| `apartment-community-pool-deck.jpg` | Home / Properties We Serve / Apartment Community | Approved customer/property photo of an apartment or multifamily commercial pool amenity | Landscape, about 3:2 or 16:10 | Yes, for any real property name | Yes, keep "Apartment Community" |
+| `commercial-hotel-spa.jpg` | Home / Properties We Serve / Commercial Spa | Approved commercial spa photo from a hotel, resort, HOA, multifamily, or managed facility | Portrait, about 2:3 or 4:5 | Yes, for any real property name | Yes, keep "Commercial Spa" |
+| `municipal-lap-pool-lanes.jpg` | Home / Properties We Serve / Municipal Facility | Approved public, municipal, school, fitness, or large managed aquatic facility photo | Portrait, about 2:3 or 4:5 | Yes, for any real property name | Yes, keep "Municipal Facility" or another neutral property-type label |
+| `commercial-equipment-room-service.jpg` | Home / Properties We Serve / Commercial Facility | Approved commercial equipment room, mechanical area, or managed aquatic facility image | Landscape, about 3:2 or 16:10 | Yes, for any real property name | Yes, keep "Commercial Facility" |
+| `commercial-water-testing.jpg` | Services / Maintenance | Approved commercial pool or commercial spa maintenance photo; water testing is optional, not required | Landscape or slightly vertical, about 16:10, 4:3, or 5:4 | Yes, if a customer/property is recognizable and named | Yes |
+| `commercial-equipment-room-service.jpg` | Services / Equipment & Restoration | Two to three approved commercial equipment, pump room, controller, feeder, heater, filter, or repair photos | Landscape, about 16:10, 3:2, or 5:4 | Yes, if a customer/property is recognizable and named | Yes |
+| `municipal-lap-pool-lanes.jpg` | Services / Urgent & Operational Support | Approved commercial facility, CPO, operational support, or recovery-support photo | Landscape or slightly vertical, about 16:10, 4:3, or 5:4 | Yes, if a customer/property is recognizable and named | Yes |
+| `commercial-equipment-room-service.jpg` | About / Commercial Focus | Optional company, team, owner-approved service, equipment-room, or field-service image | Landscape, about 16:11 or 3:2 | Yes, if a customer/property is recognizable and named | Yes |
 
-Replace representative images with PPC-owned or approved photography before identifying any pictured facility as a PPC customer or property PPC services. Written approval is required for both the photo and any displayed property name. See the root `README.md` for the placement-by-placement replacement map.
+## Planned PPC Photo Set
+
+Recommended final photo package:
+
+- 1 homepage hero image.
+- 4 to 6 customer/property commercial photos.
+- 1 to 2 commercial spa photos.
+- 2 to 3 equipment or equipment-room photos.
+- Optional company/team/service image for About.
+
+## Approval Rules
+
+- Use real customer/property names only with written approval.
+- Use website/customer-provided photos only with permission.
+- If naming permission is unavailable, use neutral property-type labels.
+- Do not imply PPC owns customer properties.
+- Do not imply representative stock photos are PPC customers.
+- Do not publish residential backyard pools.

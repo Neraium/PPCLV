@@ -4,6 +4,8 @@ const quoteForm = document.querySelector("[data-quote-form]");
 const formStatus = document.querySelector("[data-form-status]");
 const emailInput = quoteForm?.querySelector('[name="email"]');
 const phoneInput = quoteForm?.querySelector('[name="phone"]');
+const submitButton = quoteForm?.querySelector("[data-submit-button]");
+let isSubmitting = false;
 
 const closeMenu = ({ restoreFocus = false } = {}) => {
   if (!menuToggle || !primaryMenu) return;
@@ -48,45 +50,76 @@ const clearContactError = () => {
 emailInput?.addEventListener("input", clearContactError);
 phoneInput?.addEventListener("input", clearContactError);
 
-quoteForm?.addEventListener("submit", (event) => {
+const setFormStatus = (message, type) => {
   if (!formStatus) return;
   formStatus.className = "form-status";
+  formStatus.textContent = message;
+  if (type) formStatus.classList.add(type);
+};
+
+quoteForm?.addEventListener("submit", async (event) => {
+  if (isSubmitting) {
+    event.preventDefault();
+    return;
+  }
+  if (!formStatus || !window.fetch) return;
+  event.preventDefault();
+  setFormStatus("", "");
 
   const spamField = quoteForm.querySelector('[name="website"]');
   if (spamField?.value) {
-    event.preventDefault();
-    formStatus.textContent = "Submission blocked. Please refresh and try again.";
-    formStatus.classList.add("error");
+    setFormStatus("Submission blocked. Please refresh and try again.", "error");
     return;
   }
 
   clearContactError();
 
   if (!quoteForm.checkValidity()) {
-    event.preventDefault();
-    formStatus.textContent = "Please complete or correct the highlighted fields before submitting.";
-    formStatus.classList.add("error");
+    setFormStatus("Please complete or correct the highlighted fields before submitting.", "error");
     quoteForm.reportValidity();
     quoteForm.querySelector(":invalid")?.focus();
     return;
   }
 
   if (!emailInput?.value.trim() && !phoneInput?.value.trim()) {
-    event.preventDefault();
     const message = "Please enter an email address or phone number so PPC can follow up.";
     emailInput?.setCustomValidity(message);
     emailInput?.setAttribute("aria-invalid", "true");
     phoneInput?.setAttribute("aria-invalid", "true");
-    formStatus.textContent = message;
-    formStatus.classList.add("error");
+    setFormStatus(message, "error");
     emailInput?.reportValidity();
     emailInput?.focus();
     return;
   }
 
-  if (quoteForm.dataset.endpointConfigured !== "true") {
-    event.preventDefault();
-    formStatus.textContent = "We could not send your request. Please try again later.";
-    formStatus.classList.add("error");
+  isSubmitting = true;
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = "Sending...";
+  }
+
+  try {
+    const response = await fetch(quoteForm.action, {
+      method: "POST",
+      body: new FormData(quoteForm),
+      headers: {
+        Accept: "application/json",
+        "X-Requested-With": "fetch"
+      }
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || result.ok === false) {
+      throw new Error(result.message || "We could not send your request right now. Please call or email PPC directly.");
+    }
+    quoteForm.reset();
+    setFormStatus(result.message || "Thank you. PPC received your request and will follow up using the contact information provided.", "success");
+  } catch (error) {
+    setFormStatus(error.message, "error");
+  } finally {
+    isSubmitting = false;
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = "Request Service";
+    }
   }
 });

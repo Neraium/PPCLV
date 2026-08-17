@@ -2,6 +2,7 @@ const { test, expect } = require("@playwright/test");
 const { readdir, readFile } = require("node:fs/promises");
 const { join } = require("node:path");
 
+const productionOrigin = "https://professionalpoolcare.com";
 const corePages = ["/index.html", "/services.html", "/about.html", "/contact.html"];
 const utilityPages = ["/privacy.html", "/terms.html"];
 const publicPages = [...corePages, ...utilityPages];
@@ -87,10 +88,25 @@ test("services are organized into the eight approved offerings with one scope no
   await expect(page.locator(".scope-note")).toHaveText("PPC supports maintenance and inspection readiness. Property owners and operators remain responsible for applicable regulatory requirements.");
 });
 
-test("contact form is simple, accessible, and provider-neutral", async ({ page }) => {
+test("contact form is simple, accessible, and posts to the Worker endpoint", async ({ page }) => {
+  let requestBody = "";
+  await page.route("**/contact-request", async (route) => {
+    requestBody = route.request().postData() || "";
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        ok: true,
+        message: "Thank you. PPC received your request and will follow up using the contact information provided."
+      })
+    });
+  });
+
   await waitForPage(page, "/contact.html#quote");
   const form = page.locator("[data-quote-form]");
-  await expect(form).toHaveAttribute("data-endpoint-configured", "false");
+  await expect(form).toHaveAttribute("action", "/contact-request");
+  await expect(form).toHaveAttribute("method", "post");
+  await expect(form).toHaveAttribute("data-endpoint-configured", "true");
   for (const name of ["name", "company", "email", "phone", "service_needed", "message", "property_type", "privacy_consent", "website"]) {
     await expect(form.locator(`[name="${name}"]`)).toHaveCount(1);
   }
@@ -117,9 +133,12 @@ test("contact form is simple, accessible, and provider-neutral", async ({ page }
   await page.getByRole("button", { name: "Request Service" }).last().click();
   await expect(page.getByRole("status")).toContainText("email address or phone number");
   await expect(form.locator('[name="email"]')).toBeFocused();
-  await form.locator('[name="email"]').fill("test@example.com");
+  await form.locator('[name="email"]').fill("manager@professionalpoolcare.com");
   await page.getByRole("button", { name: "Request Service" }).last().click();
-  await expect(page.getByRole("status")).toHaveText("We could not send your request. Please try again later.");
+  await expect(page.getByRole("status")).toHaveText("Thank you. PPC received your request and will follow up using the contact information provided.");
+  expect(requestBody).toContain("Test User");
+  expect(requestBody).toContain("Test Property");
+  expect(requestBody).not.toContain("Adria%40ProfessionalPoolCare.com");
 });
 
 test("core pages have exact unique SEO titles and descriptions", async ({ page }) => {
@@ -135,6 +154,11 @@ test("core pages have exact unique SEO titles and descriptions", async ({ page }
     await expect(page).toHaveTitle(expectedTitles.get(path));
     await expect(page.locator("h1")).toHaveCount(1);
     await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
+    const expectedCanonical = path === "/index.html" ? `${productionOrigin}/` : `${productionOrigin}${path}`;
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", expectedCanonical);
+    await expect(page.locator('meta[property="og:url"]')).toHaveAttribute("content", expectedCanonical);
+    const ogImage = await page.locator('meta[property="og:image"]').getAttribute("content");
+    expect(ogImage).toMatch(/^https:\/\/professionalpoolcare\.com\/images\/.+/);
     const description = await page.locator('meta[name="description"]').getAttribute("content");
     expect(description.trim().length).toBeGreaterThan(70);
     descriptions.push(description);
@@ -154,6 +178,9 @@ test("public pages contain no expanded links, visible development language, em d
     const source = await page.content();
     const conflictMarkers = ["<".repeat(7), "=".repeat(7), ">".repeat(7)];
     expect(conflictMarkers.some((marker) => source.includes(marker))).toBeFalsy();
+    expect(source).not.toContain("neraium.github.io");
+    expect(source).not.toContain("localhost");
+    expect(source).not.toContain("FORM_ENDPOINT");
   }
 });
 
@@ -238,15 +265,18 @@ test("desktop header remains stable during scroll", async ({ page }) => {
   }
 });
 
-test("sitemap lists only the four Essential marketing pages", async ({ request }) => {
+test("sitemap and robots use the production domain", async ({ request }) => {
   const sitemap = await (await request.get("/sitemap.xml")).text();
   const locations = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]);
   expect(locations).toEqual([
-    "https://neraium.github.io/PPCLV/",
-    "https://neraium.github.io/PPCLV/services.html",
-    "https://neraium.github.io/PPCLV/about.html",
-    "https://neraium.github.io/PPCLV/contact.html"
+    "https://professionalpoolcare.com/",
+    "https://professionalpoolcare.com/services.html",
+    "https://professionalpoolcare.com/about.html",
+    "https://professionalpoolcare.com/contact.html"
   ]);
+  const robots = await (await request.get("/robots.txt")).text();
+  expect(robots).toContain("Sitemap: https://professionalpoolcare.com/sitemap.xml");
+  expect(`${sitemap}\n${robots}`).not.toContain("neraium.github.io");
 });
 
 test("expanded sources are noindexed and excluded from the built site", async () => {
@@ -269,4 +299,79 @@ test("keyboard focus is visibly styled", async ({ page }) => {
   await expect(skip).toBeFocused();
   const outline = await skip.evaluate((element) => getComputedStyle(element).outlineWidth);
   expect(parseFloat(outline)).toBeGreaterThanOrEqual(2);
+});
+
+test("Worker contact endpoint validates, rejects spam, sends to Adria only, and fails gracefully without binding", async () => {
+  const worker = await import("../worker/index.mjs");
+  const makeRequest = (fields) => {
+    const form = new URLSearchParams(fields);
+    return new Request("https://professionalpoolcare.com/contact-request", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Accept: "application/json"
+      },
+      body: form
+    });
+  };
+
+  const validFields = {
+    name: "Ada Manager",
+    company: "Commercial Property",
+    email: "manager@professionalpoolcare.com",
+    phone: "",
+    service_needed: "Commercial Pool Maintenance",
+    property_type: "Apartment or multifamily community",
+    message: "Please contact me about commercial pool maintenance for our property.",
+    privacy_consent: "on",
+    website: ""
+  };
+
+  const sentMessages = [];
+  const success = await worker.handleContactRequest(makeRequest(validFields), {
+    PPC_CONTACT_EMAIL: {
+      send: async (message) => {
+        sentMessages.push(message);
+        return { messageId: "test-message" };
+      }
+    }
+  });
+  expect(success.status).toBe(200);
+  expect(await success.json()).toMatchObject({ ok: true });
+  expect(sentMessages).toHaveLength(1);
+  expect(sentMessages[0].to).toEqual({
+    email: "Adria@ProfessionalPoolCare.com",
+    name: "Professional Pool Care LLC"
+  });
+  expect(sentMessages[0].from.email).toBe("Adria@ProfessionalPoolCare.com");
+  expect(sentMessages[0].replyTo.email).toBe("manager@professionalpoolcare.com");
+
+  const invalid = await worker.handleContactRequest(makeRequest({ ...validFields, email: "", phone: "", message: "short" }), {
+    PPC_CONTACT_EMAIL: { send: async () => ({ messageId: "not-used" }) }
+  });
+  expect(invalid.status).toBe(400);
+  const invalidBody = await invalid.json();
+  expect(invalidBody.errors).toContain("Email or phone is required.");
+  expect(invalidBody.errors).toContain("Message is too short.");
+
+  const spam = await worker.handleContactRequest(makeRequest({ ...validFields, website: "https://spam.invalid" }), {
+    PPC_CONTACT_EMAIL: { send: async () => ({ messageId: "not-used" }) }
+  });
+  expect(spam.status).toBe(400);
+  expect(await spam.json()).toMatchObject({ ok: false, message: "Submission blocked. Please refresh and try again." });
+
+  const noBinding = await worker.handleContactRequest(makeRequest(validFields), {});
+  expect(noBinding.status).toBe(503);
+  expect(await noBinding.json()).toMatchObject({
+    ok: false,
+    message: "We could not send your request right now. Please call 702-357-7027 or email Adria@ProfessionalPoolCare.com."
+  });
+});
+
+test("production build excludes source-only and development artifacts", async () => {
+  const builtFiles = await readdir(join(process.cwd(), "dist"));
+  expect(builtFiles).toEqual(expect.arrayContaining(["index.html", "services.html", "about.html", "contact.html", "privacy.html", "terms.html", "robots.txt", "sitemap.xml", "styles.css", "script.js", "images"]));
+  for (const forbidden of ["node_modules", ".planning", "tests", "test-artifacts", "archive", "README.md", "package.json", "wrangler.jsonc"]) {
+    expect(builtFiles).not.toContain(forbidden);
+  }
 });
