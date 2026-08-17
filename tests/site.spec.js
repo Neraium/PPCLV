@@ -286,10 +286,16 @@ test("mobile header is centered, stable, and keeps Request Service inside the me
     const logo = await page.locator(".logo-link").boundingBox();
     const logoImage = await page.locator(".site-logo").boundingBox();
     const naturalLogoSize = await page.locator(".site-logo").evaluate((image) => ({ width: image.naturalWidth, height: image.naturalHeight }));
+    const expectedHeaderHeight = width <= 430 ? 67 : 71;
+    const expectedLogoSize = width <= 430
+      ? { width: 264.06, height: 107.58 }
+      : { width: 280.36, height: 114.1 };
+    expect(initial.height).toBeCloseTo(expectedHeaderHeight, 0);
     expect(Math.abs((logo.x + logo.width / 2) - width / 2)).toBeLessThanOrEqual(1);
     expect(Math.abs((logoImage.x + logoImage.width / 2) - width / 2)).toBeLessThanOrEqual(1);
+    expect(logoImage.width).toBeCloseTo(expectedLogoSize.width, 0);
+    expect(logoImage.height).toBeCloseTo(expectedLogoSize.height, 0);
     expect(logoImage.width).toBeGreaterThanOrEqual(width <= 430 ? 260 : 275);
-    expect(logoImage.height).toBeLessThanOrEqual(initial.height * 1.6);
     expect(logo.y).toBeGreaterThanOrEqual(initial.y);
     expect(logo.y + logo.height).toBeLessThanOrEqual(initial.y + initial.height);
     expect(naturalLogoSize.width).toBeGreaterThan(logoImage.width);
