@@ -255,6 +255,7 @@ export const sendNotification = async (submission, request, env, fetchImpl = fet
     body: JSON.stringify({
       fromAddress: PPC_SENDER_EMAIL,
       toAddress: PPC_CONTACT_EMAIL,
+      ...(submission.email ? { replyTo: submission.email } : {}),
       subject: `New PPC Website Inquiry — ${subjectLabel}`,
       content: formatHtmlEmail(submission, request),
       mailFormat: "html",

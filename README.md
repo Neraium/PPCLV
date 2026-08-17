@@ -70,6 +70,7 @@ Repository-side implementation is complete:
 - Uses Zoho Mail's HTTPS API from the Worker, so it does not require raw SMTP, Cloudflare Email Sending, or Workers Paid.
 - Refreshes short-lived OAuth access tokens server-side from a least-privilege `ZohoMail.messages.CREATE` grant.
 - Keeps the sender and recipient fixed server-side as `Adria@ProfessionalPoolCare.com`.
+- Uses the visitor's server-validated email as the per-message Reply-To when an email is provided; phone-only requests omit Reply-To.
 
 Required Worker secrets:
 
@@ -88,9 +89,9 @@ One-time production setup:
 2. In the matching regional Zoho API Console, create a Self Client. Generate a temporary code with `ZohoMail.accounts.READ`, exchange it for tokens, call the matching regional `GET /api/accounts`, and record the `accountId` whose `primaryEmailAddress` is `Adria@ProfessionalPoolCare.com`. Revoke the temporary account-read refresh token afterward.
 3. In the same Self Client, generate a new authorization code with only `ZohoMail.messages.CREATE`. Exchange it before it expires and retain its `refresh_token`. Do not retain the one-hour access token.
 4. From an authenticated terminal, run `npx wrangler secret put` once for each required secret name above. If the mailbox is not in the US data center, also set `ZOHO_DATA_CENTER` as a Worker variable in Cloudflare Workers & Pages > ppclv > Settings > Variables and Secrets.
-5. Deploy with `npm run build && npx wrangler deploy`, submit one real contact request, and confirm it appears in the Zoho mailbox and its existing Gmail forwarding destination.
+5. Deploy with `npm run build && npx wrangler deploy`, submit one real contact request, and confirm it appears in the Zoho mailbox and its existing Gmail forwarding destination. If terminal authentication is unavailable, push the verified commit to `origin/main`; the configured Cloudflare Git deployment will build and deploy from `main` without an interactive Wrangler login.
 
-Zoho's documented send endpoint supports one `html` or `plaintext` body, not a multipart alternative, and does not document a per-message Reply-To field. The implementation sends escaped, readable HTML and includes the validated visitor email as a mail link rather than relying on undocumented parameters or changing the mailbox-wide Reply-To setting.
+The implementation sends escaped, readable HTML and includes the validated visitor email as both a mail link and the per-message Reply-To when available.
 
 ## SEO And Domain
 
@@ -169,7 +170,8 @@ PHOTOS:
 
 External launch actions:
 
-- Complete the Zoho OAuth and Cloudflare Worker secret setup in the Contact Form section above.
+- In the Cloudflare dashboard, confirm the Worker lists all four required Zoho secret names. Secret values are intentionally not readable after creation.
+- Confirm the Cloudflare Git deployment from `main` completes after the final push.
 - Verify Adria receives a real test submission.
 - Remove or disable the PPC Preview Access application or policy in Cloudflare Access.
 - Confirm anonymous visitors can load the public site.

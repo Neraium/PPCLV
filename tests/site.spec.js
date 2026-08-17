@@ -378,7 +378,8 @@ test("Worker contact endpoint delivers through Zoho OAuth API to Adria only", as
     ...validContactFields,
     message: "Please help with <script>alert('unsafe')</script> and the pool equipment.",
     recipient: "attacker@example.com",
-    toAddress: "attacker@example.com"
+    toAddress: "attacker@example.com",
+    replyTo: "attacker@example.com"
   }), makeZohoEnv(), fetchImpl);
   expect(success.status).toBe(200);
   expect(await success.json()).toMatchObject({ ok: true });
@@ -401,17 +402,29 @@ test("Worker contact endpoint delivers through Zoho OAuth API to Adria only", as
   expect(message).toMatchObject({
     fromAddress: "Adria@ProfessionalPoolCare.com",
     toAddress: "Adria@ProfessionalPoolCare.com",
+    replyTo: "manager@professionalpoolcare.com",
     subject: "New PPC Website Inquiry — Ada Manager / Commercial Property",
     mailFormat: "html",
     encoding: "UTF-8"
   });
-  expect(message).not.toHaveProperty("replyTo");
   expect(message.content).toContain("manager@professionalpoolcare.com");
   expect(message.content).toContain("702-555-0100");
   expect(message.content).toContain("Apartment or multifamily community");
   expect(message.content).toContain("&lt;script&gt;alert(&#39;unsafe&#39;)&lt;/script&gt;");
   expect(message.content).not.toContain("<script>");
   expect(sendCall.options.body).not.toContain("attacker@example.com");
+});
+
+test("Worker omits Reply-To when a valid submission provides phone only", async () => {
+  const worker = await import("../worker/index.mjs");
+  const { calls, fetchImpl } = makeZohoFetch();
+  const success = await worker.handleContactRequest(makeContactRequest({
+    ...validContactFields,
+    email: ""
+  }), makeZohoEnv(), fetchImpl);
+  expect(success.status).toBe(200);
+  expect(calls).toHaveLength(2);
+  expect(JSON.parse(calls[1].options.body)).not.toHaveProperty("replyTo");
 });
 
 test("Worker contact endpoint rejects malformed and missing submissions before provider calls", async () => {
@@ -509,4 +522,23 @@ test("production build excludes source-only and development artifacts", async ()
   ]) {
     expect(publicOutput).not.toContain(serverOnlyValue);
   }
+});
+
+test("Worker configuration preserves static assets, the form route, and only Zoho delivery settings", async () => {
+  const workerSource = await readFile(join(process.cwd(), "worker", "index.mjs"), "utf8");
+  const wranglerConfig = JSON.parse(await readFile(join(process.cwd(), "wrangler.jsonc"), "utf8"));
+  expect(wranglerConfig.main).toBe("worker/index.mjs");
+  expect(wranglerConfig.assets).toEqual({
+    directory: "./dist",
+    binding: "ASSETS",
+    run_worker_first: ["/contact-request"]
+  });
+  expect(JSON.stringify(wranglerConfig)).not.toMatch(/send_email|email_destination|email_binding/i);
+  expect([...workerSource.matchAll(/requireZohoSetting\(env, "([A-Z0-9_]+)"\)/g)].map((match) => match[1]).sort()).toEqual([
+    "ZOHO_ACCOUNT_ID",
+    "ZOHO_CLIENT_ID",
+    "ZOHO_CLIENT_SECRET",
+    "ZOHO_REFRESH_TOKEN"
+  ]);
+  expect(workerSource).not.toMatch(/EmailMessage|send_email/i);
 });
