@@ -9,6 +9,62 @@ const publicPages = [...corePages, ...utilityPages];
 const requiredWidths = [390, 430, 768, 1024, 1440];
 const expandedNames = ["industries.html", "our-work.html", "gallery.html", "faq.html", "commercial-pool-service-las-vegas.html"];
 
+const validContactFields = {
+  name: "Ada Manager",
+  company: "Commercial Property",
+  email: "manager@professionalpoolcare.com",
+  phone: "702-555-0100",
+  service_needed: "Commercial Pool Maintenance",
+  property_type: "Apartment or multifamily community",
+  message: "Please contact me about commercial pool maintenance for our property.",
+  privacy_consent: "on",
+  website: ""
+};
+
+const makeContactRequest = (fields = validContactFields) =>
+  new Request("https://professionalpoolcare.com/contact-request", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Accept: "application/json"
+    },
+    body: new URLSearchParams(fields)
+  });
+
+const makeZohoEnv = () => ({
+  ZOHO_CLIENT_ID: "__server_only_client_id__",
+  ZOHO_CLIENT_SECRET: "__server_only_client_secret__",
+  ZOHO_REFRESH_TOKEN: "__server_only_refresh_token__",
+  ZOHO_ACCOUNT_ID: "1234567890123456789",
+  ZOHO_DATA_CENTER: "us"
+});
+
+const makeZohoFetch = ({ tokenStatus = 200, sendStatus = 200, providerCode = sendStatus } = {}) => {
+  const calls = [];
+  const fetchImpl = async (url, options) => {
+    calls.push({ url: String(url), options });
+    if (String(url).endsWith("/oauth/v2/token")) {
+      return new Response(JSON.stringify(tokenStatus === 200 ? {
+        access_token: "__short_lived_access_token__",
+        expires_in: 3600
+      } : {
+        error: "invalid_client"
+      }), {
+        status: tokenStatus,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+    return new Response(JSON.stringify({
+      status: { code: providerCode, description: providerCode === 200 ? "success" : "provider failure" },
+      data: providerCode === 200 ? { messageId: "test-message" } : undefined
+    }), {
+      status: sendStatus,
+      headers: { "Content-Type": "application/json" }
+    });
+  };
+  return { calls, fetchImpl };
+};
+
 async function waitForPage(page, path) {
   const response = await page.goto(path);
   expect(response.ok(), `${path} should load`).toBeTruthy();
@@ -309,71 +365,123 @@ test("keyboard focus is visibly styled", async ({ page }) => {
   expect(parseFloat(outline)).toBeGreaterThanOrEqual(2);
 });
 
-test("Worker contact endpoint validates, rejects spam, sends to Adria only, and fails gracefully without binding", async () => {
+test("Worker contact endpoint delivers through Zoho OAuth API to Adria only", async () => {
   const worker = await import("../worker/index.mjs");
-  const makeRequest = (fields) => {
-    const form = new URLSearchParams(fields);
-    return new Request("https://professionalpoolcare.com/contact-request", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Accept: "application/json"
-      },
-      body: form
-    });
-  };
-
-  const validFields = {
-    name: "Ada Manager",
-    company: "Commercial Property",
-    email: "manager@professionalpoolcare.com",
-    phone: "",
-    service_needed: "Commercial Pool Maintenance",
-    property_type: "Apartment or multifamily community",
-    message: "Please contact me about commercial pool maintenance for our property.",
-    privacy_consent: "on",
-    website: ""
-  };
-
-  const sentMessages = [];
-  const success = await worker.handleContactRequest(makeRequest(validFields), {
-    PPC_CONTACT_EMAIL: {
-      send: async (message) => {
-        sentMessages.push(message);
-        return { messageId: "test-message" };
-      }
-    }
-  });
+  const { calls, fetchImpl } = makeZohoFetch();
+  const success = await worker.handleContactRequest(makeContactRequest({
+    ...validContactFields,
+    message: "Please help with <script>alert('unsafe')</script> and the pool equipment.",
+    recipient: "attacker@example.com",
+    toAddress: "attacker@example.com"
+  }), makeZohoEnv(), fetchImpl);
   expect(success.status).toBe(200);
   expect(await success.json()).toMatchObject({ ok: true });
-  expect(sentMessages).toHaveLength(1);
-  expect(sentMessages[0].to).toEqual({
-    email: "Adria@ProfessionalPoolCare.com",
-    name: "Professional Pool Care LLC"
-  });
-  expect(sentMessages[0].from.email).toBe("Adria@ProfessionalPoolCare.com");
-  expect(sentMessages[0].replyTo.email).toBe("manager@professionalpoolcare.com");
+  expect(calls).toHaveLength(2);
 
-  const invalid = await worker.handleContactRequest(makeRequest({ ...validFields, email: "", phone: "", message: "short" }), {
-    PPC_CONTACT_EMAIL: { send: async () => ({ messageId: "not-used" }) }
+  const tokenCall = calls[0];
+  expect(tokenCall.url).toBe("https://accounts.zoho.com/oauth/v2/token");
+  expect(tokenCall.url).not.toContain("__server_only");
+  expect(Object.fromEntries(new URLSearchParams(tokenCall.options.body))).toEqual({
+    refresh_token: "__server_only_refresh_token__",
+    client_id: "__server_only_client_id__",
+    client_secret: "__server_only_client_secret__",
+    grant_type: "refresh_token"
   });
-  expect(invalid.status).toBe(400);
-  const invalidBody = await invalid.json();
-  expect(invalidBody.errors).toContain("Email or phone is required.");
-  expect(invalidBody.errors).toContain("Message is too short.");
 
-  const spam = await worker.handleContactRequest(makeRequest({ ...validFields, website: "https://spam.invalid" }), {
-    PPC_CONTACT_EMAIL: { send: async () => ({ messageId: "not-used" }) }
+  const sendCall = calls[1];
+  expect(sendCall.url).toBe("https://mail.zoho.com/api/accounts/1234567890123456789/messages");
+  expect(sendCall.options.headers.Authorization).toBe("Zoho-oauthtoken __short_lived_access_token__");
+  const message = JSON.parse(sendCall.options.body);
+  expect(message).toMatchObject({
+    fromAddress: "Adria@ProfessionalPoolCare.com",
+    toAddress: "Adria@ProfessionalPoolCare.com",
+    subject: "New PPC Website Inquiry — Ada Manager / Commercial Property",
+    mailFormat: "html",
+    encoding: "UTF-8"
   });
+  expect(message).not.toHaveProperty("replyTo");
+  expect(message.content).toContain("manager@professionalpoolcare.com");
+  expect(message.content).toContain("702-555-0100");
+  expect(message.content).toContain("Apartment or multifamily community");
+  expect(message.content).toContain("&lt;script&gt;alert(&#39;unsafe&#39;)&lt;/script&gt;");
+  expect(message.content).not.toContain("<script>");
+  expect(sendCall.options.body).not.toContain("attacker@example.com");
+});
+
+test("Worker contact endpoint rejects malformed and missing submissions before provider calls", async () => {
+  const worker = await import("../worker/index.mjs");
+  const failIfCalled = async () => {
+    throw new Error("Provider must not be called for invalid submissions.");
+  };
+  const malformed = await worker.handleContactRequest(new Request("https://professionalpoolcare.com/contact-request", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify(validContactFields)
+  }), makeZohoEnv(), failIfCalled);
+  expect(malformed.status).toBe(415);
+
+  const missing = await worker.handleContactRequest(makeContactRequest({
+    ...validContactFields,
+    name: "",
+    company: "",
+    email: "",
+    phone: "",
+    service_needed: "",
+    message: "",
+    privacy_consent: ""
+  }), makeZohoEnv(), failIfCalled);
+  expect(missing.status).toBe(400);
+  const missingBody = await missing.json();
+  expect(missingBody.errors).toEqual(expect.arrayContaining([
+    "Name is required.",
+    "Company or property is required.",
+    "Email or phone is required.",
+    "Select a valid service.",
+    "Message is required.",
+    "Privacy consent is required."
+  ]));
+});
+
+test("Worker contact endpoint rejects invalid email and honeypot spam", async () => {
+  const worker = await import("../worker/index.mjs");
+  const failIfCalled = async () => {
+    throw new Error("Provider must not be called for invalid submissions.");
+  };
+  const invalidEmail = await worker.handleContactRequest(makeContactRequest({
+    ...validContactFields,
+    email: "not-an-email"
+  }), makeZohoEnv(), failIfCalled);
+  expect(invalidEmail.status).toBe(400);
+  expect((await invalidEmail.json()).errors).toContain("Enter a valid email address.");
+
+  const spam = await worker.handleContactRequest(makeContactRequest({
+    ...validContactFields,
+    website: "https://spam.invalid"
+  }), makeZohoEnv(), failIfCalled);
   expect(spam.status).toBe(400);
   expect(await spam.json()).toMatchObject({ ok: false, message: "Submission blocked. Please refresh and try again." });
+});
 
-  const noBinding = await worker.handleContactRequest(makeRequest(validFields), {});
-  expect(noBinding.status).toBe(503);
-  expect(await noBinding.json()).toMatchObject({
+test("Worker contact endpoint fails safely on Zoho configuration and provider errors", async () => {
+  const worker = await import("../worker/index.mjs");
+  const missingConfiguration = await worker.handleContactRequest(makeContactRequest(), {}, async () => {
+    throw new Error("No request should occur without configuration.");
+  });
+  expect(missingConfiguration.status).toBe(503);
+  expect(await missingConfiguration.json()).toMatchObject({
     ok: false,
     message: "We could not send your request right now. Please call 702-357-7027 or email Adria@ProfessionalPoolCare.com."
   });
+
+  const { fetchImpl } = makeZohoFetch({ sendStatus: 502, providerCode: 500 });
+  const providerFailure = await worker.handleContactRequest(makeContactRequest(), makeZohoEnv(), fetchImpl);
+  expect(providerFailure.status).toBe(503);
+  const failureBody = await providerFailure.json();
+  expect(failureBody).toEqual({
+    ok: false,
+    message: "We could not send your request right now. Please call 702-357-7027 or email Adria@ProfessionalPoolCare.com."
+  });
+  expect(JSON.stringify(failureBody)).not.toContain("provider failure");
 });
 
 test("production build excludes source-only and development artifacts", async () => {
@@ -381,5 +489,18 @@ test("production build excludes source-only and development artifacts", async ()
   expect(builtFiles).toEqual(expect.arrayContaining(["index.html", "services.html", "about.html", "contact.html", "privacy.html", "terms.html", "robots.txt", "sitemap.xml", "styles.css", "script.js", "images"]));
   for (const forbidden of ["node_modules", ".planning", "tests", "test-artifacts", "archive", "README.md", "package.json", "wrangler.jsonc"]) {
     expect(builtFiles).not.toContain(forbidden);
+  }
+
+  const textFiles = builtFiles.filter((name) => /\.(?:html|css|js|xml|txt)$/.test(name));
+  const publicOutput = (await Promise.all(textFiles.map((name) => readFile(join(process.cwd(), "dist", name), "utf8")))).join("\n");
+  for (const serverOnlyValue of [
+    "ZOHO_CLIENT_ID",
+    "ZOHO_CLIENT_SECRET",
+    "ZOHO_REFRESH_TOKEN",
+    "ZOHO_ACCOUNT_ID",
+    "__server_only",
+    "Zoho-oauthtoken"
+  ]) {
+    expect(publicOutput).not.toContain(serverOnlyValue);
   }
 });

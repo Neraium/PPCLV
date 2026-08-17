@@ -66,11 +66,31 @@ Repository-side implementation is complete:
 - Does not create an open email relay.
 - Sends notifications only to `Adria@ProfessionalPoolCare.com`.
 - Returns JSON for JavaScript submissions and simple HTML for conventional POST fallback.
-- Fails gracefully with PPC phone/email fallback if Cloudflare Email Service is not available.
+- Fails gracefully with PPC phone/email fallback if Zoho is unavailable.
+- Uses Zoho Mail's HTTPS API from the Worker, so it does not require raw SMTP, Cloudflare Email Sending, or Workers Paid.
+- Refreshes short-lived OAuth access tokens server-side from a least-privilege `ZohoMail.messages.CREATE` grant.
+- Keeps the sender and recipient fixed server-side as `Adria@ProfessionalPoolCare.com`.
 
-The Wrangler binding is named `PPC_CONTACT_EMAIL` and is restricted to the destination `Adria@ProfessionalPoolCare.com`.
+Required Worker secrets:
 
-Required Cloudflare dashboard action before public launch: configure Cloudflare Email Service for `professionalpoolcare.com` and verify that the Worker `send_email` binding can send from and to `Adria@ProfessionalPoolCare.com`.
+- `ZOHO_CLIENT_ID`
+- `ZOHO_CLIENT_SECRET`
+- `ZOHO_REFRESH_TOKEN`
+- `ZOHO_ACCOUNT_ID`
+
+Optional Worker variable:
+
+- `ZOHO_DATA_CENTER` defaults to `us`. Set it only if the mailbox is hosted elsewhere. Supported values are `us`, `eu`, `in`, `au`, `jp`, `ca`, `cn`, `ae`, and `sa`.
+
+One-time production setup:
+
+1. Sign in to the Adria Zoho mailbox and note the data center from the Mail URL. For example, `mail.zoho.com` is `us` and `mail.zoho.eu` is `eu`. Do not change the existing Zoho MX, SPF, or DKIM records.
+2. In the matching regional Zoho API Console, create a Self Client. Generate a temporary code with `ZohoMail.accounts.READ`, exchange it for tokens, call the matching regional `GET /api/accounts`, and record the `accountId` whose `primaryEmailAddress` is `Adria@ProfessionalPoolCare.com`. Revoke the temporary account-read refresh token afterward.
+3. In the same Self Client, generate a new authorization code with only `ZohoMail.messages.CREATE`. Exchange it before it expires and retain its `refresh_token`. Do not retain the one-hour access token.
+4. From an authenticated terminal, run `npx wrangler secret put` once for each required secret name above. If the mailbox is not in the US data center, also set `ZOHO_DATA_CENTER` as a Worker variable in Cloudflare Workers & Pages > ppclv > Settings > Variables and Secrets.
+5. Deploy with `npm run build && npx wrangler deploy`, submit one real contact request, and confirm it appears in the Zoho mailbox and its existing Gmail forwarding destination.
+
+Zoho's documented send endpoint supports one `html` or `plaintext` body, not a multipart alternative, and does not document a per-message Reply-To field. The implementation sends escaped, readable HTML and includes the validated visitor email as a mail link rather than relying on undocumented parameters or changing the mailbox-wide Reply-To setting.
 
 ## SEO And Domain
 
@@ -149,7 +169,7 @@ PHOTOS:
 
 External launch actions:
 
-- Configure/verify the Cloudflare Email Service domain and Worker email binding for `Adria@ProfessionalPoolCare.com`.
+- Complete the Zoho OAuth and Cloudflare Worker secret setup in the Contact Form section above.
 - Verify Adria receives a real test submission.
 - Remove or disable the PPC Preview Access application or policy in Cloudflare Access.
 - Confirm anonymous visitors can load the public site.

@@ -1,6 +1,21 @@
 const PPC_CONTACT_EMAIL = "Adria@ProfessionalPoolCare.com";
 const PPC_SENDER_EMAIL = "Adria@ProfessionalPoolCare.com";
 const MAX_BODY_BYTES = 32_000;
+const TOKEN_EXPIRY_SKEW_MS = 60_000;
+
+const ZOHO_DATA_CENTERS = Object.freeze({
+  us: { accountsOrigin: "https://accounts.zoho.com", mailOrigin: "https://mail.zoho.com" },
+  eu: { accountsOrigin: "https://accounts.zoho.eu", mailOrigin: "https://mail.zoho.eu" },
+  in: { accountsOrigin: "https://accounts.zoho.in", mailOrigin: "https://mail.zoho.in" },
+  au: { accountsOrigin: "https://accounts.zoho.com.au", mailOrigin: "https://mail.zoho.com.au" },
+  jp: { accountsOrigin: "https://accounts.zoho.jp", mailOrigin: "https://mail.zoho.jp" },
+  ca: { accountsOrigin: "https://accounts.zohocloud.ca", mailOrigin: "https://mail.zohocloud.ca" },
+  cn: { accountsOrigin: "https://accounts.zoho.com.cn", mailOrigin: "https://mail.zoho.com.cn" },
+  ae: { accountsOrigin: "https://accounts.zoho.ae", mailOrigin: "https://mail.zoho.ae" },
+  sa: { accountsOrigin: "https://accounts.zoho.sa", mailOrigin: "https://mail.zoho.sa" }
+});
+
+let cachedZohoAccessToken;
 
 const APPROVED_SERVICES = new Set([
   "Commercial Pool Maintenance",
@@ -136,64 +151,128 @@ export const validateContactForm = (formData) => {
   return { submission, errors, spam: false };
 };
 
-const formatTextEmail = (submission, request) => [
-  "New PPC website service request",
-  "",
-  `Name: ${submission.name}`,
-  `Company / Property: ${submission.company}`,
-  `Email: ${submission.email || "Not provided"}`,
-  `Phone: ${submission.phone || "Not provided"}`,
-  `Service Needed: ${submission.serviceNeeded}`,
-  `Property Type: ${submission.propertyType || "Not provided"}`,
-  "",
-  "Message:",
-  submission.message,
-  "",
-  `Submitted from: ${new URL(request.url).origin}/contact.html#quote`,
-  `Submitted at: ${new Date().toISOString()}`
-].join("\n");
-
 const formatHtmlEmail = (submission, request) => `
-  <h1>New PPC website service request</h1>
-  <dl>
-    <dt>Name</dt><dd>${escapeHtml(submission.name)}</dd>
-    <dt>Company / Property</dt><dd>${escapeHtml(submission.company)}</dd>
-    <dt>Email</dt><dd>${escapeHtml(submission.email || "Not provided")}</dd>
-    <dt>Phone</dt><dd>${escapeHtml(submission.phone || "Not provided")}</dd>
-    <dt>Service Needed</dt><dd>${escapeHtml(submission.serviceNeeded)}</dd>
-    <dt>Property Type</dt><dd>${escapeHtml(submission.propertyType || "Not provided")}</dd>
-  </dl>
-  <h2>Message</h2>
-  <p>${escapeHtml(submission.message).replace(/\n/g, "<br>")}</p>
-  <p>Submitted from: ${escapeHtml(`${new URL(request.url).origin}/contact.html#quote`)}</p>
-  <p>Submitted at: ${escapeHtml(new Date().toISOString())}</p>
+  <div style="font-family:Arial,sans-serif;line-height:1.5;color:#16212b">
+    <h1 style="font-size:22px">New PPC website service request</h1>
+    <table style="border-collapse:collapse" role="presentation">
+      <tr><th style="padding:4px 16px 4px 0;text-align:left;vertical-align:top">Name</th><td style="padding:4px 0">${escapeHtml(submission.name)}</td></tr>
+      <tr><th style="padding:4px 16px 4px 0;text-align:left;vertical-align:top">Company / Property</th><td style="padding:4px 0">${escapeHtml(submission.company)}</td></tr>
+      <tr><th style="padding:4px 16px 4px 0;text-align:left;vertical-align:top">Email</th><td style="padding:4px 0">${submission.email ? `<a href="mailto:${escapeHtml(submission.email)}">${escapeHtml(submission.email)}</a>` : "Not provided"}</td></tr>
+      <tr><th style="padding:4px 16px 4px 0;text-align:left;vertical-align:top">Phone</th><td style="padding:4px 0">${escapeHtml(submission.phone || "Not provided")}</td></tr>
+      <tr><th style="padding:4px 16px 4px 0;text-align:left;vertical-align:top">Service Needed</th><td style="padding:4px 0">${escapeHtml(submission.serviceNeeded)}</td></tr>
+      <tr><th style="padding:4px 16px 4px 0;text-align:left;vertical-align:top">Property Type</th><td style="padding:4px 0">${escapeHtml(submission.propertyType || "Not provided")}</td></tr>
+    </table>
+    <h2 style="font-size:18px">Message</h2>
+    <p>${escapeHtml(submission.message).replace(/\n/g, "<br>")}</p>
+    <hr>
+    <p style="font-size:13px;color:#4b5563">Submitted from: ${escapeHtml(`${new URL(request.url).origin}/contact.html#quote`)}<br>Submitted at: ${escapeHtml(new Date().toISOString())}</p>
+  </div>
 `;
 
-const sendNotification = async (submission, request, env) => {
-  if (!env.PPC_CONTACT_EMAIL?.send) {
-    throw Object.assign(new Error("Cloudflare Email Service binding is not configured."), {
-      code: "E_BINDING_MISSING"
+const requireZohoSetting = (env, name) => {
+  const value = typeof env[name] === "string" ? env[name].trim() : "";
+  if (!value) {
+    throw Object.assign(new Error("Zoho email delivery is not configured."), {
+      code: "E_ZOHO_CONFIG"
+    });
+  }
+  return value;
+};
+
+const getZohoEndpoints = (env) => {
+  const dataCenter = String(env.ZOHO_DATA_CENTER || "us").trim().toLowerCase();
+  const endpoints = ZOHO_DATA_CENTERS[dataCenter];
+  if (!endpoints) {
+    throw Object.assign(new Error("Zoho email delivery is not configured."), {
+      code: "E_ZOHO_DATA_CENTER"
+    });
+  }
+  return endpoints;
+};
+
+const getZohoAccessToken = async (env, fetchImpl) => {
+  const clientId = requireZohoSetting(env, "ZOHO_CLIENT_ID");
+  const clientSecret = requireZohoSetting(env, "ZOHO_CLIENT_SECRET");
+  const refreshToken = requireZohoSetting(env, "ZOHO_REFRESH_TOKEN");
+  const { accountsOrigin } = getZohoEndpoints(env);
+  const useProductionCache = fetchImpl === fetch;
+
+  if (useProductionCache && cachedZohoAccessToken?.expiresAt > Date.now()) {
+    return cachedZohoAccessToken.value;
+  }
+
+  const tokenResponse = await fetchImpl(`${accountsOrigin}/oauth/v2/token`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: new URLSearchParams({
+      refresh_token: refreshToken,
+      client_id: clientId,
+      client_secret: clientSecret,
+      grant_type: "refresh_token"
+    }),
+    cache: "no-store"
+  });
+  const tokenPayload = await tokenResponse.json().catch(() => null);
+  const accessToken = typeof tokenPayload?.access_token === "string" ? tokenPayload.access_token.trim() : "";
+  if (!tokenResponse.ok || !accessToken) {
+    throw Object.assign(new Error("Zoho authorization failed."), {
+      code: "E_ZOHO_AUTH"
     });
   }
 
-  const replyTo = submission.email
-    ? { email: submission.email, name: submission.name }
-    : undefined;
+  if (useProductionCache) {
+    const expiresInSeconds = Number(tokenPayload.expires_in) || 3600;
+    cachedZohoAccessToken = {
+      value: accessToken,
+      expiresAt: Date.now() + Math.max(0, expiresInSeconds * 1000 - TOKEN_EXPIRY_SKEW_MS)
+    };
+  }
 
-  return env.PPC_CONTACT_EMAIL.send({
-    to: { email: PPC_CONTACT_EMAIL, name: "Professional Pool Care LLC" },
-    from: { email: PPC_SENDER_EMAIL, name: "PPC LLC Website" },
-    replyTo,
-    subject: `PPC service request: ${submission.serviceNeeded}`,
-    text: formatTextEmail(submission, request),
-    html: formatHtmlEmail(submission, request),
-    headers: {
-      "X-PPC-Form": "commercial-service-request"
-    }
-  });
+  return accessToken;
 };
 
-export const handleContactRequest = async (request, env) => {
+export const sendNotification = async (submission, request, env, fetchImpl = fetch) => {
+  const accountId = requireZohoSetting(env, "ZOHO_ACCOUNT_ID");
+  if (!/^\d+$/.test(accountId)) {
+    throw Object.assign(new Error("Zoho email delivery is not configured."), {
+      code: "E_ZOHO_ACCOUNT"
+    });
+  }
+
+  const { mailOrigin } = getZohoEndpoints(env);
+  const accessToken = await getZohoAccessToken(env, fetchImpl);
+  const subjectLabel = normalize(`${submission.name} / ${submission.company}`, 120);
+  const providerResponse = await fetchImpl(`${mailOrigin}/api/accounts/${accountId}/messages`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      Authorization: `Zoho-oauthtoken ${accessToken}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      fromAddress: PPC_SENDER_EMAIL,
+      toAddress: PPC_CONTACT_EMAIL,
+      subject: `New PPC Website Inquiry — ${subjectLabel}`,
+      content: formatHtmlEmail(submission, request),
+      mailFormat: "html",
+      encoding: "UTF-8"
+    })
+  });
+  const providerPayload = await providerResponse.json().catch(() => null);
+  const providerStatus = Number(providerPayload?.status?.code || providerResponse.status);
+  if (!providerResponse.ok || providerStatus < 200 || providerStatus >= 300) {
+    throw Object.assign(new Error("Zoho rejected the email request."), {
+      code: "E_ZOHO_SEND"
+    });
+  }
+
+  return providerPayload;
+};
+
+export const handleContactRequest = async (request, env, fetchImpl = fetch) => {
   if (request.method !== "POST") {
     return respond(request, 405, "Use the contact form to submit a service request.");
   }
@@ -218,11 +297,10 @@ export const handleContactRequest = async (request, env) => {
   }
 
   try {
-    await sendNotification(submission, request, env);
+    await sendNotification(submission, request, env, fetchImpl);
   } catch (error) {
     console.error("PPC contact email failed", {
-      code: error?.code,
-      message: error?.message
+      code: error?.code || "E_ZOHO_NETWORK"
     });
     return respond(
       request,
