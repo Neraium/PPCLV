@@ -48,9 +48,13 @@
 **Confidence:** high for the documented API contract; unsupported fields may exist but are not safe to depend on.
 **Action:** Do not send an undocumented Reply-To parameter or modify the mailbox-wide Reply-To setting. Include the validated visitor email prominently and as a safe `mailto:` link in escaped HTML.
 
+**Verification boundary:** Automated tests can verify validation, HTML escaping, the fixed sender/recipient, the bounded regional API URL, and the absence of an undocumented Reply-To field. Actual provider delivery must be checked after the four Worker secrets are configured by submitting one real request and confirming receipt in the Zoho mailbox and its existing Gmail forwarding destination.
+
 ## Summary
 
 The supported Zoho Mail REST send endpoint is a practical fit for the existing Worker and Cloudflare Free limits. Use a Self Client refresh token scoped only to `ZohoMail.messages.CREATE`, refresh access tokens server-side, and send escaped HTML to the fixed PPC mailbox through regional Zoho HTTPS endpoints. No Cloudflare Email Sending binding, raw SMTP, or paid Worker feature is needed.
+
+The deployed Worker requires exactly four secrets: `ZOHO_CLIENT_ID`, `ZOHO_CLIENT_SECRET`, `ZOHO_REFRESH_TOKEN`, and `ZOHO_ACCOUNT_ID`. `ZOHO_DATA_CENTER` is a bounded, non-secret Worker variable and defaults to `us`.
 
 ## Open Questions
 

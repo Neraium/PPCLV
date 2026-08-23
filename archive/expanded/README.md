@@ -12,6 +12,6 @@ Retained source material:
 - `expanded-styles.css`: pre-alignment shared stylesheet retained with the expanded implementation.
 - `expanded-script.js`: pre-alignment shared behavior retained with the expanded implementation.
 
-Every archived HTML file includes a `noindex` directive. The production build uses an explicit public-file allowlist and does not copy this directory into `dist/`, so these sources do not ship through the GitHub Pages workflow. They are also absent from the core navigation, footer, and sitemap.
+Every archived HTML file includes a `noindex` directive. The production build uses an explicit public-file allowlist and does not copy this directory into `dist/`, so these sources do not ship through the Cloudflare Worker deployment. They are also absent from the core navigation, footer, and sitemap.
 
 Archived HTML files preserve their original root-relative source references for future development. The companion stylesheet and script preserve the implementation context from immediately before the Essential alignment. Restore and review paths, copy, claims, schema, photography permissions, and package scope before promoting any of this material again.

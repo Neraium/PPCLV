@@ -6,7 +6,7 @@ const productionOrigin = "https://professionalpoolcare.com";
 const corePages = ["/index.html", "/services.html", "/about.html", "/contact.html"];
 const utilityPages = ["/privacy.html", "/terms.html"];
 const publicPages = [...corePages, ...utilityPages];
-const requiredWidths = [390, 430, 768, 1024, 1440];
+const requiredWidths = [320, 375, 390, 430, 768, 1024, 1280, 1440, 1920];
 const expandedNames = ["industries.html", "our-work.html", "gallery.html", "faq.html", "commercial-pool-service-las-vegas.html"];
 
 const validContactFields = {
@@ -74,7 +74,7 @@ async function waitForPage(page, path) {
 test("Essential navigation promotes exactly four marketing pages", async ({ page }) => {
   for (const path of publicPages) {
     await waitForPage(page, path);
-    const links = await page.getByRole("navigation", { name: "Primary navigation" }).locator("a:not(.mobile-menu-cta)").evaluateAll((anchors) => anchors.map((anchor) => ({ text: anchor.textContent.trim(), href: anchor.getAttribute("href") })));
+    const links = await page.locator("#primary-menu a:not(.mobile-menu-cta)").evaluateAll((anchors) => anchors.map((anchor) => ({ text: anchor.textContent.trim(), href: anchor.getAttribute("href") })));
     expect(links).toEqual([
       { text: "Home", href: "index.html" },
       { text: "Services", href: "services.html" },
@@ -116,7 +116,8 @@ test("homepage imagery is commercial, lazy below the hero, and not duplicated", 
   await waitForPage(page, "/index.html");
   const hero = page.locator(".hero-image-panel img");
   await expect(hero).toHaveAttribute("fetchpriority", "high");
-  expect(await hero.evaluate((image) => image.currentSrc.endsWith("resort-hotel-pool-deck-960.webp"))).toBeTruthy();
+  await expect(hero).toHaveAttribute("srcset", /resort-hotel-pool-deck-960\.webp 960w, images\/resort-hotel-pool-deck\.webp 1440w/);
+  expect(await hero.evaluate((image) => /resort-hotel-pool-deck(?:-960)?\.webp$/.test(new URL(image.currentSrc).pathname))).toBeTruthy();
   const sources = await page.locator("main img").evaluateAll((images) => images.map((image) => image.getAttribute("src")));
   expect(new Set(sources).size).toBe(sources.length);
   const belowFoldLoading = await page.locator("main img:not(.hero-image-panel img)").evaluateAll((images) => images.map((image) => image.loading));
@@ -197,6 +198,83 @@ test("contact form is simple, accessible, and posts to the Worker endpoint", asy
   expect(requestBody).not.toContain("Adria%40ProfessionalPoolCare.com");
 });
 
+test("contact form preserves actionable server errors and handles malformed responses", async ({ page }) => {
+  let responseMode = "field-error";
+  await page.route("**/contact-request", async (route) => {
+    if (responseMode === "field-error") {
+      await route.fulfill({
+        status: 400,
+        contentType: "application/json",
+        body: JSON.stringify({
+          ok: false,
+          message: "Please complete or correct the highlighted fields before submitting.",
+          errors: ["Phone is too long."]
+        })
+      });
+      return;
+    }
+    await route.fulfill({ status: 502, contentType: "text/html", body: "<h1>Bad gateway</h1>" });
+  });
+
+  await waitForPage(page, "/contact.html#quote");
+  const form = page.locator("[data-quote-form]");
+  await expect(form.locator('[name="name"]')).toHaveAttribute("maxlength", "120");
+  await expect(form.locator('[name="company"]')).toHaveAttribute("maxlength", "160");
+  await expect(form.locator('[name="email"]')).toHaveAttribute("maxlength", "180");
+  await expect(form.locator('[name="phone"]')).toHaveAttribute("maxlength", "40");
+  await expect(form.locator('[name="message"]')).toHaveAttribute("minlength", "10");
+  await expect(form.locator('[name="message"]')).toHaveAttribute("maxlength", "2000");
+
+  await form.locator('[name="name"]').fill("Test User");
+  await form.locator('[name="company"]').fill("Test Property");
+  await form.locator('[name="phone"]').fill("702-555-0100");
+  await form.locator('[name="service_needed"]').selectOption({ index: 1 });
+  await form.locator('[name="message"]').fill("Routine commercial service request.");
+  await form.locator('[name="privacy_consent"]').check();
+  await form.getByRole("button", { name: "Request Service" }).click();
+  await expect(page.getByRole("status")).toHaveText("Please complete or correct the highlighted fields before submitting.");
+  await expect(form.locator('[name="phone"]')).toHaveAttribute("aria-invalid", "true");
+  await expect(form.locator('[name="phone"]')).toBeFocused();
+
+  responseMode = "malformed";
+  await form.getByRole("button", { name: "Request Service" }).click();
+  await expect(page.getByRole("status")).toHaveText("We could not send your request right now. Please call 702-357-7027 or email Adria@ProfessionalPoolCare.com.");
+  await expect(page.getByRole("status")).toBeFocused();
+});
+
+test("contact form prevents duplicate submissions while a request is pending", async ({ page }) => {
+  let requestCount = 0;
+  let releaseRequest;
+  await page.route("**/contact-request", async (route) => {
+    requestCount += 1;
+    await new Promise((resolve) => { releaseRequest = resolve; });
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ ok: true, message: "Request received." })
+    });
+  });
+
+  await waitForPage(page, "/contact.html#quote");
+  const form = page.locator("[data-quote-form]");
+  await form.locator('[name="name"]').fill("Test User");
+  await form.locator('[name="company"]').fill("Test Property");
+  await form.locator('[name="email"]').fill("manager@professionalpoolcare.com");
+  await form.locator('[name="service_needed"]').selectOption({ index: 1 });
+  await form.locator('[name="message"]').fill("Routine commercial service request.");
+  await form.locator('[name="privacy_consent"]').check();
+  await form.evaluate((element) => {
+    element.requestSubmit();
+    element.requestSubmit();
+  });
+  await expect(form.getByRole("button", { name: "Sending..." })).toBeDisabled();
+  await expect.poll(() => requestCount).toBe(1);
+  releaseRequest();
+  await expect(page.getByRole("status")).toHaveText("Request received.");
+  await expect(form.getByRole("button", { name: "Request Service" })).toBeEnabled();
+  expect(requestCount).toBe(1);
+});
+
 test("core pages have exact unique SEO titles and descriptions", async ({ page }) => {
   const expectedTitles = new Map([
     ["/index.html", "PPC LLC | Commercial Pool & Spa Service in Las Vegas"],
@@ -258,7 +336,7 @@ test("all internal links and fragments resolve", async ({ page, request }) => {
 });
 
 for (const width of requiredWidths) {
-  for (const path of corePages) {
+  for (const path of publicPages) {
     test(`${path} has no overflow or broken imagery at ${width}px`, async ({ page }) => {
       const errors = [];
       page.on("pageerror", (error) => errors.push(error.message));
@@ -317,6 +395,29 @@ test("mobile header is centered, stable, and keeps Request Service inside the me
     await page.keyboard.press("Escape");
     await expect(toggle).toBeFocused();
   }
+});
+
+test("mobile menu closes on outside click, navigation, and desktop resize", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 860 });
+  await waitForPage(page, "/index.html");
+  const toggle = page.getByRole("button", { name: "Menu" });
+  const menu = page.locator("#primary-menu");
+
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-expanded", "true");
+  await page.locator("footer").click({ position: { x: 5, y: 5 } });
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  await expect(menu).not.toHaveClass(/is-open/);
+
+  await toggle.click();
+  await menu.getByRole("link", { name: "Services" }).click();
+  await expect(page).toHaveURL(/services\.html$/);
+  await expect(page.getByRole("button", { name: "Menu" })).toHaveAttribute("aria-expanded", "false");
+
+  await page.getByRole("button", { name: "Menu" }).click();
+  await page.setViewportSize({ width: 1024, height: 860 });
+  await expect(page.locator(".menu-toggle")).toHaveAttribute("aria-expanded", "false");
+  await expect(page.getByRole("navigation", { name: "Primary navigation" })).not.toHaveClass(/is-open/);
 });
 
 test("desktop header remains stable during scroll", async ({ page }) => {
@@ -402,11 +503,11 @@ test("Worker contact endpoint delivers through Zoho OAuth API to Adria only", as
   expect(message).toMatchObject({
     fromAddress: "Adria@ProfessionalPoolCare.com",
     toAddress: "Adria@ProfessionalPoolCare.com",
-    replyTo: "manager@professionalpoolcare.com",
     subject: "New PPC Website Inquiry — Ada Manager / Commercial Property",
     mailFormat: "html",
     encoding: "UTF-8"
   });
+  expect(message).not.toHaveProperty("replyTo");
   expect(message.content).toContain("manager@professionalpoolcare.com");
   expect(message.content).toContain("702-555-0100");
   expect(message.content).toContain("Apartment or multifamily community");
@@ -415,12 +516,12 @@ test("Worker contact endpoint delivers through Zoho OAuth API to Adria only", as
   expect(sendCall.options.body).not.toContain("attacker@example.com");
 });
 
-test("Worker omits Reply-To when a valid submission provides phone only", async () => {
+test("Worker omits unsupported Reply-To for every valid submission", async () => {
   const worker = await import("../worker/index.mjs");
   const { calls, fetchImpl } = makeZohoFetch();
   const success = await worker.handleContactRequest(makeContactRequest({
     ...validContactFields,
-    email: ""
+    email: "manager@professionalpoolcare.com"
   }), makeZohoEnv(), fetchImpl);
   expect(success.status).toBe(200);
   expect(calls).toHaveLength(2);
@@ -479,6 +580,176 @@ test("Worker contact endpoint rejects invalid email and honeypot spam", async ()
   }), makeZohoEnv(), failIfCalled);
   expect(spam.status).toBe(400);
   expect(await spam.json()).toMatchObject({ ok: false, message: "Submission blocked. Please refresh and try again." });
+});
+
+test("Worker enforces methods, media types, malformed forms, and actual body size", async () => {
+  const worker = await import("../worker/index.mjs");
+  const failIfCalled = async () => {
+    throw new Error("Provider must not be called for rejected requests.");
+  };
+
+  const methodResponse = await worker.handleContactRequest(new Request("https://professionalpoolcare.com/contact-request", {
+    method: "PUT",
+    headers: { Accept: "application/json" }
+  }), makeZohoEnv(), failIfCalled);
+  expect(methodResponse.status).toBe(405);
+  expect(methodResponse.headers.get("allow")).toBe("POST");
+
+  const wrongMediaType = await worker.handleContactRequest(new Request("https://professionalpoolcare.com/contact-request", {
+    method: "POST",
+    headers: { "Content-Type": "text/plain", Accept: "application/json" },
+    body: new URLSearchParams(validContactFields).toString()
+  }), makeZohoEnv(), failIfCalled);
+  expect(wrongMediaType.status).toBe(415);
+
+  const malformedMultipart = await worker.handleContactRequest(new Request("https://professionalpoolcare.com/contact-request", {
+    method: "POST",
+    headers: { "Content-Type": "multipart/form-data", Accept: "application/json" },
+    body: "not-a-valid-multipart-body"
+  }), makeZohoEnv(), failIfCalled);
+  expect(malformedMultipart.status).toBe(400);
+
+  const oversizedBody = new URLSearchParams({ ...validContactFields, message: "x".repeat(33_000) }).toString();
+  const noDeclaredLength = new Request("https://professionalpoolcare.com/contact-request", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded", Accept: "application/json" },
+    body: oversizedBody
+  });
+  expect(noDeclaredLength.headers.get("content-length")).toBeNull();
+  const tooLarge = await worker.handleContactRequest(noDeclaredLength, makeZohoEnv(), failIfCalled);
+  expect(tooLarge.status).toBe(413);
+
+  const { fetchImpl } = makeZohoFetch();
+  const caseInsensitiveMediaType = await worker.handleContactRequest(new Request("https://professionalpoolcare.com/contact-request", {
+    method: "POST",
+    headers: { "Content-Type": "Application/X-WWW-Form-Urlencoded; Charset=UTF-8", Accept: "application/json" },
+    body: new URLSearchParams(validContactFields)
+  }), makeZohoEnv(), fetchImpl);
+  expect(caseInsensitiveMediaType.status).toBe(200);
+});
+
+test("Worker rejects every overlong field and meaningful low-quality input", async () => {
+  const worker = await import("../worker/index.mjs");
+  const failIfCalled = async () => {
+    throw new Error("Provider must not be called for invalid submissions.");
+  };
+  const cases = [
+    ["name", "n".repeat(121), "Name is too long."],
+    ["company", "c".repeat(161), "Company or property is too long."],
+    ["email", `${"a".repeat(171)}@example.com`, "Email is too long."],
+    ["phone", "1".repeat(41), "Phone is too long."],
+    ["property_type", "p".repeat(81), "Property type is too long."],
+    ["message", "m".repeat(2001), "Message is too long."]
+  ];
+  for (const [field, value, expectedError] of cases) {
+    const response = await worker.handleContactRequest(makeContactRequest({ ...validContactFields, [field]: value }), makeZohoEnv(), failIfCalled);
+    expect(response.status, field).toBe(400);
+    expect((await response.json()).errors, field).toContain(expectedError);
+  }
+
+  const invalidPhoneAndShortMessage = await worker.handleContactRequest(makeContactRequest({
+    ...validContactFields,
+    email: "",
+    phone: "12-AB",
+    message: "short"
+  }), makeZohoEnv(), failIfCalled);
+  expect(invalidPhoneAndShortMessage.status).toBe(400);
+  expect((await invalidPhoneAndShortMessage.json()).errors).toEqual(expect.arrayContaining([
+    "Enter a valid phone number.",
+    "Message is too short."
+  ]));
+});
+
+test("Worker bounds Zoho endpoints and account paths to server configuration", async () => {
+  const worker = await import("../worker/index.mjs");
+  for (const invalidEnv of [
+    { ...makeZohoEnv(), ZOHO_DATA_CENTER: "https://attacker.example" },
+    { ...makeZohoEnv(), ZOHO_ACCOUNT_ID: "123/messages?to=attacker" }
+  ]) {
+    let fetchCalls = 0;
+    const response = await worker.handleContactRequest(makeContactRequest(), invalidEnv, async () => {
+      fetchCalls += 1;
+      throw new Error("Invalid configuration must not reach a provider.");
+    });
+    expect(response.status).toBe(503);
+    expect(fetchCalls).toBe(0);
+    expect(await response.json()).toEqual({
+      ok: false,
+      message: "We could not send your request right now. Please call 702-357-7027 or email Adria@ProfessionalPoolCare.com."
+    });
+  }
+});
+
+test("Worker fails safely for Zoho authorization and non-JSON responses", async () => {
+  const worker = await import("../worker/index.mjs");
+  const providerCases = [
+    async () => new Response(JSON.stringify({ error: "invalid_client", client_secret: "must-not-leak" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" }
+    }),
+    async () => new Response("<html>upstream proxy error</html>", {
+      status: 502,
+      headers: { "Content-Type": "text/html" }
+    })
+  ];
+  for (const fetchImpl of providerCases) {
+    const response = await worker.handleContactRequest(makeContactRequest(), makeZohoEnv(), fetchImpl);
+    expect(response.status).toBe(503);
+    const body = await response.json();
+    expect(body.message).toContain("We could not send your request right now.");
+    expect(JSON.stringify(body)).not.toMatch(/invalid_client|client_secret|upstream proxy/i);
+  }
+});
+
+test("Worker invalidates a cached Zoho token after an unauthorized send", async () => {
+  const worker = await import("../worker/index.mjs");
+  const originalFetch = globalThis.fetch;
+  let tokenCalls = 0;
+  let sendCalls = 0;
+  globalThis.fetch = async (url) => {
+    if (String(url).endsWith("/oauth/v2/token")) {
+      tokenCalls += 1;
+      return Response.json({ access_token: `token-${tokenCalls}`, expires_in: 3600 });
+    }
+    sendCalls += 1;
+    if (sendCalls === 1) return Response.json({ status: { code: 401 } }, { status: 401 });
+    return Response.json({ status: { code: 200 }, data: { messageId: "retry-success" } });
+  };
+  try {
+    const failed = await worker.handleContactRequest(makeContactRequest(), makeZohoEnv());
+    expect(failed.status).toBe(503);
+    const retried = await worker.handleContactRequest(makeContactRequest(), makeZohoEnv());
+    expect(retried.status).toBe(200);
+    expect(tokenCalls).toBe(2);
+    expect(sendCalls).toBe(2);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("Worker returns accessible HTML fallbacks and security headers on every route", async () => {
+  const worker = await import("../worker/index.mjs");
+  const fallback = await worker.handleContactRequest(new Request("https://professionalpoolcare.com/contact-request", {
+    method: "GET",
+    headers: { Accept: "text/html" }
+  }), makeZohoEnv());
+  expect(fallback.status).toBe(405);
+  expect(fallback.headers.get("content-type")).toContain("text/html");
+  const markup = await fallback.text();
+  expect(markup).toContain('<html lang="en">');
+  expect(markup).toContain("Return to contact form");
+  expect(markup).not.toContain("undefined");
+
+  const assetResponse = await worker.default.fetch(new Request("https://professionalpoolcare.com/index.html"), {
+    ASSETS: { fetch: async () => new Response("asset", { headers: { "Content-Type": "text/plain" } }) }
+  });
+  for (const response of [fallback, assetResponse]) {
+    expect(response.headers.get("content-security-policy")).toContain("frame-ancestors 'none'");
+    expect(response.headers.get("referrer-policy")).toBe("strict-origin-when-cross-origin");
+    expect(response.headers.get("x-content-type-options")).toBe("nosniff");
+    expect(response.headers.get("x-frame-options")).toBe("DENY");
+    expect(response.headers.get("permissions-policy")).toContain("camera=()");
+  }
 });
 
 test("Worker contact endpoint fails safely on Zoho configuration and provider errors", async () => {

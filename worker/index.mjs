@@ -2,6 +2,14 @@ const PPC_CONTACT_EMAIL = "Adria@ProfessionalPoolCare.com";
 const PPC_SENDER_EMAIL = "Adria@ProfessionalPoolCare.com";
 const MAX_BODY_BYTES = 32_000;
 const TOKEN_EXPIRY_SKEW_MS = 60_000;
+const SECURITY_HEADERS = Object.freeze({
+  "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests",
+  "Cross-Origin-Opener-Policy": "same-origin",
+  "Permissions-Policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=()",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "DENY"
+});
 
 const ZOHO_DATA_CENTERS = Object.freeze({
   us: { accountsOrigin: "https://accounts.zoho.com", mailOrigin: "https://mail.zoho.com" },
@@ -38,24 +46,28 @@ const textLimits = {
   message: 2000
 };
 
-const json = (body, status = 200) =>
+const responseHeaders = (headers = {}) => ({ ...SECURITY_HEADERS, ...headers });
+
+const json = (body, status = 200, headers = {}) =>
   new Response(JSON.stringify(body), {
     status,
-    headers: {
+    headers: responseHeaders({
       "Content-Type": "application/json; charset=utf-8",
-      "Cache-Control": "no-store"
-    }
+      "Cache-Control": "no-store",
+      ...headers
+    })
   });
 
-const html = (title, message, status = 200) =>
+const html = (title, message, status = 200, headers = {}) =>
   new Response(
     `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${escapeHtml(title)} | PPC LLC</title><link rel="stylesheet" href="/styles.css"></head><body><main class="section legal-content"><div class="container narrow"><h1>${escapeHtml(title)}</h1><p>${escapeHtml(message)}</p><p><a class="btn btn-primary" href="/contact.html#quote">Return to contact form</a></p></div></main></body></html>`,
     {
       status,
-      headers: {
+      headers: responseHeaders({
         "Content-Type": "text/html; charset=utf-8",
-        "Cache-Control": "no-store"
-      }
+        "Cache-Control": "no-store",
+        ...headers
+      })
     }
   );
 
@@ -65,11 +77,11 @@ const prefersJson = (request) => {
   return accept.includes("application/json") || requestedWith.toLowerCase() === "fetch";
 };
 
-const respond = (request, status, message, details = {}) => {
+const respond = (request, status, message, details = {}, headers = {}) => {
   if (prefersJson(request)) {
-    return json({ ok: status >= 200 && status < 300, message, ...details }, status);
+    return json({ ok: status >= 200 && status < 300, message, ...details }, status, headers);
   }
-  return html(status >= 200 && status < 300 ? "Request Received" : "Request Not Sent", message, status);
+  return html(status >= 200 && status < 300 ? "Request Received" : "Request Not Sent", message, status, headers);
 };
 
 const escapeHtml = (value) =>
@@ -82,12 +94,12 @@ const escapeHtml = (value) =>
   })[character]);
 
 const normalize = (value, maxLength) =>
-  String(value || "")
+  (typeof value === "string" ? value : "")
     .replace(/\s+/g, " ")
     .trim()
-    .slice(0, maxLength);
+    .slice(0, maxLength ?? Infinity);
 
-const getField = (formData, name) => normalize(formData.get(name), textLimits[name] || 200);
+const getField = (formData, name) => normalize(formData.get(name));
 
 const hasConsent = (value) => {
   const normalized = String(value || "").toLowerCase();
@@ -108,14 +120,21 @@ const parseForm = async (request) => {
   }
 
   const contentType = request.headers.get("content-type") || "";
-  if (
-    !contentType.includes("application/x-www-form-urlencoded") &&
-    !contentType.includes("multipart/form-data")
-  ) {
+  const mediaType = contentType.split(";", 1)[0].trim().toLowerCase();
+  if (!["application/x-www-form-urlencoded", "multipart/form-data"].includes(mediaType)) {
     return { error: "Submit the form using the PPC contact page.", status: 415 };
   }
 
-  const formData = await request.formData();
+  const body = await request.arrayBuffer();
+  if (body.byteLength > MAX_BODY_BYTES) {
+    return { error: "The request is too large.", status: 413 };
+  }
+
+  const formData = await new Request(request.url, {
+    method: "POST",
+    headers: { "Content-Type": contentType },
+    body
+  }).formData();
   return { formData };
 };
 
@@ -127,7 +146,7 @@ export const validateContactForm = (formData) => {
     phone: getField(formData, "phone"),
     serviceNeeded: getField(formData, "service_needed"),
     propertyType: getField(formData, "property_type"),
-    message: String(formData.get("message") || "").trim().slice(0, textLimits.message),
+    message: typeof formData.get("message") === "string" ? formData.get("message").trim() : "",
     privacyConsent: hasConsent(formData.get("privacy_consent")),
     website: normalize(formData.get("website"), 200)
   };
@@ -139,13 +158,23 @@ export const validateContactForm = (formData) => {
   }
 
   if (!submission.name) errors.push("Name is required.");
+  if (submission.name.length > textLimits.name) errors.push("Name is too long.");
   if (!submission.company) errors.push("Company or property is required.");
+  if (submission.company.length > textLimits.company) errors.push("Company or property is too long.");
   if (!submission.email && !submission.phone) errors.push("Email or phone is required.");
   if (submission.email && !isValidEmail(submission.email)) errors.push("Enter a valid email address.");
+  if (submission.email.length > textLimits.email) errors.push("Email is too long.");
   if (submission.phone && !isValidPhone(submission.phone)) errors.push("Enter a valid phone number.");
+  if (submission.phone.length > textLimits.phone) errors.push("Phone is too long.");
   if (!APPROVED_SERVICES.has(submission.serviceNeeded)) errors.push("Select a valid service.");
-  if (!submission.message) errors.push("Message is required.");
-  if (submission.message.length < 10) errors.push("Message is too short.");
+  if (submission.propertyType.length > textLimits.property_type) errors.push("Property type is too long.");
+  if (!submission.message) {
+    errors.push("Message is required.");
+  } else if (submission.message.length < 10) {
+    errors.push("Message is too short.");
+  } else if (submission.message.length > textLimits.message) {
+    errors.push("Message is too long.");
+  }
   if (!submission.privacyConsent) errors.push("Privacy consent is required.");
 
   return { submission, errors, spam: false };
@@ -255,7 +284,6 @@ export const sendNotification = async (submission, request, env, fetchImpl = fet
     body: JSON.stringify({
       fromAddress: PPC_SENDER_EMAIL,
       toAddress: PPC_CONTACT_EMAIL,
-      ...(submission.email ? { replyTo: submission.email } : {}),
       subject: `New PPC Website Inquiry — ${subjectLabel}`,
       content: formatHtmlEmail(submission, request),
       mailFormat: "html",
@@ -265,6 +293,9 @@ export const sendNotification = async (submission, request, env, fetchImpl = fet
   const providerPayload = await providerResponse.json().catch(() => null);
   const providerStatus = Number(providerPayload?.status?.code || providerResponse.status);
   if (!providerResponse.ok || providerStatus < 200 || providerStatus >= 300) {
+    if (providerResponse.status === 401 || providerStatus === 401) {
+      cachedZohoAccessToken = undefined;
+    }
     throw Object.assign(new Error("Zoho rejected the email request."), {
       code: "E_ZOHO_SEND"
     });
@@ -275,7 +306,7 @@ export const sendNotification = async (submission, request, env, fetchImpl = fet
 
 export const handleContactRequest = async (request, env, fetchImpl = fetch) => {
   if (request.method !== "POST") {
-    return respond(request, 405, "Use the contact form to submit a service request.");
+    return respond(request, 405, "Use the contact form to submit a service request.", {}, { Allow: "POST" });
   }
 
   let parsed;
@@ -323,6 +354,13 @@ export default {
     if (url.pathname === "/contact-request") {
       return handleContactRequest(request, env);
     }
-    return env.ASSETS.fetch(request);
+    const assetResponse = await env.ASSETS.fetch(request);
+    const headers = new Headers(assetResponse.headers);
+    for (const [name, value] of Object.entries(SECURITY_HEADERS)) headers.set(name, value);
+    return new Response(assetResponse.body, {
+      status: assetResponse.status,
+      statusText: assetResponse.statusText,
+      headers
+    });
   }
 };

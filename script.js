@@ -38,7 +38,7 @@ document.addEventListener("keydown", (event) => {
 });
 
 window.addEventListener("resize", () => {
-  if (window.innerWidth > 1040) closeMenu();
+  if (window.innerWidth > 900) closeMenu();
 });
 
 const clearContactError = () => {
@@ -49,12 +49,42 @@ const clearContactError = () => {
 
 emailInput?.addEventListener("input", clearContactError);
 phoneInput?.addEventListener("input", clearContactError);
+quoteForm?.addEventListener("input", (event) => {
+  event.target.removeAttribute?.("aria-invalid");
+});
+quoteForm?.addEventListener("change", (event) => {
+  event.target.removeAttribute?.("aria-invalid");
+});
 
 const setFormStatus = (message, type) => {
   if (!formStatus) return;
   formStatus.className = "form-status";
   formStatus.textContent = message;
   if (type) formStatus.classList.add(type);
+};
+
+const fieldForServerError = (error) => {
+  if (/^Name /.test(error)) return "name";
+  if (/^Company or property /.test(error)) return "company";
+  if (/^Email /.test(error) || /valid email/.test(error)) return "email";
+  if (/^Phone /.test(error) || /valid phone/.test(error)) return "phone";
+  if (/valid service/.test(error)) return "service_needed";
+  if (/^Property type /.test(error)) return "property_type";
+  if (/^Message /.test(error)) return "message";
+  if (/Privacy consent/.test(error)) return "privacy_consent";
+  return null;
+};
+
+const applyServerErrors = (errors) => {
+  if (!Array.isArray(errors)) return false;
+  const fields = errors
+    .map(fieldForServerError)
+    .filter(Boolean)
+    .map((name) => quoteForm.querySelector(`[name="${name}"]`))
+    .filter(Boolean);
+  for (const field of fields) field.setAttribute("aria-invalid", "true");
+  fields[0]?.focus();
+  return fields.length > 0;
 };
 
 quoteForm?.addEventListener("submit", async (event) => {
@@ -107,14 +137,21 @@ quoteForm?.addEventListener("submit", async (event) => {
         "X-Requested-With": "fetch"
       }
     });
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok || result.ok === false) {
-      throw new Error(result.message || "We could not send your request right now. Please call or email PPC directly.");
+    const result = await response.json().catch(() => null);
+    if (!response.ok || result?.ok !== true) {
+      const message = typeof result?.message === "string"
+        ? result.message
+        : "We could not send your request right now. Please call 702-357-7027 or email Adria@ProfessionalPoolCare.com.";
+      setFormStatus(message, "error");
+      if (!applyServerErrors(result?.errors)) formStatus.focus();
+      return;
     }
     quoteForm.reset();
-    setFormStatus(result.message || "Thank you. PPC received your request and will follow up using the contact information provided.", "success");
-  } catch (error) {
-    setFormStatus(error.message, "error");
+    setFormStatus(typeof result?.message === "string" ? result.message : "Thank you. PPC received your request and will follow up using the contact information provided.", "success");
+    formStatus.focus();
+  } catch {
+    setFormStatus("We could not send your request right now. Please call 702-357-7027 or email Adria@ProfessionalPoolCare.com.", "error");
+    formStatus.focus();
   } finally {
     isSubmitting = false;
     if (submitButton) {

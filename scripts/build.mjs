@@ -14,7 +14,7 @@ const publicFiles = [
   "script.js",
   "robots.txt",
   "sitemap.xml",
-  ".nojekyll"
+  "_headers"
 ];
 
 const publicImages = [

@@ -70,7 +70,8 @@ Repository-side implementation is complete:
 - Uses Zoho Mail's HTTPS API from the Worker, so it does not require raw SMTP, Cloudflare Email Sending, or Workers Paid.
 - Refreshes short-lived OAuth access tokens server-side from a least-privilege `ZohoMail.messages.CREATE` grant.
 - Keeps the sender and recipient fixed server-side as `Adria@ProfessionalPoolCare.com`.
-- Uses the visitor's server-validated email as the per-message Reply-To when an email is provided; phone-only requests omit Reply-To.
+- Validates the visitor's email and includes it as an escaped, clickable `mailto:` link in the notification body when provided.
+- Does not send an undocumented per-message Reply-To field or change the Zoho mailbox's account-level Reply-To setting.
 
 Required Worker secrets:
 
@@ -91,7 +92,9 @@ One-time production setup:
 4. From an authenticated terminal, run `npx wrangler secret put` once for each required secret name above. If the mailbox is not in the US data center, also set `ZOHO_DATA_CENTER` as a Worker variable in Cloudflare Workers & Pages > ppclv > Settings > Variables and Secrets.
 5. Deploy with `npm run build && npx wrangler deploy`, submit one real contact request, and confirm it appears in the Zoho mailbox and its existing Gmail forwarding destination. If terminal authentication is unavailable, push the verified commit to `origin/main`; the configured Cloudflare Git deployment will build and deploy from `main` without an interactive Wrangler login.
 
-The implementation sends escaped, readable HTML and includes the validated visitor email as both a mail link and the per-message Reply-To when available.
+The implementation sends escaped, readable HTML and includes the validated visitor email as a safe mail link when available. Zoho's official send-message API does not document a per-message Reply-To field, so the Worker deliberately does not depend on one.
+
+The production delivery check remains external because the four secret values are not stored in this repository. After deployment, submit one real request using an address the tester can access, confirm the message arrives at `Adria@ProfessionalPoolCare.com` and the existing Gmail forwarding destination, and confirm the visitor address is readable and clickable in the message body. Do not print, log, or copy secret values into test output.
 
 ## SEO And Domain
 
@@ -144,6 +147,8 @@ The public Essential site does not ship standalone Industries, Our Work, Gallery
 
 The Cloudflare Worker serves the static asset directory `./dist` and handles only the form route separately.
 
+The site uses the same conservative security-header set for both static assets and Worker-generated form responses: `_headers` covers Cloudflare static asset delivery, while the Worker applies the matching headers to its own responses and proxied assets. The policy includes a self-restricted CSP, clickjacking protection, MIME sniffing protection, a strict-origin referrer policy, and a limited Permissions Policy. HSTS is intentionally not guessed in repository code; enable or confirm it at the Cloudflare zone only after HTTPS behavior for the apex and `www` host has been verified.
+
 Local checks:
 
 ```sh
@@ -156,7 +161,7 @@ git diff --check
 npx wrangler deploy --dry-run
 ```
 
-The build uses an explicit allowlist for the four marketing pages, two utility pages, shared assets, crawler files, and `.nojekyll`. Source archives, tests, reports, internal screenshots, and project files are not published.
+The build uses an explicit allowlist for the four marketing pages, two utility pages, shared assets, crawler files, and the Cloudflare `_headers` file. Source archives, tests, reports, internal screenshots, and project files are not published.
 
 ## FINAL PPC LAUNCH CHECKLIST
 
@@ -170,12 +175,33 @@ PHOTOS:
 
 External launch actions:
 
-- In the Cloudflare dashboard, confirm the Worker lists all four required Zoho secret names. Secret values are intentionally not readable after creation.
+- In the Cloudflare dashboard, confirm the Worker lists exactly the four required Zoho secret names: `ZOHO_CLIENT_ID`, `ZOHO_CLIENT_SECRET`, `ZOHO_REFRESH_TOKEN`, and `ZOHO_ACCOUNT_ID`. Secret values are intentionally not readable after creation.
 - Confirm the Cloudflare Git deployment from `main` completes after the final push.
-- Verify Adria receives a real test submission.
+- Submit one real contact request and verify Adria receives it, the existing Gmail forwarding receives it, and the validated visitor email appears as a safe mail link in the message body.
 - Remove or disable the PPC Preview Access application or policy in Cloudflare Access.
 - Confirm anonymous visitors can load the public site.
 - Verify `https://professionalpoolcare.com`.
 - Verify `https://www.professionalpoolcare.com` redirects to `https://professionalpoolcare.com`.
 - Verify HTTPS.
+- After both production hosts are verified on HTTPS, confirm the intended Cloudflare-zone HSTS setting; do not infer it from local Worker tests.
 - Submit the sitemap/search-console later if desired.
+
+## Launch-Readiness Review
+
+### A. MUST FIX BEFORE PUBLIC LAUNCH
+
+- Replace the representative photography with approved commercial PPC/customer/property photos using `images/README.md`, including the paired hero derivatives.
+- Configure and confirm the four exact Worker secrets, deploy the final `main` build, and complete the real Zoho delivery/forwarding check described above.
+- Remove the Cloudflare Access preview restriction, then verify anonymous apex-domain access, the `www` redirect, and HTTPS from outside the authenticated preview session.
+
+### B. OPTIONAL POLISH
+
+- Submit `sitemap.xml` to the preferred search-console account after public access is enabled.
+- Review the final image crops on physical iOS and Android devices after approved photography is installed.
+
+### C. FUTURE IMPROVEMENTS
+
+- Add privacy-conscious analytics and conversion tracking only after vendor and consent decisions are approved.
+- Add testimonials, customer/property logos, and case studies only with written permission.
+- Consider service-area landing pages, structured inquiry routing, and a lightweight content-maintenance workflow after launch.
+- Add independent uptime and contact-form delivery monitoring after the production delivery path is established.
