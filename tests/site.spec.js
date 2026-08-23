@@ -362,22 +362,19 @@ test("mobile header is centered, stable, and keeps Request Service inside the me
     const header = page.locator("[data-site-header]");
     const initial = await header.boundingBox();
     const logo = await page.locator(".logo-link").boundingBox();
-    const logoImage = await page.locator(".site-logo").boundingBox();
-    const naturalLogoSize = await page.locator(".site-logo").evaluate((image) => ({ width: image.naturalWidth, height: image.naturalHeight }));
-    const expectedHeaderHeight = width <= 430 ? 67 : 71;
-    const expectedLogoSize = width <= 430
-      ? { width: 264.06, height: 107.58 }
-      : { width: 280.36, height: 114.1 };
-    expect(initial.height).toBeCloseTo(expectedHeaderHeight, 0);
+    const logoArtwork = await page.locator(".logo-artwork").boundingBox();
+    const brandName = page.locator(".brand-name");
+    const brandNameBox = await brandName.boundingBox();
+    expect(initial.height).toBeCloseTo(97, 0);
     expect(Math.abs((logo.x + logo.width / 2) - width / 2)).toBeLessThanOrEqual(1);
-    expect(Math.abs((logoImage.x + logoImage.width / 2) - width / 2)).toBeLessThanOrEqual(1);
-    expect(logoImage.width).toBeCloseTo(expectedLogoSize.width, 0);
-    expect(logoImage.height).toBeCloseTo(expectedLogoSize.height, 0);
-    expect(logoImage.width).toBeGreaterThanOrEqual(width <= 430 ? 260 : 275);
+    expect(Math.abs((logoArtwork.x + logoArtwork.width / 2) - width / 2)).toBeLessThanOrEqual(1);
+    expect(logoArtwork.width).toBeCloseTo(164, 0);
+    expect(logoArtwork.height).toBeCloseTo(72, 0);
+    await expect(brandName).toHaveText("Professional Pool Care LLC");
+    expect(brandNameBox.y).toBeGreaterThanOrEqual(logoArtwork.y + logoArtwork.height);
+    expect(await brandName.evaluate((element) => getComputedStyle(element).whiteSpace)).toBe("nowrap");
     expect(logo.y).toBeGreaterThanOrEqual(initial.y);
     expect(logo.y + logo.height).toBeLessThanOrEqual(initial.y + initial.height);
-    expect(naturalLogoSize.width).toBeGreaterThan(logoImage.width);
-    expect(naturalLogoSize.height).toBeGreaterThan(logoImage.height);
     await expect(page.locator(".header-cta")).toBeHidden();
     const toggle = page.getByRole("button", { name: "Menu" });
     const toggleBox = await toggle.boundingBox();
@@ -426,9 +423,12 @@ test("desktop header remains stable during scroll", async ({ page }) => {
     await waitForPage(page, "/index.html");
     const header = page.locator("[data-site-header]");
     const initial = await header.boundingBox();
-    const logoImage = await page.locator(".site-logo").boundingBox();
-    expect(logoImage.width).toBeGreaterThanOrEqual(220);
-    expect(logoImage.height).toBeLessThanOrEqual(initial.height * 1.3);
+    const logoArtwork = await page.locator(".logo-artwork").boundingBox();
+    const brandNameBox = await page.locator(".brand-name").boundingBox();
+    expect(initial.height).toBeCloseTo(87, 0);
+    expect(logoArtwork.width).toBeCloseTo(132, 0);
+    expect(logoArtwork.height).toBeCloseTo(58, 0);
+    expect(brandNameBox.y).toBeGreaterThanOrEqual(logoArtwork.y + logoArtwork.height);
     await page.evaluate(() => window.scrollTo(0, 600));
     const scrolled = await header.boundingBox();
     expect(Math.abs(scrolled.height - initial.height)).toBeLessThanOrEqual(1);

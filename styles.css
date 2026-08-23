@@ -168,7 +168,7 @@ p { margin-bottom: 16px; }
   position: sticky;
   z-index: 100;
   top: 0;
-  min-height: 76px;
+  min-height: 86px;
   border-bottom: 1px solid rgba(7, 44, 72, 0.12);
   background: rgba(255, 255, 255, 0.98);
   box-shadow: 0 4px 18px rgba(4, 26, 42, 0.05);
@@ -176,7 +176,7 @@ p { margin-bottom: 16px; }
 
 .masthead-inner {
   display: grid;
-  min-height: 76px;
+  min-height: 86px;
   grid-template-columns: 158px minmax(0, 1fr) auto;
   gap: 28px;
   align-items: center;
@@ -185,18 +185,32 @@ p { margin-bottom: 16px; }
 .logo-link {
   display: flex;
   width: 158px;
-  height: 64px;
+  min-height: 78px;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  color: var(--navy-900);
+}
+
+.logo-artwork {
+  display: block;
+  width: 132px;
+  height: 58px;
   overflow: hidden;
 }
 
 .site-logo {
   width: 100%;
-  height: 100%;
-  object-fit: contain;
-  transform: scale(1.45);
-  transform-origin: center;
+  height: auto;
+  transform: translateY(-14px);
+}
+
+.brand-name {
+  margin-top: 1px;
+  font-size: 0.65625rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 .primary-nav {
@@ -527,11 +541,13 @@ p { margin-bottom: 16px; }
 }
 
 @media (max-width: 900px) {
-  html { scroll-padding-top: 80px; }
-  .masthead-inner { position: relative; display: flex; min-height: 70px; justify-content: flex-end; }
-  .brand-masthead { min-height: 70px; }
-  .logo-link { position: absolute; left: 50%; width: 172px; height: 70px; transform: translateX(-50%); }
-  .site-logo { transform: scale(1.63); }
+  html { scroll-padding-top: 102px; }
+  .masthead-inner { position: relative; display: flex; min-height: 96px; justify-content: flex-end; }
+  .brand-masthead { min-height: 96px; }
+  .logo-link { position: absolute; left: 50%; width: 174px; min-height: 94px; transform: translateX(-50%); }
+  .logo-artwork { width: 164px; height: 72px; }
+  .site-logo { transform: translateY(-18px); }
+  .brand-name { font-size: 0.6875rem; }
   .menu-toggle { display: inline-flex; min-width: 54px; min-height: 44px; align-items: center; justify-content: center; padding: 8px 5px; border: 0; color: var(--navy-900); background: transparent; font-size: 0.82rem; font-weight: 800; cursor: pointer; }
   .header-cta { display: none; }
   .primary-nav { position: absolute; top: calc(100% + 1px); left: 50%; display: none; width: 100vw; grid-template-columns: 1fr 1fr; gap: 4px; padding: 14px max(24px, calc((100vw - var(--container)) / 2)) 18px; border-bottom: 1px solid var(--border); background: rgba(255, 255, 255, 0.995); box-shadow: 0 18px 32px rgba(4, 26, 42, 0.14); transform: translateX(-50%); }
@@ -583,15 +599,13 @@ p { margin-bottom: 16px; }
 
 @media (max-width: 560px) {
   :root { --section-space: clamp(54px, 14vw, 70px); }
-  html { scroll-padding-top: 78px; }
+  html { scroll-padding-top: 102px; }
   body { line-height: 1.6; }
   .container { width: min(var(--container), calc(100% - 30px)); }
   h1 { max-width: 18ch; font-size: clamp(2.15rem, 10.2vw, 2.85rem); }
   h2 { font-size: clamp(1.7rem, 8vw, 2.25rem); }
   .brand-masthead,
-  .masthead-inner { min-height: 66px; }
-  .logo-link { width: 162px; height: 66px; }
-  .site-logo { transform: scale(1.63); }
+  .masthead-inner { min-height: 96px; }
   .primary-nav { grid-template-columns: 1fr; padding: 12px 15px 16px; }
   .primary-nav a { min-height: 47px; }
   .mobile-menu-cta { grid-column: auto; }
