@@ -116,14 +116,16 @@ No active FAQPage schema, industry-specific landing-page architecture, expanded 
 
 ## Photography
 
-The current site uses representative commercial photography. It does not identify the photographs as PPC projects and does not pair them with real customer names.
+The current site uses representative commercial photography. The homepage property showcase stages four PPC-served property names pending final written marketing-use approval, but its current images are temporary placeholders and are not depictions of the named properties or PPC projects.
 
-The only remaining normal content task is replacing representative photography with approved PPC/customer photos. See `images/README.md` for the placement-by-placement replacement map.
+The only remaining normal content task is replacing representative photography with approved PPC/customer photos and confirming final marketing-use approval for the staged property names. See `images/README.md` for the placement-by-placement replacement map and dedicated homepage property-photo targets.
 
 Customer/property showcase rules:
 
 - Use a real customer or property name only with written approval.
 - Use website/customer-provided photos only with permission.
+- Do not download or reuse property website or third-party photography without documented permission or a clearly permissive license.
+- The four staged homepage property names and their future real photos remain pending final written marketing-use approval; restore neutral labels if naming approval is withheld.
 - If naming permission is unavailable, use neutral property-type labels.
 - Do not imply PPC owns customer properties.
 - Do not imply representative stock photos are PPC customers.

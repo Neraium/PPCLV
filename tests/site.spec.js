@@ -106,9 +106,18 @@ test("homepage retains the required commercial journey", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Commercial Pool & Spa Service");
   await expect(page.getByRole("link", { name: "Request Service" }).first()).toBeVisible();
   await expect(page.getByRole("link", { name: "View Services" }).first()).toHaveAttribute("href", "services.html");
-  await expect(page.getByRole("heading", { name: "Properties We Serve" })).toBeVisible();
+  const properties = page.locator(".property-showcase");
+  await expect(properties.locator(".eyebrow")).toHaveText("PROPERTIES WE SERVE");
+  await expect(properties.getByRole("heading", { name: "Trusted across Las Vegas properties." })).toBeVisible();
+  await expect(properties.locator(".property-showcase-intro > p")).toHaveText("PPC supports commercial pools and spas at major Las Vegas resorts and hospitality properties throughout the Greater Las Vegas Area.");
   await expect(page.locator(".property-collage figure")).toHaveCount(4);
-  await expect(page.locator(".property-collage figcaption")).toHaveText(["Apartment Community", "Commercial Spa", "Municipal Facility", "Commercial Facility"]);
+  await expect(page.locator(".property-collage figcaption")).toHaveText(["Golden Nugget", "Red Rock Casino Resort & Spa", "Station Casinos", "Palms Casino Resort"]);
+  expect(await page.locator(".property-collage img").evaluateAll((images) => images.map((image) => image.getAttribute("src")))).toEqual([
+    "images/apartment-community-pool-deck.jpg",
+    "images/commercial-hotel-spa.jpg",
+    "images/municipal-lap-pool-lanes.jpg",
+    "images/commercial-equipment-room-service.jpg"
+  ]);
 });
 
 test("homepage imagery is commercial, lazy below the hero, and not duplicated", async ({ page }) => {
