@@ -127,16 +127,17 @@ test("homepage imagery is commercial, lazy below the hero, and not duplicated", 
   expect(altText.every((alt) => /commercial|resort|apartment|spa|municipal|aquatic|pool|mechanical/i.test(alt))).toBeTruthy();
 });
 
-test("services are organized into the eight approved offerings with one scope note", async ({ page }) => {
+test("services are organized into the nine approved offerings with one scope note", async ({ page }) => {
   await waitForPage(page, "/services.html");
   await expect(page.locator(".service-group")).toHaveCount(3);
-  await expect(page.locator(".service-items section")).toHaveCount(8);
+  await expect(page.locator(".service-items section")).toHaveCount(9);
   await expect(page.locator(".service-items h3")).toHaveText([
     "Commercial Pool Maintenance",
     "Commercial Spa Maintenance",
     "Equipment Repair & Troubleshooting",
     "Chemical Feed & Automation Support",
     "Acid Washing & Surface Restoration",
+    "Pool Deck Cleaning",
     "Emergency Service & Bio Cleanup",
     "Certified Pool Operator (CPO) Services",
     "Inspection-Readiness & Compliance Support"
@@ -147,8 +148,14 @@ test("services are organized into the eight approved offerings with one scope no
 
 test("contact form is simple, accessible, and posts to the Worker endpoint", async ({ page }) => {
   let requestBody = "";
+  let submittedService = "";
   await page.route("**/contact-request", async (route) => {
-    requestBody = route.request().postData() || "";
+    const request = route.request();
+    requestBody = request.postData() || "";
+    const submittedForm = await new Response(request.postDataBuffer(), {
+      headers: { "Content-Type": request.headers()["content-type"] }
+    }).formData();
+    submittedService = String(submittedForm.get("service_needed") || "");
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -176,6 +183,7 @@ test("contact form is simple, accessible, and posts to the Worker endpoint", asy
     "Equipment Repair & Troubleshooting",
     "Chemical Feed & Automation Support",
     "Acid Washing & Surface Restoration",
+    "Pool Deck Cleaning",
     "Emergency Service & Bio Cleanup",
     "Certified Pool Operator (CPO) Services",
     "Inspection-Readiness & Compliance Support"
@@ -184,7 +192,7 @@ test("contact form is simple, accessible, and posts to the Worker endpoint", asy
   await expect(form.locator('[name="name"]')).toBeFocused();
   await form.locator('[name="name"]').fill("Test User");
   await form.locator('[name="company"]').fill("Test Property");
-  await form.locator('[name="service_needed"]').selectOption({ index: 1 });
+  await form.locator('[name="service_needed"]').selectOption("Pool Deck Cleaning");
   await form.locator('[name="message"]').fill("Routine commercial service request.");
   await form.locator('[name="privacy_consent"]').check();
   await page.getByRole("button", { name: "Request Service" }).last().click();
@@ -195,6 +203,7 @@ test("contact form is simple, accessible, and posts to the Worker endpoint", asy
   await expect(page.getByRole("status")).toHaveText("Thank you. PPC received your request and will follow up using the contact information provided.");
   expect(requestBody).toContain("Test User");
   expect(requestBody).toContain("Test Property");
+  expect(submittedService).toBe("Pool Deck Cleaning");
   expect(requestBody).not.toContain("Adria%40ProfessionalPoolCare.com");
 });
 
@@ -514,6 +523,18 @@ test("Worker contact endpoint delivers through Zoho OAuth API to Adria only", as
   expect(message.content).toContain("&lt;script&gt;alert(&#39;unsafe&#39;)&lt;/script&gt;");
   expect(message.content).not.toContain("<script>");
   expect(sendCall.options.body).not.toContain("attacker@example.com");
+});
+
+test("Worker accepts Pool Deck Cleaning as an approved service", async () => {
+  const worker = await import("../worker/index.mjs");
+  const { calls, fetchImpl } = makeZohoFetch();
+  const success = await worker.handleContactRequest(makeContactRequest({
+    ...validContactFields,
+    service_needed: "Pool Deck Cleaning"
+  }), makeZohoEnv(), fetchImpl);
+  expect(success.status).toBe(200);
+  expect(calls).toHaveLength(2);
+  expect(JSON.parse(calls[1].options.body).content).toContain("Pool Deck Cleaning");
 });
 
 test("Worker omits unsupported Reply-To for every valid submission", async () => {

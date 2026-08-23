@@ -13,7 +13,7 @@ Cloudflare should redirect `https://www.professionalpoolcare.com` to `https://pr
 The only promoted marketing pages are:
 
 - `index.html`: homepage with commercial positioning, concise service overview, credibility content, Properties We Serve, and service request call to action.
-- `services.html`: PPC's eight approved service categories organized into Maintenance, Equipment & Restoration, and Urgent & Operational Support.
+- `services.html`: PPC's nine approved service categories organized into Maintenance, Equipment & Restoration, and Urgent & Operational Support.
 - `about.html`: company identity, Las Vegas history, commercial focus, and property-team communication.
 - `contact.html`: accessible commercial service-request form.
 
@@ -45,6 +45,7 @@ The Services page includes exactly these approved commercial services:
 - Equipment Repair & Troubleshooting.
 - Chemical Feed & Automation Support.
 - Acid Washing & Surface Restoration.
+- Pool Deck Cleaning.
 - Emergency Service & Bio Cleanup.
 - Certified Pool Operator (CPO) Services.
 - Inspection-Readiness & Compliance Support.

@@ -31,6 +31,7 @@ const APPROVED_SERVICES = new Set([
   "Equipment Repair & Troubleshooting",
   "Chemical Feed & Automation Support",
   "Acid Washing & Surface Restoration",
+  "Pool Deck Cleaning",
   "Emergency Service & Bio Cleanup",
   "Certified Pool Operator (CPO) Services",
   "Inspection-Readiness & Compliance Support"
