@@ -6,6 +6,7 @@ const root = new URL("../", import.meta.url);
 const publicFiles = [
   "index.html",
   "services.html",
+  "properties.html",
   "about.html",
   "contact.html",
   "privacy.html",
@@ -29,6 +30,16 @@ const publicImages = [
   "commercial-water-testing.jpg"
 ];
 
+const temporaryPropertyImages = [
+  "temp-aliante.webp",
+  "temp-golden-nugget.webp",
+  "temp-palms.webp",
+  "temp-vistas.webp",
+  "temp-sams-town.webp",
+  "temp-durango.webp",
+  "temp-red-rock.webp"
+];
+
 await rm(output, { recursive: true, force: true });
 await mkdir(output, { recursive: true });
 
@@ -39,5 +50,12 @@ for (const file of publicFiles) {
 await mkdir(new URL("images/", output));
 for (const image of publicImages) {
   await cp(new URL(`images/${image}`, root), new URL(`images/${image}`, output));
+}
+await mkdir(new URL("images/temp-property-reference/", output));
+for (const image of temporaryPropertyImages) {
+  await cp(
+    new URL(`images/temp-property-reference/${image}`, root),
+    new URL(`images/temp-property-reference/${image}`, output)
+  );
 }
 console.log("Built the Essential public site in dist/.");

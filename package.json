@@ -5,7 +5,9 @@
     "build": "node scripts/build.mjs",
     "test": "playwright test tests/site.spec.js",
     "test:e2e": "playwright test tests/site.spec.js",
-    "test:screenshots": "playwright test tests/visual.spec.js"
+    "test:screenshots": "playwright test tests/visual.spec.js",
+    "test:production-ready": "node scripts/check-production-readiness.mjs",
+    "deploy": "npm run build && npm run test:production-ready && npx wrangler deploy"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",

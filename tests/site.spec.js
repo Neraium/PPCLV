@@ -1,9 +1,10 @@
 const { test, expect } = require("@playwright/test");
+const { spawnSync } = require("node:child_process");
 const { readdir, readFile } = require("node:fs/promises");
 const { join } = require("node:path");
 
 const productionOrigin = "https://professionalpoolcare.com";
-const corePages = ["/index.html", "/services.html", "/about.html", "/contact.html"];
+const corePages = ["/index.html", "/services.html", "/properties.html", "/about.html", "/contact.html"];
 const utilityPages = ["/privacy.html", "/terms.html"];
 const publicPages = [...corePages, ...utilityPages];
 const requiredWidths = [320, 375, 390, 430, 768, 1024, 1280, 1440, 1920];
@@ -71,20 +72,21 @@ async function waitForPage(page, path) {
   await page.evaluate(() => document.fonts.ready);
 }
 
-test("Essential navigation promotes exactly four marketing pages", async ({ page }) => {
+test("Essential navigation promotes exactly five marketing pages", async ({ page }) => {
   for (const path of publicPages) {
     await waitForPage(page, path);
     const links = await page.locator("#primary-menu a:not(.mobile-menu-cta)").evaluateAll((anchors) => anchors.map((anchor) => ({ text: anchor.textContent.trim(), href: anchor.getAttribute("href") })));
     expect(links).toEqual([
       { text: "Home", href: "index.html" },
       { text: "Services", href: "services.html" },
+      { text: "Properties", href: "properties.html" },
       { text: "About", href: "about.html" },
       { text: "Contact", href: "contact.html" }
     ]);
   }
 });
 
-test("footer is compact and promotes only the four-page journey", async ({ page }) => {
+test("footer is compact and promotes the five-page journey", async ({ page }) => {
   for (const path of publicPages) {
     await waitForPage(page, path);
     const footer = page.locator("footer");
@@ -96,7 +98,7 @@ test("footer is compact and promotes only the four-page journey", async ({ page 
     await expect(footer.getByRole("link", { name: "Adria@ProfessionalPoolCare.com" })).toHaveAttribute("href", "mailto:Adria@ProfessionalPoolCare.com");
     await expect(footer.getByText("Monday-Friday, 8:00 AM-4:00 PM", { exact: true })).toBeVisible();
     const links = await footer.getByRole("navigation", { name: "Footer navigation" }).locator("a").allTextContents();
-    expect(links.map((text) => text.trim())).toEqual(["Home", "Services", "About", "Contact"]);
+    expect(links.map((text) => text.trim())).toEqual(["Home", "Services", "Properties", "About", "Contact"]);
     await expect(footer.getByRole("link", { name: "Request Service" })).toHaveCount(1);
   }
 });
@@ -109,15 +111,71 @@ test("homepage retains the required commercial journey", async ({ page }) => {
   const properties = page.locator(".property-showcase");
   await expect(properties.locator(".eyebrow")).toHaveText("PROPERTIES WE SERVE");
   await expect(properties.getByRole("heading", { name: "Trusted across Las Vegas properties." })).toBeVisible();
-  await expect(properties.locator(".property-showcase-intro > p")).toHaveText("PPC supports commercial pools and spas at major Las Vegas resorts and hospitality properties throughout the Greater Las Vegas Area.");
-  await expect(page.locator(".property-collage figure")).toHaveCount(4);
-  await expect(page.locator(".property-collage figcaption")).toHaveText(["Golden Nugget", "Red Rock Casino Resort & Spa", "Station Casinos", "Palms Casino Resort"]);
-  expect(await page.locator(".property-collage img").evaluateAll((images) => images.map((image) => image.getAttribute("src")))).toEqual([
-    "images/apartment-community-pool-deck.jpg",
-    "images/commercial-hotel-spa.jpg",
-    "images/municipal-lap-pool-lanes.jpg",
-    "images/commercial-equipment-room-service.jpg"
+  await expect(properties.locator(".property-showcase-intro > p")).toHaveText("PPC supports commercial pools and spas across a growing portfolio of resorts, hospitality properties, communities, and aquatic facilities throughout the Greater Las Vegas Area.");
+  await expect(properties.locator(".property-preview-card")).toHaveCount(4);
+  await expect(properties.locator("figcaption")).toHaveText([
+    "Golden Nugget Las Vegas Hotel & Casino",
+    "Palms Casino Resort",
+    "Red Rock Casino Resort and Spa",
+    "Durango Casino & Resort"
   ]);
+  expect(await properties.locator("img").evaluateAll((images) => images.map((image) => image.getAttribute("src")))).toEqual([
+    "images/temp-property-reference/temp-golden-nugget.webp",
+    "images/temp-property-reference/temp-palms.webp",
+    "images/temp-property-reference/temp-red-rock.webp",
+    "images/temp-property-reference/temp-durango.webp"
+  ]);
+  await expect(properties.getByRole("link", { name: "View Properties We Serve" })).toHaveAttribute("href", "properties.html");
+  await expect(properties).not.toContainText("Station Casinos");
+});
+
+test("Properties page presents the exact seven featured properties and broader portfolio", async ({ page }) => {
+  await waitForPage(page, "/properties.html");
+  await expect(page.locator("h1")).toHaveText("Commercial pool and spa service across Las Vegas.");
+  await expect(page.locator(".properties-page-hero .lead")).toHaveText("PPC supports a broad portfolio of commercial properties across the Greater Las Vegas Area, including major resorts, hospitality properties, communities, and aquatic facilities.");
+  await expect(page.getByRole("heading", { level: 2, name: "Featured Properties" })).toBeVisible();
+  const cards = page.locator(".featured-property-card");
+  await expect(cards).toHaveCount(7);
+  await expect(cards.locator("figcaption")).toHaveText([
+    "Aliante Casino Hotel Spa",
+    "Golden Nugget Las Vegas Hotel & Casino",
+    "Palms Casino Resort",
+    "The Vistas Pool at The Vistas Community Center",
+    "Sam's Town Hotel & Gambling Hall",
+    "Durango Casino & Resort",
+    "Red Rock Casino Resort and Spa"
+  ]);
+  expect(await cards.locator("img").evaluateAll((images) => images.map((image) => image.getAttribute("src")))).toEqual([
+    "images/temp-property-reference/temp-aliante.webp",
+    "images/temp-property-reference/temp-golden-nugget.webp",
+    "images/temp-property-reference/temp-palms.webp",
+    "images/temp-property-reference/temp-vistas.webp",
+    "images/temp-property-reference/temp-sams-town.webp",
+    "images/temp-property-reference/temp-durango.webp",
+    "images/temp-property-reference/temp-red-rock.webp"
+  ]);
+  await expect(page.getByRole("heading", { level: 2, name: "Additional Properties We Serve" })).toBeVisible();
+  await expect(page.locator(".additional-properties p:last-child")).toHaveText("PPC supports additional commercial pools, spas, and aquatic facilities throughout the Greater Las Vegas Area.");
+  await expect(page.locator("main img")).toHaveCount(7);
+  expect(await page.locator("main img").evaluateAll((images) => images.every((image) => image.alt.trim() && image.naturalWidth === 1200 && image.naturalHeight === 675))).toBeTruthy();
+});
+
+test("property cards retain a cohesive responsive grid and unclipped names", async ({ page }) => {
+  const cases = [
+    { width: 390, columns: 1 },
+    { width: 768, columns: 2 },
+    { width: 1440, columns: 3 }
+  ];
+  for (const { width, columns } of cases) {
+    await page.setViewportSize({ width, height: 1000 });
+    await waitForPage(page, "/properties.html");
+    const cards = page.locator(".featured-property-card");
+    const firstRowY = (await cards.nth(0).boundingBox()).y;
+    const firstRowCount = (await cards.evaluateAll((elements, y) => elements.filter((element) => Math.abs(element.getBoundingClientRect().y - y) < 2).length, firstRowY));
+    expect(firstRowCount).toBe(columns);
+    expect(await cards.locator("img").evaluateAll((images) => images.every((image) => Math.abs(image.getBoundingClientRect().width / image.getBoundingClientRect().height - 16 / 9) < 0.02))).toBeTruthy();
+    expect(await cards.locator("figcaption").evaluateAll((captions) => captions.every((caption) => caption.scrollHeight <= caption.clientHeight && caption.scrollWidth <= caption.clientWidth))).toBeTruthy();
+  }
 });
 
 test("homepage imagery is commercial, lazy below the hero, and not duplicated", async ({ page }) => {
@@ -297,9 +355,12 @@ test("core pages have exact unique SEO titles and descriptions", async ({ page }
   const expectedTitles = new Map([
     ["/index.html", "PPC LLC | Commercial Pool & Spa Service in Las Vegas"],
     ["/services.html", "Commercial Pool & Spa Services | PPC LLC"],
+    ["/properties.html", "Properties We Serve | PPC LLC"],
     ["/about.html", "About PPC LLC | Professional Pool Care"],
     ["/contact.html", "Contact PPC LLC | Request Commercial Pool Service"]
   ]);
+  const expectedPropertiesDescription = "Explore featured Las Vegas resorts, communities, and aquatic facilities served by Professional Pool Care LLC across the Greater Las Vegas Area.";
+  const expectedPropertiesOgDescription = "Commercial pool and spa service for a broad portfolio of Las Vegas resorts, hospitality properties, communities, and aquatic facilities.";
   const descriptions = [];
   for (const path of corePages) {
     await waitForPage(page, path);
@@ -309,10 +370,15 @@ test("core pages have exact unique SEO titles and descriptions", async ({ page }
     const expectedCanonical = path === "/index.html" ? `${productionOrigin}/` : `${productionOrigin}${path}`;
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", expectedCanonical);
     await expect(page.locator('meta[property="og:url"]')).toHaveAttribute("content", expectedCanonical);
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute("content", expectedTitles.get(path));
     const ogImage = await page.locator('meta[property="og:image"]').getAttribute("content");
     expect(ogImage).toMatch(/^https:\/\/professionalpoolcare\.com\/images\/.+/);
     const description = await page.locator('meta[name="description"]').getAttribute("content");
     expect(description.trim().length).toBeGreaterThan(70);
+    if (path === "/properties.html") {
+      expect(description).toBe(expectedPropertiesDescription);
+      await expect(page.locator('meta[property="og:description"]')).toHaveAttribute("content", expectedPropertiesOgDescription);
+    }
     descriptions.push(description);
   }
   expect(new Set(descriptions).size).toBe(corePages.length);
@@ -460,6 +526,7 @@ test("sitemap and robots use the production domain", async ({ request }) => {
   expect(locations).toEqual([
     "https://professionalpoolcare.com/",
     "https://professionalpoolcare.com/services.html",
+    "https://professionalpoolcare.com/properties.html",
     "https://professionalpoolcare.com/about.html",
     "https://professionalpoolcare.com/contact.html"
   ]);
@@ -475,7 +542,7 @@ test("expanded sources are noindexed and excluded from the built site", async ()
     expect(source).toMatch(/<meta name="robots" content="noindex, (?:nofollow|follow)">/);
   }
   const builtHtml = (await readdir(join(process.cwd(), "dist"))).filter((name) => name.endsWith(".html")).sort();
-  expect(builtHtml).toEqual(["about.html", "contact.html", "index.html", "privacy.html", "services.html", "terms.html"]);
+  expect(builtHtml).toEqual(["about.html", "contact.html", "index.html", "privacy.html", "properties.html", "services.html", "terms.html"]);
   const builtImages = await readdir(join(process.cwd(), "dist", "images"));
   expect(builtImages).not.toContain("README.md");
   expect(builtImages).not.toContain("logo.png");
@@ -806,7 +873,7 @@ test("Worker contact endpoint fails safely on Zoho configuration and provider er
 
 test("production build excludes source-only and development artifacts", async () => {
   const builtFiles = await readdir(join(process.cwd(), "dist"));
-  expect(builtFiles).toEqual(expect.arrayContaining(["index.html", "services.html", "about.html", "contact.html", "privacy.html", "terms.html", "robots.txt", "sitemap.xml", "styles.css", "script.js", "images"]));
+  expect(builtFiles).toEqual(expect.arrayContaining(["index.html", "services.html", "properties.html", "about.html", "contact.html", "privacy.html", "terms.html", "robots.txt", "sitemap.xml", "styles.css", "script.js", "images"]));
   for (const forbidden of ["node_modules", ".planning", "tests", "test-artifacts", "archive", "README.md", "package.json", "wrangler.jsonc"]) {
     expect(builtFiles).not.toContain(forbidden);
   }
@@ -823,6 +890,21 @@ test("production build excludes source-only and development artifacts", async ()
   ]) {
     expect(publicOutput).not.toContain(serverOnlyValue);
   }
+});
+
+test("production-readiness guard detects temporary property references and supports clean replacements", async () => {
+  const guard = await import("../scripts/check-production-readiness.mjs");
+  expect(guard.scanTextForTemporaryReferences('<img src="images/temp-property-reference/temp-example.webp">')).toBeTruthy();
+  expect(guard.scanTextForTemporaryReferences('<img src="images/properties/approved-example.webp">')).toBeFalsy();
+  const failures = await guard.findTemporaryImageReferences();
+  expect(failures).toEqual(expect.arrayContaining([expect.stringMatching(/^index\.html:/), expect.stringMatching(/^properties\.html:/)]));
+  const command = spawnSync(process.execPath, ["scripts/check-production-readiness.mjs"], {
+    cwd: process.cwd(),
+    encoding: "utf8"
+  });
+  expect(command.status).toBe(1);
+  expect(command.stderr).toContain("PRODUCTION READINESS: FAIL");
+  expect(command.stderr).toContain("NOT CLEARED FOR PUBLIC LAUNCH");
 });
 
 test("Worker configuration preserves static assets, the form route, and only Zoho delivery settings", async () => {

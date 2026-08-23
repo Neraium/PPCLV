@@ -1,0 +1,82 @@
+import { access, readdir, readFile } from "node:fs/promises";
+import { constants } from "node:fs";
+import { extname, join, relative, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const root = fileURLToPath(new URL("../", import.meta.url));
+const distribution = join(root, "dist");
+const publicSourceFiles = [
+  "index.html",
+  "services.html",
+  "properties.html",
+  "about.html",
+  "contact.html",
+  "privacy.html",
+  "terms.html",
+  "styles.css",
+  "script.js",
+  "sitemap.xml"
+];
+const textExtensions = new Set([".html", ".css", ".js", ".mjs", ".xml", ".txt"]);
+const temporaryDirectoryPattern = /(?:^|["'(/=\s])(?:\.\/|\/)?images\/temp-property-reference\//i;
+const temporaryFilenamePattern = /(?:^|["'(/=\s])temp-[a-z0-9][a-z0-9._-]*/i;
+
+export function scanTextForTemporaryReferences(text) {
+  return temporaryDirectoryPattern.test(text) || temporaryFilenamePattern.test(text);
+}
+
+async function walk(directory) {
+  const entries = await readdir(directory, { withFileTypes: true });
+  const files = [];
+  for (const entry of entries) {
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) files.push(...await walk(path));
+    else files.push(path);
+  }
+  return files;
+}
+
+export async function findTemporaryImageReferences() {
+  const failures = [];
+  for (const source of publicSourceFiles) {
+    const path = join(root, source);
+    const text = await readFile(path, "utf8");
+    if (!scanTextForTemporaryReferences(text)) continue;
+    text.split(/\r?\n/).forEach((line, index) => {
+      if (scanTextForTemporaryReferences(line)) failures.push(`${source}:${index + 1}`);
+    });
+  }
+
+  try {
+    await access(distribution, constants.R_OK);
+  } catch {
+    failures.push("dist/ is missing; run npm run build before the production-readiness check");
+    return failures;
+  }
+
+  for (const path of await walk(distribution)) {
+    const builtPath = relative(root, path);
+    if (path.split(/[\\/]/).some((segment) => segment.toLowerCase().startsWith("temp-"))) {
+      failures.push(builtPath);
+      continue;
+    }
+    if (!textExtensions.has(extname(path).toLowerCase())) continue;
+    const text = await readFile(path, "utf8");
+    if (scanTextForTemporaryReferences(text)) failures.push(builtPath);
+  }
+  return [...new Set(failures)].sort();
+}
+
+const isCommandLine = process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1]);
+if (isCommandLine) {
+  const failures = await findTemporaryImageReferences();
+  if (failures.length) {
+    console.error("PRODUCTION READINESS: FAIL");
+    console.error("TEMPORARY WEB-SOURCED REFERENCE IMAGES — NOT CLEARED FOR PUBLIC LAUNCH.");
+    console.error("Replace every temporary property image reference before deployment:");
+    failures.forEach((failure) => console.error(`- ${failure}`));
+    process.exitCode = 1;
+  } else {
+    console.log("PRODUCTION READINESS: PASS — no temporary property image references found.");
+  }
+}

@@ -1,6 +1,6 @@
 # PPC LLC Essential Business Website
 
-Static four-page Essential website for Professional Pool Care LLC, also known as PPC LLC.
+Static five-page Essential website for Professional Pool Care LLC, also known as PPC LLC.
 
 Production domain: `https://professionalpoolcare.com`
 
@@ -12,14 +12,15 @@ Cloudflare should redirect `https://www.professionalpoolcare.com` to `https://pr
 
 The only promoted marketing pages are:
 
-- `index.html`: homepage with commercial positioning, concise service overview, credibility content, Properties We Serve, and service request call to action.
+- `index.html`: homepage with commercial positioning, concise service overview, credibility content, a four-property preview, and service request call to action.
 - `services.html`: PPC's nine approved service categories organized into Maintenance, Equipment & Restoration, and Urgent & Operational Support.
+- `properties.html`: seven featured PPC-served properties plus a scalable section communicating the broader Greater Las Vegas portfolio.
 - `about.html`: company identity, Las Vegas history, commercial focus, and property-team communication.
 - `contact.html`: accessible commercial service-request form.
 
 `privacy.html` and `terms.html` are concise legal utility pages. They are linked only in the footer, marked `noindex`, and are not promoted as marketing pages.
 
-Primary navigation and the compact footer promote only Home, Services, About, and Contact.
+Primary navigation and the compact footer promote Home, Services, Properties, About, and Contact.
 
 ## Approved PPC Information
 
@@ -91,7 +92,7 @@ One-time production setup:
 2. In the matching regional Zoho API Console, create a Self Client. Generate a temporary code with `ZohoMail.accounts.READ`, exchange it for tokens, call the matching regional `GET /api/accounts`, and record the `accountId` whose `primaryEmailAddress` is `Adria@ProfessionalPoolCare.com`. Revoke the temporary account-read refresh token afterward.
 3. In the same Self Client, generate a new authorization code with only `ZohoMail.messages.CREATE`. Exchange it before it expires and retain its `refresh_token`. Do not retain the one-hour access token.
 4. From an authenticated terminal, run `npx wrangler secret put` once for each required secret name above. If the mailbox is not in the US data center, also set `ZOHO_DATA_CENTER` as a Worker variable in Cloudflare Workers & Pages > ppclv > Settings > Variables and Secrets.
-5. Deploy with `npm run build && npx wrangler deploy`, submit one real contact request, and confirm it appears in the Zoho mailbox and its existing Gmail forwarding destination. If terminal authentication is unavailable, push the verified commit to `origin/main`; the configured Cloudflare Git deployment will build and deploy from `main` without an interactive Wrangler login.
+5. After approved property photos are installed and the production-readiness guard passes, deploy with `npm run deploy`, submit one real contact request, and confirm it appears in the Zoho mailbox and its existing Gmail forwarding destination. `npm run deploy` rebuilds, runs the mandatory temporary-image guard, and only then invokes Wrangler. If terminal authentication is unavailable, push the verified production-ready commit to `origin/main`; the configured Cloudflare Git deployment will build and deploy from `main` without an interactive Wrangler login.
 
 The implementation sends escaped, readable HTML and includes the validated visitor email as a safe mail link when available. Zoho's official send-message API does not document a per-message Reply-To field, so the Worker deliberately does not depend on one.
 
@@ -105,27 +106,34 @@ Core canonical URLs:
 
 - Home: `https://professionalpoolcare.com/`
 - Services: `https://professionalpoolcare.com/services.html`
+- Properties: `https://professionalpoolcare.com/properties.html`
 - About: `https://professionalpoolcare.com/about.html`
 - Contact: `https://professionalpoolcare.com/contact.html`
 - Privacy: `https://professionalpoolcare.com/privacy.html`
 - Terms: `https://professionalpoolcare.com/terms.html`
 
-`sitemap.xml` lists only the four indexable marketing pages. The utility legal pages are intentionally `noindex`.
+`sitemap.xml` lists only the five indexable marketing pages. The utility legal pages are intentionally `noindex`.
 
 No active FAQPage schema, industry-specific landing-page architecture, expanded local SEO package, advanced schema strategy, GEO package, or AI-answer optimization package is included in the Essential build.
 
 ## Photography
 
-The current site uses representative commercial photography. The homepage property showcase stages four PPC-served property names pending final written marketing-use approval, but its current images are temporary placeholders and are not depictions of the named properties or PPC projects.
+The current site uses representative commercial photography outside the property showcase. The homepage and Properties page additionally use seven isolated, property-specific web-sourced images for **temporary internal preview only**. They are stored only under `images/temp-property-reference/`, are not cleared for public use, and **MUST be replaced before public launch**.
 
-The only remaining normal content task is replacing representative photography with approved PPC/customer photos and confirming final marketing-use approval for the staged property names. See `images/README.md` for the placement-by-placement replacement map and dedicated homepage property-photo targets.
+See `images/README.md` for the exact source URL/domain, retrieval date, placements, crop guidance, output recommendation, rights requirement, and intended permanent filename for every featured property. The production-readiness check intentionally fails while any temporary reference remains:
+
+```sh
+npm run test:production-ready
+```
+
+Final approved property photos can be installed without another layout or design pass. The replacement is limited to the mapped asset files, `src` paths/intrinsic dimensions, and build allowlist entries, followed by crop verification.
 
 Customer/property showcase rules:
 
 - Use a real customer or property name only with written approval.
-- Use website/customer-provided photos only with permission.
-- Do not download or reuse property website or third-party photography without documented permission or a clearly permissive license.
-- The four staged homepage property names and their future real photos remain pending final written marketing-use approval; restore neutral labels if naming approval is withheld.
+- Use website/customer-provided photos publicly only with written permission.
+- Treat every web-sourced property reference in this branch as provenance-only internal-preview material, not as evidence of reuse rights.
+- The seven staged featured-property names and their final photos require PPC marketing approval and confirmed public-use rights before launch.
 - If naming permission is unavailable, use neutral property-type labels.
 - Do not imply PPC owns customer properties.
 - Do not imply representative stock photos are PPC customers.
@@ -158,13 +166,15 @@ Local checks:
 npm clean-install
 npm run build
 npm test
+npm run test:e2e
 npm run test:screenshots
+npm run test:production-ready
 node --check script.js
 git diff --check
-npx wrangler deploy --dry-run
+npm run deploy -- --dry-run
 ```
 
-The build uses an explicit allowlist for the four marketing pages, two utility pages, shared assets, crawler files, and the Cloudflare `_headers` file. Source archives, tests, reports, internal screenshots, and project files are not published.
+The build uses an explicit allowlist for the five marketing pages, two utility pages, shared assets, crawler files, and the Cloudflare `_headers` file. Source archives, tests, reports, internal screenshots, and project files are not published. During internal review it also copies the seven isolated temporary property references; the production-readiness check blocks launch until those paths and filenames are gone.
 
 ## FINAL PPC LAUNCH CHECKLIST
 
@@ -172,9 +182,11 @@ PHOTOS:
 
 - Receive approved PPC/customer commercial images.
 - Replace representative images according to `images/README.md`.
+- Replace every image under `images/temp-property-reference/` with its mapped approved permanent asset and update the mechanical image references.
 - Optimize images and responsive derivatives.
 - Verify alt text.
 - Verify written naming and photo-use permissions.
+- Require `npm run test:production-ready` to pass before deployment.
 
 External launch actions:
 
@@ -193,7 +205,7 @@ External launch actions:
 
 ### A. MUST FIX BEFORE PUBLIC LAUNCH
 
-- Replace the representative photography with approved commercial PPC/customer/property photos using `images/README.md`, including the paired hero derivatives.
+- Replace the representative photography with approved commercial PPC/customer/property photos using `images/README.md`, including all seven temporary property references and the paired hero derivatives; the production-readiness guard must pass.
 - Configure and confirm the four exact Worker secrets, deploy the final `main` build, and complete the real Zoho delivery/forwarding check described above.
 - Remove the Cloudflare Access preview restriction, then verify anonymous apex-domain access, the `www` redirect, and HTTPS from outside the authenticated preview session.
 

@@ -6,6 +6,7 @@ const widths = [320, 375, 390, 430, 768, 1024, 1280, 1440, 1920];
 const reviewPages = [
   { name: "home", path: "/index.html" },
   { name: "services", path: "/services.html" },
+  { name: "properties", path: "/properties.html" },
   { name: "about", path: "/about.html" },
   { name: "contact", path: "/contact.html" },
   { name: "privacy", path: "/privacy.html" },
