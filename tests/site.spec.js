@@ -109,6 +109,7 @@ test("homepage retains the required commercial journey", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Commercial Pool & Spa Service");
   await expect(page.getByRole("link", { name: "Request Service" }).first()).toBeVisible();
   await expect(page.getByRole("link", { name: "View Services" }).first()).toHaveAttribute("href", "services.html");
+  await expect(page.locator(".services-row-intro > p:last-child")).toHaveText("PPC serves commercial aquatic facilities, resorts, hospitality properties, communities, and large private estates throughout the Greater Las Vegas Area.");
   const properties = page.locator(".property-showcase");
   await expect(properties.locator(".eyebrow")).toHaveText("PROPERTIES WE SERVE");
   await expect(properties.getByRole("heading", { name: "Trusted across Las Vegas properties." })).toBeVisible();
@@ -190,7 +191,7 @@ test("FAQ presents the exact 20 approved questions with native keyboard behavior
     "How do I request commercial pool or spa service from PPC?",
     "Does PPC service residential pools?",
     "Does PPC service private estates?",
-    "What types of services can PPC provide for large private estates?",
+    "What services can PPC provide for large private estates?",
     "How often should a commercial pool or spa be serviced?",
     "Why is CPO coverage important for a commercial aquatic facility?",
     "Can PPC troubleshoot water-quality problems as well as equipment issues?",
@@ -235,6 +236,7 @@ test("structured data defines one restrained entity graph and five supported ser
     telephone: "+1-702-357-7027",
     email: "Adria@ProfessionalPoolCare.com",
     foundingDate: "2003",
+    description: "Professional Pool Care LLC serves commercial aquatic facilities, resorts, hospitality properties, communities, and large private estates throughout the Greater Las Vegas Area.",
     slogan: "PPC LLC, The Difference Is Clear."
   });
   const prohibitedSchemaTerms = new Set(["LocalBusiness", "address", "geo", "sameAs", "review", "rating", "price", "openingHours", "credential"]);
@@ -277,13 +279,15 @@ test("FAQ and estate discovery remain contextual and commercial-first", async ({
   await waitForPage(page, "/services.html");
   await expect(page.getByRole("link", { name: "Read Service FAQ" })).toHaveAttribute("href", "faq.html");
   await expect(page.locator("#large-private-estates")).toBeVisible();
+  await expect(page.locator(".service-page-hero .lead")).toHaveText("PPC provides commercial pool and spa service for resorts, hospitality properties, communities, aquatic facilities, and large private estates across the Greater Las Vegas Area.");
 
   await waitForPage(page, "/contact.html");
   await expect(page.getByRole("link", { name: "Read the service FAQ" })).toHaveAttribute("href", "faq.html");
-  await expect(page.locator('[name="property_type"]')).toContainText("Large private estate");
+  await expect(page.locator('[name="property_type"]')).toContainText("Private Estate");
 
   await waitForPage(page, "/about.html");
   await expect(page.getByRole("link", { name: "commercial pool and spa services" })).toHaveAttribute("href", "services.html");
+  await expect(page.locator(".about-page-hero .lead")).toContainText("commercial aquatic facilities, resorts, hospitality properties, communities, and large private estates");
 
   const publicText = [];
   for (const path of publicPages) {
@@ -385,6 +389,7 @@ test("services are organized into the nine approved offerings with one scope not
 test("contact form is simple, accessible, and posts to the Worker endpoint", async ({ page }) => {
   let requestBody = "";
   let submittedService = "";
+  let submittedPropertyType = "";
   await page.route("**/contact-request", async (route) => {
     const request = route.request();
     requestBody = request.postData() || "";
@@ -392,6 +397,7 @@ test("contact form is simple, accessible, and posts to the Worker endpoint", asy
       headers: { "Content-Type": request.headers()["content-type"] }
     }).formData();
     submittedService = String(submittedForm.get("service_needed") || "");
+    submittedPropertyType = String(submittedForm.get("property_type") || "");
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -430,13 +436,14 @@ test("contact form is simple, accessible, and posts to the Worker endpoint", asy
     "HOA aquatic facility",
     "Municipal or public facility",
     "Other commercial property",
-    "Large private estate"
+    "Private Estate"
   ]);
   await page.getByRole("button", { name: "Request Service" }).last().click();
   await expect(form.locator('[name="name"]')).toBeFocused();
   await form.locator('[name="name"]').fill("Test User");
   await form.locator('[name="company"]').fill("Test Property");
   await form.locator('[name="service_needed"]').selectOption("Pool Deck Cleaning");
+  await form.locator('[name="property_type"]').selectOption("Private Estate");
   await form.locator('[name="message"]').fill("Routine commercial service request.");
   await form.locator('[name="privacy_consent"]').check();
   await page.getByRole("button", { name: "Request Service" }).last().click();
@@ -448,6 +455,7 @@ test("contact form is simple, accessible, and posts to the Worker endpoint", asy
   expect(requestBody).toContain("Test User");
   expect(requestBody).toContain("Test Property");
   expect(submittedService).toBe("Pool Deck Cleaning");
+  expect(submittedPropertyType).toBe("Private Estate");
   expect(requestBody).not.toContain("Adria%40ProfessionalPoolCare.com");
 });
 
@@ -532,14 +540,14 @@ test("all public pages have exact unique production metadata", async ({ page }) 
   const expected = new Map([
     ["/index.html", {
       title: "Commercial Pool & Spa Service Las Vegas | PPC LLC",
-      description: "Professional Pool Care LLC provides commercial pool and spa maintenance, CPO coverage, equipment support, emergency service, and large-estate care across Greater Las Vegas.",
+      description: "Commercial pool and spa maintenance, CPO coverage, equipment support, emergency service, and large private estate care from PPC across Greater Las Vegas.",
       canonical: `${productionOrigin}/`,
       image: `${productionOrigin}/images/resort-hotel-pool-deck.webp`,
       imageAlt: "Large commercial resort pool deck with hospitality seating"
     }],
     ["/services.html", {
       title: "Commercial Pool & Spa Services Las Vegas | PPC LLC",
-      description: "Explore PPC commercial pool and spa maintenance, CPO services, equipment repair, automation, deck cleaning, emergency support, and estate service in Greater Las Vegas.",
+      description: "PPC commercial pool and spa maintenance, CPO service, equipment support, deck cleaning, emergency service, and large private estate care in Greater Las Vegas.",
       canonical: `${productionOrigin}/services.html`,
       image: `${productionOrigin}/images/commercial-equipment-room-service.jpg`,
       imageAlt: "Commercial pool equipment room with pumps and service access"
@@ -553,14 +561,14 @@ test("all public pages have exact unique production metadata", async ({ page }) 
     }],
     ["/about.html", {
       title: "About Professional Pool Care LLC | Las Vegas",
-      description: "Professional Pool Care LLC is family owned and operated in Las Vegas since 2003, serving commercial aquatic facilities and large private estates.",
+      description: "PPC has served commercial aquatic facilities, resorts, hospitality properties, communities, and large private estates across Greater Las Vegas since 2003.",
       canonical: `${productionOrigin}/about.html`,
       image: `${productionOrigin}/images/commercial-equipment-room-service.jpg`,
       imageAlt: "Commercial pool equipment room with pumps, piping, and service access"
     }],
     ["/contact.html", {
       title: "Request Pool & Spa Service in Las Vegas | PPC LLC",
-      description: "Request commercial pool, spa, CPO, equipment, or large-private-estate service from Professional Pool Care LLC in the Greater Las Vegas Area.",
+      description: "Request commercial pool, spa, CPO, equipment, or large private estate service from Professional Pool Care LLC in the Greater Las Vegas Area.",
       canonical: `${productionOrigin}/contact.html`,
       image: `${productionOrigin}/images/resort-hotel-pool-deck.webp`,
       imageAlt: "Large commercial resort pool deck with hospitality seating"
@@ -837,16 +845,18 @@ test("Worker contact endpoint delivers through Zoho OAuth API to Adria only", as
   expect(sendCall.options.body).not.toContain("attacker@example.com");
 });
 
-test("Worker accepts Pool Deck Cleaning as an approved service", async () => {
+test("Worker accepts Pool Deck Cleaning for a Private Estate property", async () => {
   const worker = await import("../worker/index.mjs");
   const { calls, fetchImpl } = makeZohoFetch();
   const success = await worker.handleContactRequest(makeContactRequest({
     ...validContactFields,
-    service_needed: "Pool Deck Cleaning"
+    service_needed: "Pool Deck Cleaning",
+    property_type: "Private Estate"
   }), makeZohoEnv(), fetchImpl);
   expect(success.status).toBe(200);
   expect(calls).toHaveLength(2);
   expect(JSON.parse(calls[1].options.body).content).toContain("Pool Deck Cleaning");
+  expect(JSON.parse(calls[1].options.body).content).toContain("Private Estate");
 });
 
 test("Worker omits unsupported Reply-To for every valid submission", async () => {
