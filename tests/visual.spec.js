@@ -2,7 +2,7 @@ const { test, expect } = require("@playwright/test");
 const { mkdir } = require("node:fs/promises");
 
 const output = "test-artifacts/screenshots/essential-review";
-const widths = [320, 375, 390, 430, 768, 1024, 1280, 1440, 1920];
+const widths = [320, 375, 390, 393, 430, 768, 1024, 1280, 1440, 1920];
 const reviewPages = [
   { name: "home", path: "/index.html" },
   { name: "services", path: "/services.html" },
@@ -33,13 +33,31 @@ for (const reviewPage of reviewPages) {
   }
 }
 
-for (const width of [390, 430]) {
-  test(`mobile navigation review at ${width}px`, async ({ page }, testInfo) => {
+for (const width of [320, 375, 390, 393, 430]) {
+  test(`mobile compact header review at ${width}px`, async ({ page }, testInfo) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
     await page.setViewportSize({ width, height: 900 });
     await preparePage(page, "/index.html");
-    await page.getByRole("button", { name: "Menu" }).click();
+    await page.evaluate(() => window.scrollTo(0, 500));
+    await expect(page.locator("[data-site-header]")).toHaveClass(/is-compact/);
+    await page.waitForTimeout(20);
+    await mkdir(output, { recursive: true });
+    await page.screenshot({ path: `${output}/${testInfo.project.name}-mobile-header-compact-${width}.jpg`, type: "jpeg", quality: 86 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBeTruthy();
+  });
+}
+
+for (const width of [390, 430]) {
+  test(`mobile compact navigation review at ${width}px`, async ({ page }, testInfo) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.setViewportSize({ width, height: 900 });
+    await preparePage(page, "/index.html");
+    await page.evaluate(() => window.scrollTo(0, 500));
+    await expect(page.locator("[data-site-header]")).toHaveClass(/is-compact/);
+    await page.waitForTimeout(20);
+    await page.getByRole("button", { name: "Menu" }).evaluate((button) => button.click());
     await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
     await mkdir(output, { recursive: true });
-    await page.screenshot({ path: `${output}/${testInfo.project.name}-mobile-navigation-open-${width}.jpg`, type: "jpeg", quality: 86 });
+    await page.screenshot({ path: `${output}/${testInfo.project.name}-mobile-navigation-compact-open-${width}.jpg`, type: "jpeg", quality: 86 });
   });
 }

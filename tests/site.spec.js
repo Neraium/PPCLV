@@ -7,7 +7,7 @@ const productionOrigin = "https://professionalpoolcare.com";
 const corePages = ["/index.html", "/services.html", "/properties.html", "/about.html", "/contact.html", "/faq.html"];
 const utilityPages = ["/privacy.html", "/terms.html"];
 const publicPages = [...corePages, ...utilityPages];
-const requiredWidths = [320, 375, 390, 430, 768, 1024, 1280, 1440, 1920];
+const requiredWidths = [320, 375, 390, 393, 430, 768, 1024, 1280, 1440, 1920];
 const archivedExpandedNames = ["industries.html", "our-work.html", "gallery.html", "faq.html", "commercial-pool-service-las-vegas.html"];
 const nonPublicExpandedNames = archivedExpandedNames.filter((name) => name !== "faq.html");
 
@@ -171,6 +171,35 @@ test("homepage service cards share one neutral default treatment and reveal emph
   expect(hoverStyle.boxShadow).not.toBe("none");
   expect(hoverStyle.transform).not.toBe("none");
   await expect(cards.nth(1)).toHaveCSS("background-color", "rgb(255, 255, 255)");
+});
+
+test("homepage service cards stay efficient, readable, and equally treated on mobile", async ({ page }) => {
+  for (const width of [375, 390, 430]) {
+    await page.setViewportSize({ width, height: 900 });
+    await waitForPage(page, "/index.html");
+    const cards = page.locator(".service-line-item");
+    const cardStyles = await cards.evaluateAll((elements) => elements.map((element) => {
+      const style = getComputedStyle(element);
+      const link = element.querySelector("a").getBoundingClientRect();
+      return {
+        backgroundColor: style.backgroundColor,
+        borderColor: style.borderColor,
+        paddingTop: style.paddingTop,
+        paddingBottom: style.paddingBottom,
+        numberGap: getComputedStyle(element.querySelector(":scope > span")).marginBottom,
+        headingGap: getComputedStyle(element.querySelector("h3")).marginBottom,
+        bodyGap: getComputedStyle(element.querySelector("p")).marginBottom,
+        linkHeight: link.height,
+        overflow: element.scrollWidth > element.clientWidth
+      };
+    }));
+    expect(new Set(cardStyles.map(({ linkHeight, ...style }) => JSON.stringify(style))).size).toBe(1);
+    expect(cardStyles.every((style) => style.backgroundColor === "rgb(255, 255, 255)" && style.borderColor === "rgb(200, 220, 231)")).toBeTruthy();
+    expect(cardStyles.every((style) => style.paddingTop === "24px" && style.paddingBottom === "25px")).toBeTruthy();
+    expect(cardStyles.every((style) => style.numberGap === "13px" && style.headingGap === "8px" && style.bodyGap === "12px")).toBeTruthy();
+    expect(cardStyles.every((style) => style.linkHeight >= 44 && !style.overflow)).toBeTruthy();
+    await expect(page.locator(".service-line-item.featured-service")).toHaveCount(0);
+  }
 });
 
 test("FAQ presents the exact 20 approved questions with native keyboard behavior and schema parity", async ({ page }) => {
@@ -682,17 +711,20 @@ for (const width of requiredWidths) {
   }
 }
 
-test("mobile header balances centered branding and Menu across phone widths", async ({ page }) => {
+test("mobile header preserves its approved top state and compacts after the scroll threshold", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   const cases = [
     { width: 320, headerHeight: 97, artworkWidth: 164, artworkHeight: 72, minimumMenuGap: 0 },
     { width: 375, headerHeight: 111, artworkWidth: 190, artworkHeight: 83, minimumMenuGap: 20 },
     { width: 390, headerHeight: 111, artworkWidth: 190, artworkHeight: 83, minimumMenuGap: 24 },
+    { width: 393, headerHeight: 111, artworkWidth: 190, artworkHeight: 83, minimumMenuGap: 24 },
     { width: 430, headerHeight: 111, artworkWidth: 190, artworkHeight: 83, minimumMenuGap: 24 }
   ];
 
   for (const { width, headerHeight, artworkWidth, artworkHeight, minimumMenuGap } of cases) {
     await page.setViewportSize({ width, height: 860 });
     await waitForPage(page, "/index.html");
+    await page.addStyleTag({ content: "[data-site-header], [data-site-header] * { transition: none !important; }" });
     const header = page.locator("[data-site-header]");
     const initial = await header.boundingBox();
     const logo = await page.locator(".logo-link").boundingBox();
@@ -714,18 +746,134 @@ test("mobile header balances centered branding and Menu across phone widths", as
     const toggleBox = await toggle.boundingBox();
     expect(toggleBox.x - (logo.x + logo.width)).toBeGreaterThanOrEqual(minimumMenuGap);
     expect(Math.abs((toggleBox.y + toggleBox.height / 2) - (initial.y + initial.height / 2))).toBeLessThanOrEqual(2);
-    await toggle.click();
-    await expect(toggle).toHaveAttribute("aria-expanded", "true");
-    await expect(page.locator(".mobile-menu-cta")).toBeVisible();
-    const open = await header.boundingBox();
-    expect(Math.abs(open.height - initial.height)).toBeLessThanOrEqual(1);
-    await page.evaluate(() => window.scrollTo(0, 500));
-    const scrolled = await header.boundingBox();
-    expect(Math.abs(scrolled.height - initial.height)).toBeLessThanOrEqual(1);
-    expect(Math.abs(scrolled.y)).toBeLessThanOrEqual(1);
-    await page.keyboard.press("Escape");
-    await expect(toggle).toBeFocused();
+
+    await page.evaluate(() => {
+      window.scrollTo(0, 112);
+      window.dispatchEvent(new Event("scroll"));
+    });
+    await expect(header).not.toHaveClass(/is-compact/);
+    await page.evaluate(() => {
+      window.scrollTo(0, 113);
+      window.dispatchEvent(new Event("scroll"));
+    });
+    await expect(header).toHaveClass(/is-compact/);
+    await page.waitForTimeout(20);
+    const compact = await header.boundingBox();
+    const compactLogo = await page.locator(".logo-link").boundingBox();
+    const compactArtwork = await page.locator(".logo-artwork").boundingBox();
+    const compactBrandName = await brandName.boundingBox();
+    const compactToggle = await toggle.boundingBox();
+    expect(compact.height).toBeCloseTo(81, 0);
+    expect(initial.height - compact.height).toBeGreaterThanOrEqual(16);
+    expect(compactLogo.width).toBeCloseTo(148, 0);
+    expect(compactArtwork.width).toBeCloseTo(146, 0);
+    expect(compactArtwork.height).toBeCloseTo(64, 0);
+    expect(compactBrandName.y).toBeGreaterThanOrEqual(compactArtwork.y + compactArtwork.height);
+    expect(compactLogo.y).toBeGreaterThanOrEqual(compact.y);
+    expect(compactLogo.y + compactLogo.height).toBeLessThanOrEqual(compact.y + compact.height);
+    expect(Math.abs((compactToggle.y + compactToggle.height / 2) - (compact.y + compact.height / 2))).toBeLessThanOrEqual(2);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBeTruthy();
+    await page.evaluate(() => {
+      window.scrollTo(0, 73);
+      window.dispatchEvent(new Event("scroll"));
+    });
+    await expect(header).toHaveClass(/is-compact/);
+    await page.evaluate(() => {
+      window.scrollTo(0, 72);
+      window.dispatchEvent(new Event("scroll"));
+    });
+    await expect(header).not.toHaveClass(/is-compact/);
   }
+});
+
+test("mobile compact header stays locked while the Menu is open", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 390, height: 860 });
+  await waitForPage(page, "/index.html");
+  const header = page.locator("[data-site-header]");
+  const toggle = page.getByRole("button", { name: "Menu" });
+
+  await page.evaluate(() => {
+    window.scrollTo(0, 500);
+    window.dispatchEvent(new Event("scroll"));
+  });
+  await expect(header).toHaveClass(/is-compact/);
+  await page.waitForTimeout(20);
+  const compact = await header.boundingBox();
+  await toggle.evaluate((button) => button.click());
+  await expect(toggle).toHaveAttribute("aria-expanded", "true");
+  await expect(page.locator(".mobile-menu-cta")).toBeVisible();
+  await page.evaluate(() => {
+    window.scrollTo(0, 800);
+    window.dispatchEvent(new Event("scroll"));
+  });
+  const openCompact = await header.boundingBox();
+  expect(Math.abs(openCompact.height - compact.height)).toBeLessThanOrEqual(1);
+  await page.keyboard.press("Escape");
+  await expect(toggle).toBeFocused();
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  await expect(header).toHaveClass(/is-compact/);
+
+  await page.evaluate(() => {
+    window.scrollTo(0, 0);
+    window.dispatchEvent(new Event("scroll"));
+  });
+  await expect(header).not.toHaveClass(/is-compact/);
+  await page.waitForTimeout(20);
+  const full = await header.boundingBox();
+  await toggle.evaluate((button) => button.click());
+  await page.evaluate(() => {
+    window.scrollTo(0, 500);
+    window.dispatchEvent(new Event("scroll"));
+  });
+  await expect(header).not.toHaveClass(/is-compact/);
+  const openFull = await header.boundingBox();
+  expect(Math.abs(openFull.height - full.height)).toBeLessThanOrEqual(1);
+  await page.keyboard.press("Escape");
+  await expect(header).toHaveClass(/is-compact/);
+});
+
+test("mobile compact header uses a restrained transition", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 860 });
+  await waitForPage(page, "/index.html");
+  const transitions = await page.locator("[data-site-header]").evaluate((header) => {
+    const masthead = getComputedStyle(header);
+    const artwork = getComputedStyle(header.querySelector(".logo-artwork"));
+    return {
+      mastheadProperty: masthead.transitionProperty,
+      mastheadDuration: masthead.transitionDuration,
+      mastheadTiming: masthead.transitionTimingFunction,
+      artworkProperty: artwork.transitionProperty,
+      artworkDuration: artwork.transitionDuration,
+      artworkTiming: artwork.transitionTimingFunction
+    };
+  });
+  expect(transitions).toEqual({
+    mastheadProperty: "min-height",
+    mastheadDuration: "0.18s",
+    mastheadTiming: "ease",
+    artworkProperty: "width, height",
+    artworkDuration: "0.18s, 0.18s",
+    artworkTiming: "ease, ease"
+  });
+});
+
+test("mobile compact header respects reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 390, height: 860 });
+  await waitForPage(page, "/index.html");
+  const header = page.locator("[data-site-header]");
+  await page.evaluate(() => {
+    window.scrollTo(0, 500);
+    window.dispatchEvent(new Event("scroll"));
+  });
+  await expect(header).toHaveClass(/is-compact/);
+  const maximumTransitionMs = await header.evaluate((element) => Math.max(...[element, ...element.querySelectorAll("*")].flatMap((node) => {
+    const durations = getComputedStyle(node).transitionDuration.split(",");
+    return durations.map((duration) => parseFloat(duration) * (duration.includes("ms") ? 1 : 1000));
+  })));
+  expect(maximumTransitionMs).toBeLessThanOrEqual(1);
+  expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior)).toBe("auto");
 });
 
 test("tablet header gives the centered logo more presence without crowding Menu", async ({ page }) => {
@@ -753,6 +901,7 @@ test("tablet header gives the centered logo more presence without crowding Menu"
   expect(Math.abs((toggleBox.y + toggleBox.height / 2) - (initial.y + initial.height / 2))).toBeLessThanOrEqual(2);
 
   await page.evaluate(() => window.scrollTo(0, 500));
+  await expect(header).not.toHaveClass(/is-compact/);
   const scrolled = await header.boundingBox();
   expect(Math.abs(scrolled.height - initial.height)).toBeLessThanOrEqual(1);
   expect(Math.abs(scrolled.y)).toBeLessThanOrEqual(1);
@@ -794,6 +943,7 @@ test("desktop header remains stable during scroll", async ({ page }) => {
     expect(logoArtwork.height).toBeCloseTo(69, 0);
     expect(brandNameBox.y).toBeGreaterThanOrEqual(logoArtwork.y + logoArtwork.height);
     await page.evaluate(() => window.scrollTo(0, 600));
+    await expect(header).not.toHaveClass(/is-compact/);
     const scrolled = await header.boundingBox();
     expect(Math.abs(scrolled.height - initial.height)).toBeLessThanOrEqual(1);
     expect(Math.abs(scrolled.y)).toBeLessThanOrEqual(1);

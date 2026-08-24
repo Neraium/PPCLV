@@ -1,16 +1,28 @@
 const menuToggle = document.querySelector(".menu-toggle");
 const primaryMenu = document.querySelector("#primary-menu");
+const siteHeader = document.querySelector("[data-site-header]");
 const quoteForm = document.querySelector("[data-quote-form]");
 const formStatus = document.querySelector("[data-form-status]");
 const emailInput = quoteForm?.querySelector('[name="email"]');
 const phoneInput = quoteForm?.querySelector('[name="phone"]');
 const submitButton = quoteForm?.querySelector("[data-submit-button]");
+const compactHeaderMedia = window.matchMedia("(max-width: 560px)");
+const compactHeaderThreshold = 112;
+const compactHeaderReleaseThreshold = 72;
 let isSubmitting = false;
+
+const updateCompactHeader = ({ force = false } = {}) => {
+  if (!siteHeader) return;
+  if (!force && primaryMenu?.classList.contains("is-open")) return;
+  const threshold = siteHeader.classList.contains("is-compact") ? compactHeaderReleaseThreshold : compactHeaderThreshold;
+  siteHeader.classList.toggle("is-compact", compactHeaderMedia.matches && window.scrollY > threshold);
+};
 
 const closeMenu = ({ restoreFocus = false } = {}) => {
   if (!menuToggle || !primaryMenu) return;
   menuToggle.setAttribute("aria-expanded", "false");
   primaryMenu.classList.remove("is-open");
+  updateCompactHeader();
   if (restoreFocus) menuToggle.focus();
 };
 
@@ -18,6 +30,7 @@ menuToggle?.addEventListener("click", () => {
   const expanded = menuToggle.getAttribute("aria-expanded") === "true";
   menuToggle.setAttribute("aria-expanded", String(!expanded));
   primaryMenu?.classList.toggle("is-open", !expanded);
+  updateCompactHeader({ force: true });
 });
 
 primaryMenu?.addEventListener("click", (event) => {
@@ -39,7 +52,12 @@ document.addEventListener("keydown", (event) => {
 
 window.addEventListener("resize", () => {
   if (window.innerWidth > 900) closeMenu();
+  else updateCompactHeader();
 });
+
+window.addEventListener("scroll", () => updateCompactHeader(), { passive: true });
+window.addEventListener("pageshow", () => updateCompactHeader());
+updateCompactHeader();
 
 const clearContactError = () => {
   emailInput?.setCustomValidity("");
