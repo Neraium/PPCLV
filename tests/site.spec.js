@@ -129,6 +129,48 @@ test("homepage retains the required commercial journey", async ({ page }) => {
   await expect(properties).not.toContainText("Station Casinos");
 });
 
+test("homepage service cards share one neutral default treatment and reveal emphasis only on interaction", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await waitForPage(page, "/index.html");
+  const cards = page.locator(".service-line-item");
+  await expect(cards).toHaveCount(3);
+  await expect(page.locator(".service-line-item.featured-service")).toHaveCount(0);
+
+  const defaultStyles = await cards.evaluateAll((elements) => elements.map((element) => {
+    const style = getComputedStyle(element);
+    return {
+      backgroundColor: style.backgroundColor,
+      borderColor: style.borderColor,
+      borderStyle: style.borderStyle,
+      borderWidth: style.borderWidth,
+      borderRadius: style.borderRadius,
+      boxShadow: style.boxShadow,
+      transform: style.transform
+    };
+  }));
+  expect(new Set(defaultStyles.map((style) => JSON.stringify(style))).size).toBe(1);
+  expect(defaultStyles[0]).toMatchObject({
+    backgroundColor: "rgb(255, 255, 255)",
+    borderColor: "rgb(200, 220, 231)",
+    borderStyle: "solid",
+    borderWidth: "1px",
+    borderRadius: "6px",
+    boxShadow: "none",
+    transform: "none"
+  });
+
+  await cards.first().hover();
+  await page.waitForTimeout(220);
+  const hoverStyle = await cards.first().evaluate((element) => {
+    const style = getComputedStyle(element);
+    return { borderColor: style.borderColor, boxShadow: style.boxShadow, transform: style.transform };
+  });
+  expect(hoverStyle.borderColor).toBe("rgb(40, 124, 158)");
+  expect(hoverStyle.boxShadow).not.toBe("none");
+  expect(hoverStyle.transform).not.toBe("none");
+  await expect(cards.nth(1)).toHaveCSS("background-color", "rgb(255, 255, 255)");
+});
+
 test("Properties page presents the exact seven featured properties and broader portfolio", async ({ page }) => {
   await waitForPage(page, "/properties.html");
   await expect(page.locator("h1")).toHaveText("Commercial pool and spa service across Las Vegas.");
