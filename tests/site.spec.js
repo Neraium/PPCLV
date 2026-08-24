@@ -302,8 +302,20 @@ test("structured data defines one restrained entity graph and five supported ser
 test("FAQ and estate discovery remain contextual and commercial-first", async ({ page }) => {
   await waitForPage(page, "/index.html");
   await expect(page.locator(".home-faq-preview details")).toHaveCount(0);
-  await expect(page.locator(".home-faq-preview article")).toHaveCount(3);
+  const homepageFAQ = page.locator(".home-faq-preview");
+  await expect(homepageFAQ.getByRole("heading", { level: 2 })).toHaveText("Clear answers for property and facility teams.");
+  await expect(homepageFAQ.locator("article")).toHaveCount(3);
+  await expect(homepageFAQ.locator("h3 a")).toHaveText([
+    "Does PPC provide CPO services?",
+    "Does PPC handle commercial pool equipment troubleshooting and repair?",
+    "What areas does PPC serve?"
+  ]);
+  await expect(homepageFAQ.getByRole("link", { name: "Does PPC service large private estates?" })).toHaveCount(0);
   await expect(page.getByRole("link", { name: "View All FAQs" })).toHaveAttribute("href", "faq.html");
+
+  await waitForPage(page, "/faq.html");
+  await expect(page.locator("#private-estates")).toContainText("Does PPC service private estates?");
+  await expect(page.locator("#estate-services")).toContainText("What services can PPC provide for large private estates?");
 
   await waitForPage(page, "/services.html");
   await expect(page.getByRole("link", { name: "Read Service FAQ" })).toHaveAttribute("href", "faq.html");
