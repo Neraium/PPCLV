@@ -744,6 +744,16 @@ p { margin-bottom: 16px; }
   .footer-links { grid-template-columns: 1fr 1fr; }
 }
 
+@media (min-width: 360px) and (max-width: 560px) {
+  html { scroll-padding-top: 112px; }
+  .brand-masthead,
+  .masthead-inner { min-height: 110px; }
+  .logo-link { width: 190px; min-height: 108px; }
+  .logo-artwork { width: 190px; height: 83px; }
+  .site-logo { transform: translateY(-21px); }
+  .brand-name { font-size: 0.8125rem; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *,

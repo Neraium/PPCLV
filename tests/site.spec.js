@@ -682,8 +682,15 @@ for (const width of requiredWidths) {
   }
 }
 
-test("mobile header is centered, stable, and keeps Request Service inside the menu", async ({ page }) => {
-  for (const width of [390, 430]) {
+test("mobile header balances centered branding and Menu across phone widths", async ({ page }) => {
+  const cases = [
+    { width: 320, headerHeight: 97, artworkWidth: 164, artworkHeight: 72, minimumMenuGap: 0 },
+    { width: 375, headerHeight: 111, artworkWidth: 190, artworkHeight: 83, minimumMenuGap: 20 },
+    { width: 390, headerHeight: 111, artworkWidth: 190, artworkHeight: 83, minimumMenuGap: 24 },
+    { width: 430, headerHeight: 111, artworkWidth: 190, artworkHeight: 83, minimumMenuGap: 24 }
+  ];
+
+  for (const { width, headerHeight, artworkWidth, artworkHeight, minimumMenuGap } of cases) {
     await page.setViewportSize({ width, height: 860 });
     await waitForPage(page, "/index.html");
     const header = page.locator("[data-site-header]");
@@ -692,11 +699,11 @@ test("mobile header is centered, stable, and keeps Request Service inside the me
     const logoArtwork = await page.locator(".logo-artwork").boundingBox();
     const brandName = page.locator(".brand-name");
     const brandNameBox = await brandName.boundingBox();
-    expect(initial.height).toBeCloseTo(97, 0);
+    expect(initial.height).toBeCloseTo(headerHeight, 0);
     expect(Math.abs((logo.x + logo.width / 2) - width / 2)).toBeLessThanOrEqual(1);
     expect(Math.abs((logoArtwork.x + logoArtwork.width / 2) - width / 2)).toBeLessThanOrEqual(1);
-    expect(logoArtwork.width).toBeCloseTo(164, 0);
-    expect(logoArtwork.height).toBeCloseTo(72, 0);
+    expect(logoArtwork.width).toBeCloseTo(artworkWidth, 0);
+    expect(logoArtwork.height).toBeCloseTo(artworkHeight, 0);
     await expect(brandName).toHaveText("Professional Pool Care LLC");
     expect(brandNameBox.y).toBeGreaterThanOrEqual(logoArtwork.y + logoArtwork.height);
     expect(await brandName.evaluate((element) => getComputedStyle(element).whiteSpace)).toBe("nowrap");
@@ -705,7 +712,7 @@ test("mobile header is centered, stable, and keeps Request Service inside the me
     await expect(page.locator(".header-cta")).toBeHidden();
     const toggle = page.getByRole("button", { name: "Menu" });
     const toggleBox = await toggle.boundingBox();
-    expect(toggleBox.x - (logo.x + logo.width)).toBeGreaterThanOrEqual(24);
+    expect(toggleBox.x - (logo.x + logo.width)).toBeGreaterThanOrEqual(minimumMenuGap);
     expect(Math.abs((toggleBox.y + toggleBox.height / 2) - (initial.y + initial.height / 2))).toBeLessThanOrEqual(2);
     await toggle.click();
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
