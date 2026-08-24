@@ -377,15 +377,28 @@ test("property cards retain a cohesive responsive grid and unclipped names", asy
   }
 });
 
-test("homepage imagery is commercial, lazy below the hero, and not duplicated", async ({ page }) => {
+test("homepage hero uses the Red Rock property image without weakening LCP handling", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await waitForPage(page, "/index.html");
   const hero = page.locator(".hero-image-panel img");
+  await expect(hero).toHaveAttribute("src", "images/temp-property-reference/temp-red-rock.webp");
+  await expect(hero).toHaveAttribute("width", "1200");
+  await expect(hero).toHaveAttribute("height", "675");
   await expect(hero).toHaveAttribute("fetchpriority", "high");
-  await expect(hero).toHaveAttribute("srcset", /resort-hotel-pool-deck-960\.webp 960w, images\/resort-hotel-pool-deck\.webp 1440w/);
-  expect(await hero.evaluate((image) => /resort-hotel-pool-deck(?:-960)?\.webp$/.test(new URL(image.currentSrc).pathname))).toBeTruthy();
+  await expect(hero).not.toHaveAttribute("loading", "lazy");
+  await expect(hero).toHaveAttribute("alt", "Red Rock resort pool with a central fountain, red loungers, and palm-lined grounds");
+  expect(await hero.evaluate((image) => ({
+    currentSrc: new URL(image.currentSrc).pathname,
+    naturalWidth: image.naturalWidth,
+    naturalHeight: image.naturalHeight
+  }))).toEqual({
+    currentSrc: "/images/temp-property-reference/temp-red-rock.webp",
+    naturalWidth: 1200,
+    naturalHeight: 675
+  });
   const sources = await page.locator("main img").evaluateAll((images) => images.map((image) => image.getAttribute("src")));
-  expect(new Set(sources).size).toBe(sources.length);
+  expect(new Set(sources.slice(1)).size).toBe(sources.length - 1);
+  expect(sources.filter((source) => source === "images/temp-property-reference/temp-red-rock.webp")).toHaveLength(2);
   const belowFoldLoading = await page.locator("main img:not(.hero-image-panel img)").evaluateAll((images) => images.map((image) => image.loading));
   expect(belowFoldLoading.every((value) => value === "lazy")).toBeTruthy();
   const altText = await page.locator("main img").evaluateAll((images) => images.map((image) => image.alt.trim()));

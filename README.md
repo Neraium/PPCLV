@@ -118,7 +118,7 @@ No active FAQPage schema, industry-specific landing-page architecture, expanded 
 
 ## Photography
 
-The current site uses representative commercial photography outside the property showcase. The homepage and Properties page additionally use seven isolated, property-specific web-sourced images for **temporary internal preview only**. They are stored only under `images/temp-property-reference/`, are not cleared for public use, and **MUST be replaced before public launch**.
+The current site uses representative commercial photography outside its property-specific placements. The homepage hero, homepage property showcase, and Properties page use seven isolated, property-specific web-sourced images for **temporary internal preview only**. The hero specifically reuses the Red Rock reference image. These assets are stored only under `images/temp-property-reference/`, are not cleared for public use, and **MUST be replaced before public launch**.
 
 See `images/README.md` for the exact source URL/domain, retrieval date, placements, crop guidance, output recommendation, rights requirement, and intended permanent filename for every featured property. The production-readiness check intentionally fails while any temporary reference remains:
 
