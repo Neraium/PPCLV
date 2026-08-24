@@ -329,6 +329,15 @@ test("FAQ and estate discovery remain contextual and commercial-first", async ({
   await waitForPage(page, "/about.html");
   await expect(page.getByRole("link", { name: "commercial pool and spa services" })).toHaveAttribute("href", "services.html");
   await expect(page.locator(".about-page-hero .lead")).toContainText("commercial aquatic facilities, resorts, hospitality properties, communities, and large private estates");
+  await expect(page.locator(".image-split-section h2")).toHaveText("Built around the way commercial pools and spas actually operate.");
+  await expect(page.locator(".image-split-section img")).toHaveAttribute("src", "images/temp-property-reference/temp-commercial-pool-mechanical-room.jpg");
+  await expect(page.locator(".image-split-section img")).toHaveAttribute("alt", "Mechanical room with large filtration vessels, circulation piping, valves, and controls");
+  await expect(page.locator(".why-list span")).toHaveText([
+    "Commercial service is coordinated around property access, guest or resident activity, and day-to-day operations.",
+    "Routine attention supports water quality, equipment condition, presentation, and useful service records.",
+    "Communication is framed for managers, boards, engineers, and facility operators who need clear conditions, service needs, and next steps.",
+    "Las Vegas heat, dust, heavy bather loads, evaporation, and seasonal demand influence the needs of commercial pools and spas."
+  ]);
 
   const publicText = [];
   for (const path of publicPages) {
@@ -620,8 +629,8 @@ test("all public pages have exact unique production metadata", async ({ page }) 
       title: "About Professional Pool Care LLC | Las Vegas",
       description: "PPC has served commercial aquatic facilities, resorts, hospitality properties, communities, and large private estates across Greater Las Vegas since 2003.",
       canonical: `${productionOrigin}/about.html`,
-      image: `${productionOrigin}/images/commercial-equipment-room-service.jpg`,
-      imageAlt: "Commercial pool equipment room with pumps, piping, and service access"
+      image: `${productionOrigin}/images/temp-property-reference/temp-commercial-pool-mechanical-room.jpg`,
+      imageAlt: "Mechanical room with large filtration vessels, circulation piping, valves, and controls"
     }],
     ["/contact.html", {
       title: "Request Pool & Spa Service in Las Vegas | PPC LLC",
@@ -1360,7 +1369,7 @@ test("production-readiness guard detects temporary property references and suppo
   expect(guard.scanTextForTemporaryReferences('<img src="images/temp-property-reference/temp-example.webp">')).toBeTruthy();
   expect(guard.scanTextForTemporaryReferences('<img src="images/properties/approved-example.webp">')).toBeFalsy();
   const failures = await guard.findTemporaryImageReferences();
-  expect(failures).toEqual(expect.arrayContaining([expect.stringMatching(/^index\.html:/), expect.stringMatching(/^properties\.html:/), expect.stringMatching(/^services\.html:/)]));
+  expect(failures).toEqual(expect.arrayContaining([expect.stringMatching(/^index\.html:/), expect.stringMatching(/^properties\.html:/), expect.stringMatching(/^services\.html:/), expect.stringMatching(/^about\.html:/)]));
   const command = spawnSync(process.execPath, ["scripts/check-production-readiness.mjs"], {
     cwd: process.cwd(),
     encoding: "utf8"
