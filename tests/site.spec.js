@@ -109,7 +109,7 @@ test("homepage retains the required commercial journey", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Commercial Pool & Spa Service");
   await expect(page.getByRole("link", { name: "Request Service" }).first()).toBeVisible();
   await expect(page.getByRole("link", { name: "View Services" }).first()).toHaveAttribute("href", "services.html");
-  await expect(page.locator(".services-row-intro > p:last-child")).toHaveText("PPC provides pool and spa service for resorts, hospitality properties, communities, commercial aquatic facilities, and large private estates throughout the Greater Las Vegas Area.");
+  await expect(page.locator(".services-row-intro > p:last-child")).toHaveText("PPC provides pool and spa service for resorts, communities, commercial facilities, and large private estates throughout the Greater Las Vegas Area.");
   const properties = page.locator(".property-showcase");
   await expect(properties.locator(".eyebrow")).toHaveText("PROPERTIES WE SERVE");
   await expect(properties.getByRole("heading", { name: "Trusted across Las Vegas properties." })).toBeVisible();
