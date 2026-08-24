@@ -351,9 +351,10 @@ test("FAQ and estate discovery remain contextual and commercial-first", async ({
 
 test("Properties page presents the exact seven featured properties and broader portfolio", async ({ page }) => {
   await waitForPage(page, "/properties.html");
-  await expect(page.locator("h1")).toHaveText("Commercial pool and spa service across Las Vegas.");
-  await expect(page.locator(".properties-page-hero .lead")).toHaveText("PPC supports a broad portfolio of commercial properties across the Greater Las Vegas Area, including major resorts, hospitality properties, communities, and aquatic facilities.");
-  await expect(page.getByRole("heading", { level: 2, name: "Featured Properties" })).toBeVisible();
+  await expect(page.locator("h1")).toHaveText("Commercial pool and spa service across the Greater Las Vegas Area.");
+  await expect(page.locator(".properties-page-hero .lead")).toHaveText("PPC serves a broad portfolio of resorts, hospitality properties, communities, and aquatic facilities throughout the Greater Las Vegas Area.");
+  await expect(page.locator(".featured-properties .eyebrow")).toHaveText("FEATURED PROPERTIES");
+  await expect(page.getByRole("heading", { level: 2, name: "Properties We Serve" })).toBeVisible();
   const cards = page.locator(".featured-property-card");
   await expect(cards).toHaveCount(7);
   await expect(cards.locator("figcaption")).toHaveText([
@@ -374,8 +375,11 @@ test("Properties page presents the exact seven featured properties and broader p
     "images/temp-property-reference/temp-durango.webp",
     "images/temp-property-reference/temp-red-rock.webp"
   ]);
-  await expect(page.getByRole("heading", { level: 2, name: "Additional Properties We Serve" })).toBeVisible();
-  await expect(page.locator(".additional-properties p:last-child")).toHaveText("PPC supports additional commercial pools, spas, and aquatic facilities throughout the Greater Las Vegas Area.");
+  await expect(page.locator(".additional-properties .eyebrow")).toHaveText("MORE PROPERTIES ACROSS LAS VEGAS");
+  await expect(page.getByRole("heading", { level: 2, name: "Beyond our featured properties." })).toBeVisible();
+  await expect(page.locator(".additional-properties p:last-child")).toHaveText("PPC supports additional commercial pools, spas, communities, aquatic facilities, and large private estates throughout the Greater Las Vegas Area.");
+  await expect(page.locator(".final-contact-band h2")).toHaveText("Keep your pool and spa operation ready.");
+  await expect(page.locator(".final-contact-band div > p:last-child")).toHaveText("Tell PPC about your property and the support you need.");
   await expect(page.locator("main img")).toHaveCount(7);
   expect(await page.locator("main img").evaluateAll((images) => images.every((image) => image.alt.trim() && image.naturalWidth === 1200 && image.naturalHeight === 675))).toBeTruthy();
 });
