@@ -11,6 +11,7 @@ const publicSourceFiles = [
   "properties.html",
   "about.html",
   "contact.html",
+  "faq.html",
   "privacy.html",
   "terms.html",
   "styles.css",

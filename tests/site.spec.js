@@ -4,11 +4,12 @@ const { readdir, readFile } = require("node:fs/promises");
 const { join } = require("node:path");
 
 const productionOrigin = "https://professionalpoolcare.com";
-const corePages = ["/index.html", "/services.html", "/properties.html", "/about.html", "/contact.html"];
+const corePages = ["/index.html", "/services.html", "/properties.html", "/about.html", "/contact.html", "/faq.html"];
 const utilityPages = ["/privacy.html", "/terms.html"];
 const publicPages = [...corePages, ...utilityPages];
 const requiredWidths = [320, 375, 390, 430, 768, 1024, 1280, 1440, 1920];
-const expandedNames = ["industries.html", "our-work.html", "gallery.html", "faq.html", "commercial-pool-service-las-vegas.html"];
+const archivedExpandedNames = ["industries.html", "our-work.html", "gallery.html", "faq.html", "commercial-pool-service-las-vegas.html"];
+const nonPublicExpandedNames = archivedExpandedNames.filter((name) => name !== "faq.html");
 
 const validContactFields = {
   name: "Ada Manager",
@@ -77,7 +78,7 @@ test("Essential navigation promotes exactly five marketing pages", async ({ page
     await waitForPage(page, path);
     const links = await page.locator("#primary-menu a:not(.mobile-menu-cta)").evaluateAll((anchors) => anchors.map((anchor) => ({ text: anchor.textContent.trim(), href: anchor.getAttribute("href") })));
     expect(links).toEqual([
-      { text: "Home", href: "index.html" },
+      { text: "Home", href: "/" },
       { text: "Services", href: "services.html" },
       { text: "Properties", href: "properties.html" },
       { text: "About", href: "about.html" },
@@ -86,7 +87,7 @@ test("Essential navigation promotes exactly five marketing pages", async ({ page
   }
 });
 
-test("footer is compact and promotes the five-page journey", async ({ page }) => {
+test("footer is compact and includes FAQ without changing the five-page primary journey", async ({ page }) => {
   for (const path of publicPages) {
     await waitForPage(page, path);
     const footer = page.locator("footer");
@@ -98,7 +99,7 @@ test("footer is compact and promotes the five-page journey", async ({ page }) =>
     await expect(footer.getByRole("link", { name: "Adria@ProfessionalPoolCare.com" })).toHaveAttribute("href", "mailto:Adria@ProfessionalPoolCare.com");
     await expect(footer.getByText("Monday-Friday, 8:00 AM-4:00 PM", { exact: true })).toBeVisible();
     const links = await footer.getByRole("navigation", { name: "Footer navigation" }).locator("a").allTextContents();
-    expect(links.map((text) => text.trim())).toEqual(["Home", "Services", "Properties", "About", "Contact"]);
+    expect(links.map((text) => text.trim())).toEqual(["Home", "Services", "Properties", "About", "Contact", "FAQ"]);
     await expect(footer.getByRole("link", { name: "Request Service" })).toHaveCount(1);
   }
 });
@@ -160,7 +161,7 @@ test("homepage service cards share one neutral default treatment and reveal emph
   });
 
   await cards.first().hover();
-  await page.waitForTimeout(220);
+  await expect(cards.first()).toHaveCSS("border-color", "rgb(40, 124, 158)");
   const hoverStyle = await cards.first().evaluate((element) => {
     const style = getComputedStyle(element);
     return { borderColor: style.borderColor, boxShadow: style.boxShadow, transform: style.transform };
@@ -169,6 +170,129 @@ test("homepage service cards share one neutral default treatment and reveal emph
   expect(hoverStyle.boxShadow).not.toBe("none");
   expect(hoverStyle.transform).not.toBe("none");
   await expect(cards.nth(1)).toHaveCSS("background-color", "rgb(255, 255, 255)");
+});
+
+test("FAQ presents the exact 20 approved questions with native keyboard behavior and schema parity", async ({ page }) => {
+  await waitForPage(page, "/faq.html");
+  const expectedQuestions = [
+    "What types of commercial pools and spas does PPC service?",
+    "What areas does Professional Pool Care LLC serve?",
+    "Does PPC provide Certified Pool Operator (CPO) services?",
+    "Does PPC handle commercial pool equipment troubleshooting and repair?",
+    "Does PPC service chemical feed and pool automation systems?",
+    "Does PPC provide pool deck cleaning?",
+    "How does PPC clean commercial pool decks?",
+    "Does PPC provide emergency pool and spa service?",
+    "Does PPC handle biological contamination and bio cleanup?",
+    "Can PPC help prepare a commercial pool or spa for inspection?",
+    "Does PPC provide acid washing and surface restoration?",
+    "Can PPC work around hotel, resort, HOA, community, and facility operating schedules?",
+    "How do I request commercial pool or spa service from PPC?",
+    "Does PPC service residential pools?",
+    "Does PPC service private estates?",
+    "What types of services can PPC provide for large private estates?",
+    "How often should a commercial pool or spa be serviced?",
+    "Why is CPO coverage important for a commercial aquatic facility?",
+    "Can PPC troubleshoot water-quality problems as well as equipment issues?",
+    "Does PPC service hotels, resorts, casinos, communities, aquatic facilities, and large private estates?"
+  ];
+  const details = page.locator(".faq-list details");
+  await expect(details).toHaveCount(20);
+  await expect(details.locator("summary")).toHaveText(expectedQuestions);
+
+  const schema = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent());
+  expect(schema["@type"]).toBe("FAQPage");
+  expect(schema["@id"]).toBe("https://professionalpoolcare.com/faq.html#faq");
+  expect(schema.mainEntity).toHaveLength(20);
+  const normalize = (value) => value.replace(/\s+/g, " ").trim();
+  const visible = await details.evaluateAll((elements) => elements.map((element) => ({
+    question: element.querySelector("summary").innerText,
+    answer: element.querySelector("p").textContent
+  })));
+  expect(schema.mainEntity.map((entry) => entry.name)).toEqual(visible.map((entry) => normalize(entry.question)));
+  expect(schema.mainEntity.map((entry) => entry.acceptedAnswer.text)).toEqual(visible.map((entry) => normalize(entry.answer)));
+
+  const firstSummary = details.first().locator("summary");
+  await firstSummary.focus();
+  await expect(firstSummary).toBeFocused();
+  expect((await firstSummary.boundingBox()).height).toBeGreaterThanOrEqual(48);
+  await page.keyboard.press("Enter");
+  await expect(details.first()).toHaveJSProperty("open", true);
+  await page.keyboard.press("Space");
+  await expect(details.first()).toHaveJSProperty("open", false);
+});
+
+test("structured data defines one restrained entity graph and five supported services", async ({ page }) => {
+  await waitForPage(page, "/index.html");
+  const homeSchema = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent());
+  expect(homeSchema["@graph"].map((node) => node["@type"])).toEqual(["Organization", "ImageObject", "Place", "WebSite"]);
+  const organization = homeSchema["@graph"].find((node) => node["@type"] === "Organization");
+  expect(organization).toMatchObject({
+    "@id": "https://professionalpoolcare.com/#organization",
+    name: "Professional Pool Care LLC",
+    alternateName: "PPC LLC",
+    url: "https://professionalpoolcare.com/",
+    telephone: "+1-702-357-7027",
+    email: "Adria@ProfessionalPoolCare.com",
+    foundingDate: "2003",
+    slogan: "PPC LLC, The Difference Is Clear."
+  });
+  const prohibitedSchemaTerms = new Set(["LocalBusiness", "address", "geo", "sameAs", "review", "rating", "price", "openingHours", "credential"]);
+  const schemaTerms = [];
+  const collectSchemaTerms = (value) => {
+    if (!value || typeof value !== "object") return;
+    for (const [key, child] of Object.entries(value)) {
+      schemaTerms.push(key);
+      if (key === "@type") schemaTerms.push(...(Array.isArray(child) ? child : [child]));
+      collectSchemaTerms(child);
+    }
+  };
+  collectSchemaTerms(homeSchema);
+  expect(schemaTerms.some((term) => prohibitedSchemaTerms.has(term))).toBeFalsy();
+
+  await waitForPage(page, "/services.html");
+  const serviceSchema = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent());
+  expect(serviceSchema["@graph"]).toHaveLength(5);
+  expect(serviceSchema["@graph"].every((node) => node["@type"] === "Service")).toBeTruthy();
+  expect(serviceSchema["@graph"].map((node) => node.name)).toEqual([
+    "Commercial Pool and Spa Maintenance",
+    "Commercial Pool Equipment and Restoration Support",
+    "Certified Pool Operator and Inspection-Readiness Support",
+    "Emergency Commercial Pool and Spa Service and Bio Cleanup",
+    "Large Private Estate Pool and Spa Service"
+  ]);
+  for (const service of serviceSchema["@graph"]) {
+    expect(service.provider).toEqual({ "@id": "https://professionalpoolcare.com/#organization" });
+    expect(service.areaServed).toEqual({ "@id": "https://professionalpoolcare.com/#greater-las-vegas-area" });
+  }
+  expect(JSON.stringify(serviceSchema)).not.toMatch(/Offer|price|review|rating|availability|openingHours|guarantee/i);
+});
+
+test("FAQ and estate discovery remain contextual and commercial-first", async ({ page }) => {
+  await waitForPage(page, "/index.html");
+  await expect(page.locator(".home-faq-preview details")).toHaveCount(0);
+  await expect(page.locator(".home-faq-preview article")).toHaveCount(3);
+  await expect(page.getByRole("link", { name: "View All FAQs" })).toHaveAttribute("href", "faq.html");
+
+  await waitForPage(page, "/services.html");
+  await expect(page.getByRole("link", { name: "Read Service FAQ" })).toHaveAttribute("href", "faq.html");
+  await expect(page.locator("#large-private-estates")).toBeVisible();
+
+  await waitForPage(page, "/contact.html");
+  await expect(page.getByRole("link", { name: "Read the service FAQ" })).toHaveAttribute("href", "faq.html");
+  await expect(page.locator('[name="property_type"]')).toContainText("Large private estate");
+
+  await waitForPage(page, "/about.html");
+  await expect(page.getByRole("link", { name: "commercial pool and spa services" })).toHaveAttribute("href", "services.html");
+
+  const publicText = [];
+  for (const path of publicPages) {
+    await waitForPage(page, path);
+    publicText.push(await page.locator("body").textContent());
+  }
+  const combined = publicText.join("\n");
+  expect(combined).toContain("PPC's primary focus is commercial aquatic facilities and large private estates rather than routine residential pool service.");
+  expect(combined).not.toMatch(/residential pool cleaning|backyard pool service|weekly home pool service|offers? routine residential service/i);
 });
 
 test("Properties page presents the exact seven featured properties and broader portfolio", async ({ page }) => {
@@ -253,6 +377,9 @@ test("services are organized into the nine approved offerings with one scope not
   ]);
   await expect(page.locator(".service-group > .service-group-image")).toHaveCount(3);
   await expect(page.locator(".scope-note")).toHaveText("PPC supports maintenance and inspection readiness. Property owners and operators remain responsible for applicable regulatory requirements.");
+  await expect(page.locator("#large-private-estates")).toContainText("large private estates");
+  await expect(page.locator("#pool-deck-cleaning p")).toHaveText("Commercial pool deck power washing using cleaning solutions selected for compatibility with pool areas, deck surfaces, and surrounding décor, focused on helping remove dirt, buildup, organic debris, and surface staining. Surface material and condition affect compatibility and results, and complete stain removal is not promised.");
+  await expect(page.locator("#pool-deck-cleaning p")).not.toContainText("pool-, deck-, and décor-safe");
 });
 
 test("contact form is simple, accessible, and posts to the Worker endpoint", async ({ page }) => {
@@ -296,6 +423,14 @@ test("contact form is simple, accessible, and posts to the Worker endpoint", asy
     "Emergency Service & Bio Cleanup",
     "Certified Pool Operator (CPO) Services",
     "Inspection-Readiness & Compliance Support"
+  ]);
+  await expect(form.locator('[name="property_type"] option:not([value=""])')).toHaveText([
+    "Resort or hotel",
+    "Apartment or multifamily community",
+    "HOA aquatic facility",
+    "Municipal or public facility",
+    "Other commercial property",
+    "Large private estate"
   ]);
   await page.getByRole("button", { name: "Request Service" }).last().click();
   await expect(form.locator('[name="name"]')).toBeFocused();
@@ -393,37 +528,95 @@ test("contact form prevents duplicate submissions while a request is pending", a
   expect(requestCount).toBe(1);
 });
 
-test("core pages have exact unique SEO titles and descriptions", async ({ page }) => {
-  const expectedTitles = new Map([
-    ["/index.html", "PPC LLC | Commercial Pool & Spa Service in Las Vegas"],
-    ["/services.html", "Commercial Pool & Spa Services | PPC LLC"],
-    ["/properties.html", "Properties We Serve | PPC LLC"],
-    ["/about.html", "About PPC LLC | Professional Pool Care"],
-    ["/contact.html", "Contact PPC LLC | Request Commercial Pool Service"]
+test("all public pages have exact unique production metadata", async ({ page }) => {
+  const expected = new Map([
+    ["/index.html", {
+      title: "Commercial Pool & Spa Service Las Vegas | PPC LLC",
+      description: "Professional Pool Care LLC provides commercial pool and spa maintenance, CPO coverage, equipment support, emergency service, and large-estate care across Greater Las Vegas.",
+      canonical: `${productionOrigin}/`,
+      image: `${productionOrigin}/images/resort-hotel-pool-deck.webp`,
+      imageAlt: "Large commercial resort pool deck with hospitality seating"
+    }],
+    ["/services.html", {
+      title: "Commercial Pool & Spa Services Las Vegas | PPC LLC",
+      description: "Explore PPC commercial pool and spa maintenance, CPO services, equipment repair, automation, deck cleaning, emergency support, and estate service in Greater Las Vegas.",
+      canonical: `${productionOrigin}/services.html`,
+      image: `${productionOrigin}/images/commercial-equipment-room-service.jpg`,
+      imageAlt: "Commercial pool equipment room with pumps and service access"
+    }],
+    ["/properties.html", {
+      title: "Las Vegas Commercial Pool Properties | PPC LLC",
+      description: "Explore featured Las Vegas resorts, communities, and aquatic facilities served by Professional Pool Care LLC across the Greater Las Vegas Area.",
+      canonical: `${productionOrigin}/properties.html`,
+      image: `${productionOrigin}/images/resort-hotel-pool-deck.webp`,
+      imageAlt: "Large commercial resort pool deck with hospitality seating"
+    }],
+    ["/about.html", {
+      title: "About Professional Pool Care LLC | Las Vegas",
+      description: "Professional Pool Care LLC is family owned and operated in Las Vegas since 2003, serving commercial aquatic facilities and large private estates.",
+      canonical: `${productionOrigin}/about.html`,
+      image: `${productionOrigin}/images/commercial-equipment-room-service.jpg`,
+      imageAlt: "Commercial pool equipment room with pumps, piping, and service access"
+    }],
+    ["/contact.html", {
+      title: "Request Pool & Spa Service in Las Vegas | PPC LLC",
+      description: "Request commercial pool, spa, CPO, equipment, or large-private-estate service from Professional Pool Care LLC in the Greater Las Vegas Area.",
+      canonical: `${productionOrigin}/contact.html`,
+      image: `${productionOrigin}/images/resort-hotel-pool-deck.webp`,
+      imageAlt: "Large commercial resort pool deck with hospitality seating"
+    }],
+    ["/faq.html", {
+      title: "Commercial Pool & Spa Service FAQ | PPC LLC Las Vegas",
+      description: "Answers about PPC commercial pool and spa maintenance, CPO coverage, equipment, deck cleaning, emergency service, and large private estates in Las Vegas.",
+      canonical: `${productionOrigin}/faq.html`,
+      image: `${productionOrigin}/images/commercial-water-testing.jpg`,
+      imageAlt: "Water-condition thermometer beside a large commercial pool"
+    }],
+    ["/privacy.html", {
+      title: "Privacy Policy | PPC LLC",
+      description: "Read how Professional Pool Care LLC handles information submitted through its commercial pool and spa service request form.",
+      canonical: `${productionOrigin}/privacy.html`,
+      image: `${productionOrigin}/images/resort-hotel-pool-deck.webp`,
+      imageAlt: "Large commercial resort pool deck with hospitality seating"
+    }],
+    ["/terms.html", {
+      title: "Website Terms | PPC LLC",
+      description: "Read the website terms for Professional Pool Care LLC service information and commercial pool and spa inquiries.",
+      canonical: `${productionOrigin}/terms.html`,
+      image: `${productionOrigin}/images/resort-hotel-pool-deck.webp`,
+      imageAlt: "Large commercial resort pool deck with hospitality seating"
+    }]
   ]);
-  const expectedPropertiesDescription = "Explore featured Las Vegas resorts, communities, and aquatic facilities served by Professional Pool Care LLC across the Greater Las Vegas Area.";
-  const expectedPropertiesOgDescription = "Commercial pool and spa service for a broad portfolio of Las Vegas resorts, hospitality properties, communities, and aquatic facilities.";
   const descriptions = [];
-  for (const path of corePages) {
+  const titles = [];
+  for (const path of publicPages) {
+    const metadata = expected.get(path);
     await waitForPage(page, path);
-    await expect(page).toHaveTitle(expectedTitles.get(path));
+    await expect(page).toHaveTitle(metadata.title);
     await expect(page.locator("h1")).toHaveCount(1);
     await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
-    const expectedCanonical = path === "/index.html" ? `${productionOrigin}/` : `${productionOrigin}${path}`;
-    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", expectedCanonical);
-    await expect(page.locator('meta[property="og:url"]')).toHaveAttribute("content", expectedCanonical);
-    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute("content", expectedTitles.get(path));
-    const ogImage = await page.locator('meta[property="og:image"]').getAttribute("content");
-    expect(ogImage).toMatch(/^https:\/\/professionalpoolcare\.com\/images\/.+/);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", metadata.canonical);
+    await expect(page.locator('meta[property="og:url"]')).toHaveAttribute("content", metadata.canonical);
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute("content", metadata.title);
+    await expect(page.locator('meta[property="og:description"]')).toHaveAttribute("content", metadata.description);
+    await expect(page.locator('meta[property="og:type"]')).toHaveAttribute("content", "website");
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", metadata.image);
+    await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute("content", metadata.imageAlt);
+    await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute("content", "Professional Pool Care LLC");
+    await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute("content", "summary_large_image");
     const description = await page.locator('meta[name="description"]').getAttribute("content");
-    expect(description.trim().length).toBeGreaterThan(70);
-    if (path === "/properties.html") {
-      expect(description).toBe(expectedPropertiesDescription);
-      await expect(page.locator('meta[property="og:description"]')).toHaveAttribute("content", expectedPropertiesOgDescription);
-    }
+    expect(description).toBe(metadata.description);
+    const schemaSources = await page.locator('script[type="application/ld+json"]').allTextContents();
+    if (path !== "/faq.html") expect(schemaSources.every((source) => !source.includes('"FAQPage"'))).toBeTruthy();
     descriptions.push(description);
+    titles.push(metadata.title);
   }
-  expect(new Set(descriptions).size).toBe(corePages.length);
+  expect(new Set(descriptions).size).toBe(publicPages.length);
+  expect(new Set(titles).size).toBe(publicPages.length);
+  for (const path of utilityPages) {
+    await waitForPage(page, path);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex, follow");
+  }
 });
 
 test("public pages contain no expanded links, visible development language, em dashes, or conflict markers", async ({ page }) => {
@@ -434,7 +627,7 @@ test("public pages contain no expanded links, visible development language, em d
     expect(text).not.toMatch(forbiddenVisible);
     expect(text).not.toContain("—");
     const hrefs = await page.locator("a[href]").evaluateAll((anchors) => anchors.map((anchor) => anchor.getAttribute("href")));
-    for (const expandedName of expandedNames) expect(hrefs.some((href) => href.includes(expandedName))).toBeFalsy();
+    for (const expandedName of nonPublicExpandedNames) expect(hrefs.some((href) => href.includes(expandedName))).toBeFalsy();
     const source = await page.content();
     const conflictMarkers = ["<".repeat(7), "=".repeat(7), ">".repeat(7)];
     expect(conflictMarkers.some((marker) => source.includes(marker))).toBeFalsy();
@@ -570,7 +763,8 @@ test("sitemap and robots use the production domain", async ({ request }) => {
     "https://professionalpoolcare.com/services.html",
     "https://professionalpoolcare.com/properties.html",
     "https://professionalpoolcare.com/about.html",
-    "https://professionalpoolcare.com/contact.html"
+    "https://professionalpoolcare.com/contact.html",
+    "https://professionalpoolcare.com/faq.html"
   ]);
   const robots = await (await request.get("/robots.txt")).text();
   expect(robots).toContain("Sitemap: https://professionalpoolcare.com/sitemap.xml");
@@ -579,12 +773,12 @@ test("sitemap and robots use the production domain", async ({ request }) => {
 
 test("expanded sources are noindexed and excluded from the built site", async () => {
   const archiveDirectory = join(process.cwd(), "archive", "expanded");
-  for (const name of expandedNames) {
+  for (const name of archivedExpandedNames) {
     const source = await readFile(join(archiveDirectory, name), "utf8");
     expect(source).toMatch(/<meta name="robots" content="noindex, (?:nofollow|follow)">/);
   }
   const builtHtml = (await readdir(join(process.cwd(), "dist"))).filter((name) => name.endsWith(".html")).sort();
-  expect(builtHtml).toEqual(["about.html", "contact.html", "index.html", "privacy.html", "properties.html", "services.html", "terms.html"]);
+  expect(builtHtml).toEqual(["about.html", "contact.html", "faq.html", "index.html", "privacy.html", "properties.html", "services.html", "terms.html"]);
   const builtImages = await readdir(join(process.cwd(), "dist", "images"));
   expect(builtImages).not.toContain("README.md");
   expect(builtImages).not.toContain("logo.png");
@@ -915,7 +1109,7 @@ test("Worker contact endpoint fails safely on Zoho configuration and provider er
 
 test("production build excludes source-only and development artifacts", async () => {
   const builtFiles = await readdir(join(process.cwd(), "dist"));
-  expect(builtFiles).toEqual(expect.arrayContaining(["index.html", "services.html", "properties.html", "about.html", "contact.html", "privacy.html", "terms.html", "robots.txt", "sitemap.xml", "styles.css", "script.js", "images"]));
+  expect(builtFiles).toEqual(expect.arrayContaining(["index.html", "services.html", "properties.html", "about.html", "contact.html", "faq.html", "privacy.html", "terms.html", "robots.txt", "sitemap.xml", "styles.css", "script.js", "images"]));
   for (const forbidden of ["node_modules", ".planning", "tests", "test-artifacts", "archive", "README.md", "package.json", "wrangler.jsonc"]) {
     expect(builtFiles).not.toContain(forbidden);
   }
@@ -936,6 +1130,8 @@ test("production build excludes source-only and development artifacts", async ()
 
 test("production-readiness guard detects temporary property references and supports clean replacements", async () => {
   const guard = await import("../scripts/check-production-readiness.mjs");
+  const guardSource = await readFile(join(process.cwd(), "scripts", "check-production-readiness.mjs"), "utf8");
+  expect(guardSource).toContain('"faq.html"');
   expect(guard.scanTextForTemporaryReferences('<img src="images/temp-property-reference/temp-example.webp">')).toBeTruthy();
   expect(guard.scanTextForTemporaryReferences('<img src="images/properties/approved-example.webp">')).toBeFalsy();
   const failures = await guard.findTemporaryImageReferences();

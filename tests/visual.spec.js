@@ -9,6 +9,7 @@ const reviewPages = [
   { name: "properties", path: "/properties.html" },
   { name: "about", path: "/about.html" },
   { name: "contact", path: "/contact.html" },
+  { name: "faq", path: "/faq.html" },
   { name: "privacy", path: "/privacy.html" },
   { name: "terms", path: "/terms.html" }
 ];
