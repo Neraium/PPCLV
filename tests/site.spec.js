@@ -683,7 +683,7 @@ for (const width of requiredWidths) {
 }
 
 test("mobile header is centered, stable, and keeps Request Service inside the menu", async ({ page }) => {
-  for (const width of [390, 430, 768]) {
+  for (const width of [390, 430]) {
     await page.setViewportSize({ width, height: 860 });
     await waitForPage(page, "/index.html");
     const header = page.locator("[data-site-header]");
@@ -721,6 +721,36 @@ test("mobile header is centered, stable, and keeps Request Service inside the me
   }
 });
 
+test("tablet header gives the centered logo more presence without crowding Menu", async ({ page }) => {
+  await page.setViewportSize({ width: 768, height: 900 });
+  await waitForPage(page, "/index.html");
+  const header = page.locator("[data-site-header]");
+  const initial = await header.boundingBox();
+  const logo = await page.locator(".logo-link").boundingBox();
+  const logoArtwork = await page.locator(".logo-artwork").boundingBox();
+  const brandName = page.locator(".brand-name");
+  const brandNameBox = await brandName.boundingBox();
+  const toggle = page.getByRole("button", { name: "Menu" });
+  const toggleBox = await toggle.boundingBox();
+
+  expect(initial.height).toBeCloseTo(115, 0);
+  expect(Math.abs((logo.x + logo.width / 2) - 384)).toBeLessThanOrEqual(1);
+  expect(Math.abs((logoArtwork.x + logoArtwork.width / 2) - 384)).toBeLessThanOrEqual(1);
+  expect(logoArtwork.width).toBeCloseTo(194, 0);
+  expect(logoArtwork.height).toBeCloseTo(85, 0);
+  await expect(brandName).toHaveText("Professional Pool Care LLC");
+  expect(brandNameBox.y).toBeGreaterThanOrEqual(logoArtwork.y + logoArtwork.height);
+  expect(logo.y).toBeGreaterThanOrEqual(initial.y);
+  expect(logo.y + logo.height).toBeLessThanOrEqual(initial.y + initial.height);
+  expect(toggleBox.x - (logo.x + logo.width)).toBeGreaterThanOrEqual(24);
+  expect(Math.abs((toggleBox.y + toggleBox.height / 2) - (initial.y + initial.height / 2))).toBeLessThanOrEqual(2);
+
+  await page.evaluate(() => window.scrollTo(0, 500));
+  const scrolled = await header.boundingBox();
+  expect(Math.abs(scrolled.height - initial.height)).toBeLessThanOrEqual(1);
+  expect(Math.abs(scrolled.y)).toBeLessThanOrEqual(1);
+});
+
 test("mobile menu closes on outside click, navigation, and desktop resize", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 860 });
   await waitForPage(page, "/index.html");
@@ -745,16 +775,16 @@ test("mobile menu closes on outside click, navigation, and desktop resize", asyn
 });
 
 test("desktop header remains stable during scroll", async ({ page }) => {
-  for (const width of [1024, 1440]) {
+  for (const width of [1024, 1280, 1440, 1920]) {
     await page.setViewportSize({ width, height: 900 });
     await waitForPage(page, "/index.html");
     const header = page.locator("[data-site-header]");
     const initial = await header.boundingBox();
     const logoArtwork = await page.locator(".logo-artwork").boundingBox();
     const brandNameBox = await page.locator(".brand-name").boundingBox();
-    expect(initial.height).toBeCloseTo(87, 0);
-    expect(logoArtwork.width).toBeCloseTo(132, 0);
-    expect(logoArtwork.height).toBeCloseTo(58, 0);
+    expect(initial.height).toBeCloseTo(101, 0);
+    expect(logoArtwork.width).toBeCloseTo(156, 0);
+    expect(logoArtwork.height).toBeCloseTo(69, 0);
     expect(brandNameBox.y).toBeGreaterThanOrEqual(logoArtwork.y + logoArtwork.height);
     await page.evaluate(() => window.scrollTo(0, 600));
     const scrolled = await header.boundingBox();

@@ -181,7 +181,7 @@ p { margin-bottom: 16px; }
   position: sticky;
   z-index: 100;
   top: 0;
-  min-height: 86px;
+  min-height: 100px;
   border-bottom: 1px solid rgba(7, 44, 72, 0.12);
   background: rgba(255, 255, 255, 0.98);
   box-shadow: 0 4px 18px rgba(4, 26, 42, 0.05);
@@ -189,16 +189,16 @@ p { margin-bottom: 16px; }
 
 .masthead-inner {
   display: grid;
-  min-height: 86px;
-  grid-template-columns: 158px minmax(0, 1fr) auto;
+  min-height: 100px;
+  grid-template-columns: 186px minmax(0, 1fr) auto;
   gap: 28px;
   align-items: center;
 }
 
 .logo-link {
   display: flex;
-  width: 158px;
-  min-height: 78px;
+  width: 186px;
+  min-height: 92px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -207,20 +207,20 @@ p { margin-bottom: 16px; }
 
 .logo-artwork {
   display: block;
-  width: 132px;
-  height: 58px;
+  width: 156px;
+  height: 69px;
   overflow: hidden;
 }
 
 .site-logo {
   width: 100%;
   height: auto;
-  transform: translateY(-14px);
+  transform: translateY(-17px);
 }
 
 .brand-name {
   margin-top: 1px;
-  font-size: 0.65625rem;
+  font-size: 0.765625rem;
   font-weight: 700;
   line-height: 1.2;
   white-space: nowrap;
@@ -657,6 +657,16 @@ p { margin-bottom: 16px; }
   .hero-side-note { max-width: 620px; }
   .contact-panel { position: static; }
   .featured-property-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 561px) and (max-width: 900px) {
+  html { scroll-padding-top: 116px; }
+  .masthead-inner,
+  .brand-masthead { min-height: 114px; }
+  .logo-link { width: 206px; min-height: 111px; }
+  .logo-artwork { width: 194px; height: 85px; }
+  .site-logo { transform: translateY(-21px); }
+  .brand-name { font-size: 0.8125rem; }
 }
 
 @media (max-width: 760px) {
