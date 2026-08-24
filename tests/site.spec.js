@@ -320,7 +320,7 @@ test("FAQ and estate discovery remain contextual and commercial-first", async ({
   await waitForPage(page, "/services.html");
   await expect(page.getByRole("link", { name: "Read Service FAQ" })).toHaveAttribute("href", "faq.html");
   await expect(page.locator("#large-private-estates")).toBeVisible();
-  await expect(page.locator(".service-page-hero .lead")).toHaveText("PPC provides commercial pool and spa service for resorts, hospitality properties, communities, aquatic facilities, and large private estates across the Greater Las Vegas Area.");
+  await expect(page.locator(".service-page-hero .lead")).toHaveText("PPC serves resorts, hospitality properties, communities, commercial aquatic facilities, and large private estates throughout the Greater Las Vegas Area.");
 
   await waitForPage(page, "/contact.html");
   await expect(page.getByRole("link", { name: "Read the service FAQ" })).toHaveAttribute("href", "faq.html");
@@ -434,9 +434,12 @@ test("services are organized into the nine approved offerings with one scope not
     "Inspection-Readiness & Compliance Support"
   ]);
   await expect(page.locator(".service-group > .service-group-image")).toHaveCount(3);
+  await expect(page.locator("#equipment-restoration h2")).toHaveText("Equipment, automation, and surface care.");
+  await expect(page.locator("#equipment-restoration img")).toHaveAttribute("src", "images/temp-property-reference/temp-commercial-pool-mechanical-room.jpg");
+  await expect(page.locator("#equipment-restoration img")).toHaveAttribute("alt", "Mechanical room with large filtration vessels, circulation piping, valves, and controls");
   await expect(page.locator(".scope-note")).toHaveText("PPC supports maintenance and inspection readiness. Property owners and operators remain responsible for applicable regulatory requirements.");
   await expect(page.locator("#large-private-estates")).toContainText("large private estates");
-  await expect(page.locator("#pool-deck-cleaning p")).toHaveText("Commercial pool deck power washing using cleaning solutions selected for compatibility with pool areas, deck surfaces, and surrounding décor, focused on helping remove dirt, buildup, organic debris, and surface staining. Surface material and condition affect compatibility and results, and complete stain removal is not promised.");
+  await expect(page.locator("#pool-deck-cleaning p")).toHaveText("Commercial pool deck power washing uses cleaning solutions selected for compatibility with pool areas, deck surfaces, and surrounding décor. Surface material and condition affect compatibility and results; complete stain removal is not guaranteed.");
   await expect(page.locator("#pool-deck-cleaning p")).not.toContainText("pool-, deck-, and décor-safe");
 });
 
@@ -603,8 +606,8 @@ test("all public pages have exact unique production metadata", async ({ page }) 
       title: "Commercial Pool & Spa Services Las Vegas | PPC LLC",
       description: "PPC commercial pool and spa maintenance, CPO service, equipment support, deck cleaning, emergency service, and large private estate care in Greater Las Vegas.",
       canonical: `${productionOrigin}/services.html`,
-      image: `${productionOrigin}/images/commercial-equipment-room-service.jpg`,
-      imageAlt: "Commercial pool equipment room with pumps and service access"
+      image: `${productionOrigin}/images/temp-property-reference/temp-commercial-pool-mechanical-room.jpg`,
+      imageAlt: "Mechanical room with large filtration vessels, circulation piping, valves, and controls"
     }],
     ["/properties.html", {
       title: "Las Vegas Commercial Pool Properties | PPC LLC",
@@ -1357,7 +1360,7 @@ test("production-readiness guard detects temporary property references and suppo
   expect(guard.scanTextForTemporaryReferences('<img src="images/temp-property-reference/temp-example.webp">')).toBeTruthy();
   expect(guard.scanTextForTemporaryReferences('<img src="images/properties/approved-example.webp">')).toBeFalsy();
   const failures = await guard.findTemporaryImageReferences();
-  expect(failures).toEqual(expect.arrayContaining([expect.stringMatching(/^index\.html:/), expect.stringMatching(/^properties\.html:/)]));
+  expect(failures).toEqual(expect.arrayContaining([expect.stringMatching(/^index\.html:/), expect.stringMatching(/^properties\.html:/), expect.stringMatching(/^services\.html:/)]));
   const command = spawnSync(process.execPath, ["scripts/check-production-readiness.mjs"], {
     cwd: process.cwd(),
     encoding: "utf8"

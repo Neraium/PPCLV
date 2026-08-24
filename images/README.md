@@ -30,6 +30,20 @@ Every file under `images/temp-property-reference/` is for PPC's internal preview
 
 The shared property-card layout uses a 16:9 crop with flowing captions. Final approved images can replace these references without another design or layout pass. The only markup work should be the mechanical asset-path and intrinsic-dimension update described in the workflow below.
 
+### Commercial Pool Mechanical Room
+
+- Temporary filename: `images/temp-property-reference/temp-commercial-pool-mechanical-room.jpg`.
+- Source page URL / domain: `https://www.sunbeltpools.com/projects/garland-isd-natatorium/` / `sunbeltpools.com`.
+- Source asset URL / domain: `https://www.sunbeltpools.com/wp-content/uploads/2022/11/Garland-ISD-Web-1-scaled.jpg` / `sunbeltpools.com`.
+- Date retrieved: 2026-08-24.
+- Placements: Services / Equipment & Restoration; Services Open Graph image.
+- Preview status: official project-page source selected for subject clarity; source provenance does not establish reuse rights or permission to publish.
+- Current dimensions / ratio: landscape / 2560 × 1707 px / approximately 3:2.
+- Crop guidance: retain the large filtration vessels, central circulation piping, valves, and control equipment; avoid losing the blue filtration vessel at narrow crops.
+- Alt-text guidance: describe only the visible filtration vessels, piping, valves, and controls; do not infer repair completion, compliance, or PPC involvement.
+- Final approval: written public-use rights and PPC marketing approval are required before launch.
+- Intended permanent filename: `images/commercial-pool-mechanical-room.jpg`.
+
 ### Aliante Casino Hotel Spa
 
 - Temporary filename: `images/temp-property-reference/temp-aliante.webp`.
