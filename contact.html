@@ -47,7 +47,7 @@
           <h2>Greater Las Vegas Area</h2>
           <p>PPC serves commercial pool and spa properties and large private estates across the Greater Las Vegas Area.</p>
           <p><strong>Phone:</strong> <a href="tel:+17023577027">702-357-7027</a><br><strong>Email:</strong> <a href="mailto:Adria@ProfessionalPoolCare.com">Adria@ProfessionalPoolCare.com</a><br><strong>Office hours:</strong> Monday-Friday, 8:00 AM-4:00 PM</p>
-          <p class="contact-panel-note">Tell us who you are, what property you manage, and the type of support needed. Additional facility details can be discussed after PPC receives the request.</p>
+          <p class="contact-panel-note">Tell PPC who you are, what property you manage, and the type of service you need. We’ll follow up for any additional facility details.</p>
           <p><a class="text-link text-link-on-dark" href="faq.html">Read the service FAQ</a></p>
         </aside>
 
@@ -55,7 +55,7 @@
           <input type="hidden" name="form-name" value="commercial-service-request">
           <div class="form-heading">
             <p class="eyebrow">Service Request</p>
-            <h2>How can PPC help?</h2>
+            <h2>Tell us what your property needs.</h2>
             <p>Required fields are marked <span aria-hidden="true">*</span>.</p>
           </div>
           <div class="form-grid">
@@ -78,8 +78,8 @@
                 <option>Inspection-Readiness &amp; Compliance Support</option>
               </select>
             </label>
-            <label>Property Type <span class="field-optional">Optional</span>
-              <select name="property_type">
+            <label for="property-type">Property Type <span class="field-optional">(optional)</span>
+              <select id="property-type" name="property_type">
                 <option value="">Select property type</option>
                 <option>Resort or hotel</option>
                 <option>Apartment or multifamily community</option>
@@ -91,7 +91,7 @@
             </label>
             <label class="full">Message <span class="required" aria-hidden="true">*</span><textarea required name="message" rows="6" minlength="10" maxlength="2000"></textarea></label>
           </div>
-          <label class="consent"><input required type="checkbox" name="privacy_consent"> <span>I consent to PPC using this information to respond to my service request. <a href="privacy.html">Privacy Policy</a> <span class="required" aria-hidden="true">*</span></span></label>
+          <label class="consent"><input required type="checkbox" name="privacy_consent"> <span>I consent to PPC using this information to respond to my request. <a href="privacy.html">Privacy Policy</a>&nbsp;<span class="required" aria-hidden="true">*</span></span></label>
           <label class="hp" aria-hidden="true">Leave this field blank <input name="website" tabindex="-1" autocomplete="off"></label>
           <button class="btn btn-primary" type="submit" data-submit-button>Request Service</button>
           <p class="form-status" data-form-status role="status" aria-live="polite" tabindex="-1"></p>

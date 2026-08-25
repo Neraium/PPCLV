@@ -499,6 +499,11 @@ test("contact form is simple, accessible, and posts to the Worker endpoint", asy
 
   await waitForPage(page, "/contact.html#quote");
   const form = page.locator("[data-quote-form]");
+  await expect(page.locator(".contact-panel-note")).toHaveText("Tell PPC who you are, what property you manage, and the type of service you need. We’ll follow up for any additional facility details.");
+  await expect(form.getByRole("heading", { name: "Tell us what your property needs." })).toBeVisible();
+  await expect(form.locator('label[for="property-type"]')).toContainText("Property Type (optional)");
+  await expect(form.locator('[name="property_type"]')).toHaveAttribute("id", "property-type");
+  await expect(form.locator(".consent")).toContainText("I consent to PPC using this information to respond to my request.");
   await expect(form).toHaveAttribute("action", "/contact-request");
   await expect(form).toHaveAttribute("method", "post");
   await expect(form).toHaveAttribute("data-endpoint-configured", "true");
