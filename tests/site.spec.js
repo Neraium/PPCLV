@@ -447,9 +447,17 @@ test("services are organized into the nine approved offerings with one scope not
     "Inspection-Readiness & Compliance Support"
   ]);
   await expect(page.locator(".service-group > .service-group-image")).toHaveCount(3);
+  await expect(page.locator("#maintenance h2")).toHaveText("Consistent care for commercial pools and spas.");
+  await expect(page.locator("#maintenance img")).toHaveAttribute("src", "images/commercial-surface-cleaning.jpg");
+  await expect(page.locator("#maintenance img")).toHaveAttribute("alt", "Pool technician skimming a pool at a commercial property");
   await expect(page.locator("#equipment-restoration h2")).toHaveText("Equipment, automation, and surface care.");
   await expect(page.locator("#equipment-restoration img")).toHaveAttribute("src", "images/temp-property-reference/temp-commercial-pool-mechanical-room.jpg");
   await expect(page.locator("#equipment-restoration img")).toHaveAttribute("alt", "Mechanical room with large filtration vessels, circulation piping, valves, and controls");
+  await expect(page.locator("#urgent-support img")).toHaveAttribute("src", "images/temp-property-reference/temp-commercial-pool-operator-water-testing.jpg");
+  await expect(page.locator("#urgent-support img")).toHaveAttribute("alt", "Operator checking water beside an indoor public pool with a test case");
+  await expect(page.locator("#emergency-service-bio-cleanup p")).toHaveText("PPC responds to urgent water-quality, circulation, equipment, and biological contamination concerns with appropriate water care, filtration attention, recovery coordination, and clear communication, subject to service availability.");
+  await expect(page.locator("#certified-pool-operator-services p")).toContainText("Certified Pool Operator (CPO) coverage");
+  await expect(page.locator("#inspection-readiness-support p")).toHaveText("Maintenance, equipment observations, and documentation help owners and operators prepare for applicable health and safety reviews.");
   await expect(page.locator(".scope-note")).toHaveText("PPC supports maintenance and inspection readiness. Property owners and operators remain responsible for applicable regulatory requirements.");
   await expect(page.locator("#large-private-estates")).toContainText("large private estates");
   await expect(page.locator("#pool-deck-cleaning p")).toHaveText("Commercial pool deck power washing uses cleaning solutions selected for compatibility with pool areas, deck surfaces, and surrounding décor. Surface material and condition affect compatibility and results; complete stain removal is not guaranteed.");

@@ -33,6 +33,7 @@ const publicImages = [
 
 const temporaryPropertyImages = [
   "temp-commercial-pool-mechanical-room.jpg",
+  "temp-commercial-pool-operator-water-testing.jpg",
   "temp-aliante.webp",
   "temp-golden-nugget.webp",
   "temp-palms.webp",
