@@ -202,7 +202,7 @@ test("homepage service cards stay efficient, readable, and equally treated on mo
   }
 });
 
-test("FAQ presents the exact 20 approved questions with native keyboard behavior and schema parity", async ({ page }) => {
+test("FAQ presents the exact 17 approved questions with native keyboard behavior and schema parity", async ({ page }) => {
   await waitForPage(page, "/faq.html");
   const expectedQuestions = [
     "What types of commercial pools and spas does PPC service?",
@@ -211,29 +211,40 @@ test("FAQ presents the exact 20 approved questions with native keyboard behavior
     "Does PPC handle commercial pool equipment troubleshooting and repair?",
     "Does PPC service chemical feed and pool automation systems?",
     "Does PPC provide pool deck cleaning?",
-    "How does PPC clean commercial pool decks?",
     "Does PPC provide emergency pool and spa service?",
     "Does PPC handle biological contamination and bio cleanup?",
     "Can PPC help prepare a commercial pool or spa for inspection?",
     "Does PPC provide acid washing and surface restoration?",
     "Can PPC work around hotel, resort, HOA, community, and facility operating schedules?",
-    "How do I request commercial pool or spa service from PPC?",
-    "Does PPC service residential pools?",
-    "Does PPC service private estates?",
-    "What services can PPC provide for large private estates?",
     "How often should a commercial pool or spa be serviced?",
     "Why is CPO coverage important for a commercial aquatic facility?",
     "Can PPC troubleshoot water-quality problems as well as equipment issues?",
+    "Does PPC service private estates?",
+    "Does PPC service residential pools?",
+    "How do I request commercial pool or spa service from PPC?"
+  ];
+  const removedQuestions = [
+    "How does PPC clean commercial pool decks?",
+    "What services can PPC provide for large private estates?",
     "Does PPC service hotels, resorts, casinos, communities, aquatic facilities, and large private estates?"
   ];
   const details = page.locator(".faq-list details");
-  await expect(details).toHaveCount(20);
+  await expect(details).toHaveCount(17);
   await expect(details.locator("summary")).toHaveText(expectedQuestions);
+  for (const question of removedQuestions) {
+    await expect(details.locator("summary", { hasText: question })).toHaveCount(0);
+  }
+
+  await expect(page.locator(".faq-page-hero h1")).toHaveText("Answers about commercial pool and spa service in Greater Las Vegas.");
+  await expect(page.locator(".faq-page-hero .lead")).toHaveText("Find answers about maintenance, equipment, CPO coverage, emergency service, inspection readiness, private estates, and requesting service from PPC.");
+  await expect(page.locator("#equipment-troubleshooting-repair p")).toHaveText("Yes. PPC troubleshoots and repairs commercial pool and spa equipment involving circulation, filtration, heating, chemical delivery, and related facility systems. When additional work is required, PPC communicates the findings and recommended next steps.");
+  await expect(page.locator("#pool-deck-cleaning p")).toHaveText("Yes. PPC provides commercial pool deck power washing using cleaning solutions selected for compatibility with pool areas, deck surfaces, and surrounding décor. Service is focused on removing dirt, buildup, organic debris, and surface staining, with results dependent on the material and condition of the surface.");
+  await expect(page.locator("#private-estates p")).toHaveText("Yes. In addition to commercial aquatic facilities, Professional Pool Care LLC can provide pool and spa service for large private estates in the Greater Las Vegas Area. Applicable services may include water care, equipment support, chemical automation, deck cleaning, spa service, and other PPC services based on the property's needs.");
 
   const schema = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent());
   expect(schema["@type"]).toBe("FAQPage");
   expect(schema["@id"]).toBe("https://professionalpoolcare.com/faq.html#faq");
-  expect(schema.mainEntity).toHaveLength(20);
+  expect(schema.mainEntity).toHaveLength(17);
   const normalize = (value) => value.replace(/\s+/g, " ").trim();
   const visible = await details.evaluateAll((elements) => elements.map((element) => ({
     question: element.querySelector("summary").innerText,
@@ -315,7 +326,7 @@ test("FAQ and estate discovery remain contextual and commercial-first", async ({
 
   await waitForPage(page, "/faq.html");
   await expect(page.locator("#private-estates")).toContainText("Does PPC service private estates?");
-  await expect(page.locator("#estate-services")).toContainText("What services can PPC provide for large private estates?");
+  await expect(page.locator("#estate-services")).toHaveCount(0);
 
   await waitForPage(page, "/services.html");
   await expect(page.getByRole("link", { name: "Read Service FAQ" })).toHaveAttribute("href", "faq.html");
