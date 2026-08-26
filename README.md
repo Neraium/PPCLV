@@ -12,15 +12,15 @@ Cloudflare should redirect `https://www.professionalpoolcare.com` to `https://pr
 
 The only promoted marketing pages are:
 
-- `index.html`: homepage with commercial positioning, concise service overview, credibility content, a four-property preview, and service request call to action.
+- `index.html`: homepage with commercial positioning, concise service overview, credibility content, a four-image work-gallery preview, and service request call to action.
 - `services.html`: PPC's nine approved service categories organized into Maintenance, Equipment & Restoration, and Urgent & Operational Support.
-- `properties.html`: seven featured PPC-served properties plus a scalable section communicating the broader Greater Las Vegas portfolio.
+- `properties.html`: public Gallery page with seven image-led examples of commercial pool and spa environments across Greater Las Vegas; the stable filename is retained to avoid link churn.
 - `about.html`: company identity, Las Vegas history, commercial focus, and property-team communication.
 - `contact.html`: accessible commercial service-request form.
 
 `privacy.html` and `terms.html` are concise legal utility pages. They are linked only in the footer, marked `noindex`, and are not promoted as marketing pages.
 
-Primary navigation and the compact footer promote Home, Services, Properties, About, and Contact.
+Primary navigation and the compact footer promote Home, Services, Gallery, About, and Contact.
 
 ## Approved PPC Information
 
@@ -106,7 +106,7 @@ Core canonical URLs:
 
 - Home: `https://professionalpoolcare.com/`
 - Services: `https://professionalpoolcare.com/services.html`
-- Properties: `https://professionalpoolcare.com/properties.html`
+- Gallery: `https://professionalpoolcare.com/properties.html`
 - About: `https://professionalpoolcare.com/about.html`
 - Contact: `https://professionalpoolcare.com/contact.html`
 - Privacy: `https://professionalpoolcare.com/privacy.html`
@@ -118,9 +118,9 @@ No active FAQPage schema, industry-specific landing-page architecture, expanded 
 
 ## Photography
 
-The current site uses representative commercial photography outside its property-specific placements. The homepage hero, homepage property showcase, and Properties page use seven isolated, property-specific web-sourced images for **temporary internal preview only**. The hero specifically reuses the Red Rock reference image. These assets are stored only under `images/temp-property-reference/`, are not cleared for public use, and **MUST be replaced before public launch**.
+The current site presents its photography as generic examples of PPC service environments without publicly identifying customer accounts. The homepage hero, homepage work-gallery preview, and Gallery page still use seven isolated, property-specific web-sourced images for **temporary internal preview only**. These assets are stored only under `images/temp-property-reference/`, are not cleared for public use, and **MUST be replaced before public launch**. Removing visible names does not resolve image-rights or release requirements.
 
-See `images/README.md` for the exact source URL/domain, retrieval date, placements, crop guidance, output recommendation, rights requirement, and intended permanent filename for every featured property. The production-readiness check intentionally fails while any temporary reference remains:
+See `images/README.md` for the exact source URL/domain, retrieval date, placements, crop guidance, output recommendation, rights requirement, and intended permanent filename for every gallery reference. Source identities remain in that internal documentation only for provenance and rights review. The production-readiness check intentionally fails while any temporary reference remains:
 
 ```sh
 npm run test:production-ready
@@ -128,13 +128,13 @@ npm run test:production-ready
 
 Final approved property photos can be installed without another layout or design pass. The replacement is limited to the mapped asset files, `src` paths/intrinsic dimensions, and build allowlist entries, followed by crop verification.
 
-Customer/property showcase rules:
+Gallery safeguards:
 
-- Use a real customer or property name only with written approval.
+- Do not display individual customer or property names in public gallery copy, captions, alt text, metadata, or schema.
 - Use website/customer-provided photos publicly only with written permission.
 - Treat every web-sourced property reference in this branch as provenance-only internal-preview material, not as evidence of reuse rights.
-- The seven staged featured-property names and their final photos require PPC marketing approval and confirmed public-use rights before launch.
-- If naming permission is unavailable, use neutral property-type labels.
+- The seven staged gallery references and their final photos require PPC marketing approval and confirmed public-use rights before launch.
+- Source identities may remain in internal rights documentation but must not be copied into public content.
 - Do not imply PPC owns customer properties.
 - Do not imply representative stock photos are PPC customers.
 - All future photos must be commercial.
@@ -152,7 +152,7 @@ Expanded-package source work is preserved in `archive/expanded/`:
 
 These files are marked `noindex`, have no links from the Essential site, are absent from `sitemap.xml`, and are excluded from the production `dist/` artifact. They remain available in source control for a possible future package upgrade.
 
-The public Essential site does not ship standalone Industries, Our Work, Gallery, FAQ, case-study, industry-specific SEO, advanced schema, GEO, or AI-search deliverables.
+The public Essential site now ships Gallery and FAQ within its core five-page marketing journey. It does not ship standalone Industries, case-study, industry-specific SEO, advanced schema, GEO, or AI-search deliverables.
 
 ## Build And Deployment
 

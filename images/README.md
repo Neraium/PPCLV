@@ -7,7 +7,7 @@
 
 ## Current Representative Photography
 
-The current public images communicate a commercial visual direction while PPC gathers approved company and customer/property photography. They are not presented as PPC customer properties or completed PPC work.
+The current public images communicate PPC's commercial service environments while PPC gathers approved company and customer/property photography. Public copy presents them as generic examples of PPC's work and experience without identifying customer accounts. This positioning does not establish photo-use rights, releases, or permission to publish.
 
 All replacement photos must be commercial. Do not use residential backyard pool photography. Water-testing photography is not required. The dimensions below deliberately match the current intrinsic dimensions in the page markup. Exporting to those dimensions and replacing the files under the same names requires no HTML, CSS, or JavaScript changes.
 
@@ -22,13 +22,15 @@ All replacement photos must be commercial. Do not use residential backyard pool 
 | `commercial-equipment-room-service.jpg` | Two Our Work cards (archived, not deployed); retained as a source asset | Commercial equipment or service scene | Landscape; 1500 × 1000 px; 3:2 | Keep the key equipment/service action centered; allow vertical and horizontal crop; remove or avoid legible account labels, access codes, and sensitive facility details | Progressive JPEG quality 80–85; keep filename exactly | Describe only visible equipment or service access without naming it; do not infer repair completion, compliance, or inspection results | Written customer/property and recognizable-person permission; confirm sensitive mechanical-room details are safe to publish |
 | `commercial-water-testing.jpg` | FAQ Open Graph image; Our Work and Industries cards (archived, not deployed) | Commercial pool or spa maintenance scene; water testing is optional | Portrait; 1200 × 1800 px; 2:3 | Keep the maintenance subject central so the layout can use a wider crop; avoid tiny instruments or text as the only meaningful detail | Progressive JPEG quality 80–85; keep filename exactly | Describe the visible maintenance activity and commercial setting without promising water-quality outcomes | Written customer/property and recognizable-person permission; written naming permission if identified |
 
-## Featured Property Photo Replacement Map
+## Gallery Photo Replacement Map
 
 > **TEMPORARY WEB-SOURCED REFERENCE IMAGES — NOT CLEARED FOR PUBLIC LAUNCH.**
 
 Every file under `images/temp-property-reference/` is for PPC's internal preview only. Source provenance does not grant reuse rights. These files **MUST be replaced before public launch**, and `npm run test:production-ready` is intentionally designed to fail while any public source or built output still references them.
 
-The shared property-card layout uses a 16:9 crop with flowing captions. Final approved images can replace these references without another design or layout pass. The only markup work should be the mechanical asset-path and intrinsic-dimension update described in the workflow below.
+The shared image-only gallery layout uses a 16:9 crop with factual alt text and no visible property captions. Final approved images can replace these references without another design or layout pass. The only markup work should be the mechanical asset-path and intrinsic-dimension update described in the workflow below.
+
+The named headings below are retained only as internal source-provenance records for rights review. They are not approved public copy and must not be used in visible labels, alt text, metadata, or schema.
 
 ### Commercial Pool Mechanical Room
 
@@ -64,7 +66,7 @@ The shared property-card layout uses a 16:9 crop with flowing captions. Final ap
 - Source page URL / domain: `https://aliante.boydgaming.com/stay/resort-pool/` / `aliante.boydgaming.com`.
 - Source asset URL / domain: `https://mc-d7f7cc1f-1a7c-4fc5-b531-6087-cdn-endpoint.azureedge.net/-/media/project/boyd/property/lasvegas/aliante/hero/al_resortpool_hero_1200x570.jpg?h=570&iar=0&rev=630b3de596ab4fdebc57815578cfe19b&w=1200` / `mc-d7f7cc1f-1a7c-4fc5-b531-6087-cdn-endpoint.azureedge.net`.
 - Date retrieved: 2026-08-23.
-- Placements: Properties page featured card; not on the homepage.
+- Placements: Gallery page image tile; not in the homepage gallery preview.
 - Preferred final orientation / ratio / minimum: landscape / 16:9 / 1600 × 900 px.
 - Crop guidance: retain the central pool, palms, and cabanas; allow equal loss at the left and right edges; keep important deck details away from the outer 10%.
 - Recommended output: optimized WebP at quality 80–84; retain an approved high-quality JPEG source outside the public build if supplied.
@@ -78,7 +80,7 @@ The shared property-card layout uses a 16:9 crop with flowing captions. Final ap
 - Source page URL / domain: `https://www.goldennugget.com/las-vegas/amenities/h2o-pool/` / `goldennugget.com`.
 - Source asset URL / domain: `https://www.goldennugget.com/contentassets/37efe8dc02cd438a8e60f3399b32419e/new-pool-gal-1.jpg` / `goldennugget.com`.
 - Date retrieved: 2026-08-23.
-- Placements: homepage featured preview and Properties page featured card.
+- Placements: homepage gallery preview and Gallery page image tile.
 - Preferred final orientation / ratio / minimum: landscape / 16:9 / 1600 × 900 px.
 - Crop guidance: retain the circular deck, pool, slide, and central resort architecture; avoid cutting the pool curve or slide at card edges.
 - Recommended output: optimized WebP at quality 80–84; retain an approved high-quality JPEG source outside the public build if supplied.
@@ -93,7 +95,7 @@ The shared property-card layout uses a 16:9 crop with flowing captions. Final ap
 - Source asset URL / domain: `https://assets.simpleviewcms.com/simpleview/image/upload/v1/clients/lasvegas/127685_03_LVCVA_Misc_Web_Requests_1200x800_0004_Photo_Credit_Travel_Ruby_09da0d4a-b606-4f26-8b4a-35a218056076.jpg` / `assets.simpleviewcms.com`.
 - Source-selection note: the first-party Palms Pool page at `https://www.palms.com/experiences/palms-pool` was preferred, but its image server returned HTTP 403 to the workspace downloader. The LVCVA-hosted, clearly identified Palms image is a preview-only fallback; its encoded Travel Ruby credit is not a reuse license.
 - Date retrieved: 2026-08-23.
-- Placements: homepage featured preview and Properties page featured card.
+- Placements: homepage gallery preview and Gallery page image tile.
 - Preferred final orientation / ratio / minimum: landscape / 16:9 / 1600 × 900 px.
 - Crop guidance: retain the pool basin and multi-level deck; keep any recognizable person away from edge crops and prefer a people-free approved final image.
 - Recommended output: optimized WebP at quality 80–84; retain an approved high-quality JPEG source outside the public build if supplied.
@@ -107,7 +109,7 @@ The shared property-card layout uses a 16:9 crop with flowing captions. Final ap
 - Source page URL / domain: `https://summerlin.com/summerlin-community-centers-and-pools/` / `summerlin.com`.
 - Source asset URL / domain: `https://summerlin.com/wp-content/uploads/2022/07/Vistas-Community-Center-and-Pool_08-1-scaled-1.webp` / `summerlin.com`.
 - Date retrieved: 2026-08-23.
-- Placements: Properties page featured card; not on the homepage.
+- Placements: Gallery page image tile; not in the homepage gallery preview.
 - Preferred final orientation / ratio / minimum: landscape / 16:9 / 1600 × 900 px.
 - Crop guidance: retain the main pool, lap area, shade structures, and mountain context; avoid centering identifiable swimmers in the final crop.
 - Recommended output: optimized WebP at quality 80–84; retain an approved high-quality JPEG source outside the public build if supplied.
@@ -121,7 +123,7 @@ The shared property-card layout uses a 16:9 crop with flowing captions. Final ap
 - Source page URL / domain: `https://samstownlv.boydgaming.com/stay/resort-pool` / `samstownlv.boydgaming.com`.
 - Source asset URL / domain: `https://mc-d7f7cc1f-1a7c-4fc5-b531-6087-cdn-endpoint.azureedge.net/-/media/project/boyd/property/lasvegas/sams-town-las-vegas/hero/lv_resortpool_hero_1200x570.jpg?h=570&iar=0&rev=7924858ba8c9498cabc2678bfb90435d&w=1200` / `mc-d7f7cc1f-1a7c-4fc5-b531-6087-cdn-endpoint.azureedge.net`.
 - Date retrieved: 2026-08-23.
-- Placements: Properties page featured card; not on the homepage.
+- Placements: Gallery page image tile; not in the homepage gallery preview.
 - Preferred final orientation / ratio / minimum: landscape / 16:9 / 1600 × 900 px.
 - Crop guidance: preserve the pool curve, palms, water reflections, and lounge seating; avoid losing the pool edge on narrow crops.
 - Recommended output: optimized WebP at quality 80–84; retain an approved high-quality JPEG source outside the public build if supplied.
@@ -135,7 +137,7 @@ The shared property-card layout uses a 16:9 crop with flowing captions. Final ap
 - Source page URL / domain: `https://durangoresort.com/bel-aire-backyard/` / `durangoresort.com`.
 - Source asset URL / domain: `https://durangoresort.com/wp-content/uploads/2024/02/Durango-Bel-Aire-Backyard-Pool.jpg` / `durangoresort.com`.
 - Date retrieved: 2026-08-23.
-- Placements: homepage featured preview and Properties page featured card.
+- Placements: homepage gallery preview and Gallery page image tile.
 - Preferred final orientation / ratio / minimum: landscape / 16:9 / 1600 × 900 px.
 - Crop guidance: retain the main pool, in-water loungers, cabanas, and palm-lined sightline; keep the central fountain visible when present.
 - Recommended output: optimized WebP at quality 80–84; retain an approved high-quality JPEG source outside the public build if supplied.
@@ -149,7 +151,7 @@ The shared property-card layout uses a 16:9 crop with flowing captions. Final ap
 - Source page URL / domain: `https://redrockresort.com/see-and-do/pool/` / `redrockresort.com`.
 - Source asset URL / domain: `https://redrockresort.com/wp-content/uploads/2023/11/Main-Pool-at-Red-Rock.jpg` / `redrockresort.com`.
 - Date retrieved: 2026-08-23.
-- Placements: homepage hero, homepage featured preview, and Properties page featured card. The hero placement is also temporary and keeps the production-readiness guard in a failing state until this file is replaced with approved property photography.
+- Placements: homepage hero, homepage gallery preview, and Gallery page image tile. The hero placement is also temporary and keeps the production-readiness guard in a failing state until this file is replaced with approved property photography.
 - Preferred final orientation / ratio / minimum: landscape / 16:9 / 1600 × 900 px.
 - Crop guidance: retain the main pool, fountain, red loungers, palms, and resort context; keep the fountain near center across responsive crops.
 - Recommended output: optimized WebP at quality 80–84; retain an approved high-quality JPEG source outside the public build if supplied.
@@ -184,7 +186,7 @@ Recommended final photo package:
 
 ## Approval Rules
 
-- Use real customer/property names only with written approval.
+- Do not display individual customer/property names in public gallery copy, alt text, metadata, or schema; retain source identities only in internal provenance records.
 - Use website/customer-provided photos only with permission.
 - If naming permission is unavailable, use neutral property-type labels.
 - Do not imply PPC owns customer properties.

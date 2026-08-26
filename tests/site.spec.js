@@ -10,6 +10,15 @@ const publicPages = [...corePages, ...utilityPages];
 const requiredWidths = [320, 375, 390, 393, 430, 768, 1024, 1280, 1440, 1920];
 const archivedExpandedNames = ["industries.html", "our-work.html", "gallery.html", "faq.html", "commercial-pool-service-las-vegas.html"];
 const nonPublicExpandedNames = archivedExpandedNames.filter((name) => name !== "faq.html");
+const publicCustomerNames = [
+  "Aliante Casino Hotel Spa",
+  "Golden Nugget Las Vegas Hotel & Casino",
+  "Palms Casino Resort",
+  "The Vistas Pool at The Vistas Community Center",
+  "Sam's Town Hotel & Gambling Hall",
+  "Durango Casino & Resort",
+  "Red Rock Casino Resort and Spa"
+];
 
 const validContactFields = {
   name: "Ada Manager",
@@ -80,7 +89,7 @@ test("Essential navigation promotes exactly five marketing pages", async ({ page
     expect(links).toEqual([
       { text: "Home", href: "/" },
       { text: "Services", href: "services.html" },
-      { text: "Properties", href: "properties.html" },
+      { text: "Gallery", href: "properties.html" },
       { text: "About", href: "about.html" },
       { text: "Contact", href: "contact.html" }
     ]);
@@ -99,7 +108,7 @@ test("footer is compact and includes FAQ without changing the five-page primary 
     await expect(footer.getByRole("link", { name: "Adria@ProfessionalPoolCare.com" })).toHaveAttribute("href", "mailto:Adria@ProfessionalPoolCare.com");
     await expect(footer.getByText("Monday-Friday, 8:00 AM-4:00 PM", { exact: true })).toBeVisible();
     const links = await footer.getByRole("navigation", { name: "Footer navigation" }).locator("a").allTextContents();
-    expect(links.map((text) => text.trim())).toEqual(["Home", "Services", "Properties", "About", "Contact", "FAQ"]);
+    expect(links.map((text) => text.trim())).toEqual(["Home", "Services", "Gallery", "About", "Contact", "FAQ"]);
     await expect(footer.getByRole("link", { name: "Request Service" })).toHaveCount(1);
   }
 });
@@ -111,23 +120,18 @@ test("homepage retains the required commercial journey", async ({ page }) => {
   await expect(page.getByRole("link", { name: "View Services" }).first()).toHaveAttribute("href", "services.html");
   await expect(page.locator(".services-row-intro > p:last-child")).toHaveText("PPC provides pool and spa service for resorts, communities, commercial facilities, and large private estates throughout the Greater Las Vegas Area.");
   const properties = page.locator(".property-showcase");
-  await expect(properties.locator(".eyebrow")).toHaveText("PROPERTIES WE SERVE");
-  await expect(properties.getByRole("heading", { name: "Trusted by properties across Las Vegas." })).toBeVisible();
-  await expect(properties.locator(".property-showcase-intro > p")).toHaveText("PPC provides pool and spa service across a broad portfolio of resorts, hospitality properties, communities, and aquatic facilities throughout the Greater Las Vegas Area.");
+  await expect(properties.locator(".eyebrow")).toHaveText("OUR WORK");
+  await expect(properties.getByRole("heading", { name: "Commercial pool and spa environments across Las Vegas." })).toBeVisible();
+  await expect(properties.locator(".property-showcase-intro > p")).toHaveText("A look at the types of properties and aquatic facilities PPC supports throughout the Greater Las Vegas Area.");
   await expect(properties.locator(".property-preview-card")).toHaveCount(4);
-  await expect(properties.locator("figcaption")).toHaveText([
-    "Golden Nugget Las Vegas Hotel & Casino",
-    "Palms Casino Resort",
-    "Red Rock Casino Resort and Spa",
-    "Durango Casino & Resort"
-  ]);
+  await expect(properties.locator("figcaption")).toHaveCount(0);
   expect(await properties.locator("img").evaluateAll((images) => images.map((image) => image.getAttribute("src")))).toEqual([
     "images/temp-property-reference/temp-golden-nugget.webp",
     "images/temp-property-reference/temp-palms.webp",
     "images/temp-property-reference/temp-red-rock.webp",
     "images/temp-property-reference/temp-durango.webp"
   ]);
-  await expect(properties.getByRole("link", { name: "View Properties We Serve" })).toHaveAttribute("href", "properties.html");
+  await expect(properties.getByRole("link", { name: "View Gallery" })).toHaveAttribute("href", "properties.html");
   await expect(properties).not.toContainText("Station Casinos");
 });
 
@@ -360,23 +364,17 @@ test("FAQ and estate discovery remain contextual and commercial-first", async ({
   expect(combined).not.toMatch(/residential pool cleaning|backyard pool service|weekly home pool service|offers? routine residential service/i);
 });
 
-test("Properties page presents the exact seven featured properties and broader portfolio", async ({ page }) => {
+test("Gallery page presents seven image-led work examples without customer names", async ({ page }) => {
   await waitForPage(page, "/properties.html");
-  await expect(page.locator("h1")).toHaveText("Commercial pool and spa service across the Greater Las Vegas Area.");
-  await expect(page.locator(".properties-page-hero .lead")).toHaveText("PPC serves a broad portfolio of resorts, hospitality properties, communities, and aquatic facilities throughout the Greater Las Vegas Area.");
-  await expect(page.locator(".featured-properties .eyebrow")).toHaveText("FEATURED PROPERTIES");
-  await expect(page.getByRole("heading", { level: 2, name: "Properties We Serve" })).toBeVisible();
+  await expect(page.locator(".properties-page-hero .eyebrow")).toHaveText("OUR WORK");
+  await expect(page.locator("h1")).toHaveText("Commercial pool and spa environments across Greater Las Vegas.");
+  await expect(page.locator(".properties-page-hero .lead")).toHaveText("PPC supports resorts, communities, commercial aquatic facilities, and large private estates throughout the Greater Las Vegas Area.");
+  await expect(page.locator(".featured-properties .eyebrow")).toHaveText("GALLERY");
+  await expect(page.getByRole("heading", { level: 2, name: "Commercial Pool & Spa Gallery" })).toBeVisible();
+  await expect(page.locator(".properties-section-heading > p:last-child")).toHaveText("A selection of commercial pool, spa, resort, community, and aquatic environments supported by PPC throughout the Greater Las Vegas Area.");
   const cards = page.locator(".featured-property-card");
   await expect(cards).toHaveCount(7);
-  await expect(cards.locator("figcaption")).toHaveText([
-    "Aliante Casino Hotel Spa",
-    "Golden Nugget Las Vegas Hotel & Casino",
-    "Palms Casino Resort",
-    "The Vistas Pool at The Vistas Community Center",
-    "Sam's Town Hotel & Gambling Hall",
-    "Durango Casino & Resort",
-    "Red Rock Casino Resort and Spa"
-  ]);
+  await expect(cards.locator("figcaption")).toHaveCount(0);
   expect(await cards.locator("img").evaluateAll((images) => images.map((image) => image.getAttribute("src")))).toEqual([
     "images/temp-property-reference/temp-aliante.webp",
     "images/temp-property-reference/temp-golden-nugget.webp",
@@ -386,20 +384,18 @@ test("Properties page presents the exact seven featured properties and broader p
     "images/temp-property-reference/temp-durango.webp",
     "images/temp-property-reference/temp-red-rock.webp"
   ]);
-  await expect(page.locator(".additional-properties .eyebrow")).toHaveText("MORE PROPERTIES ACROSS LAS VEGAS");
-  await expect(page.getByRole("heading", { level: 2, name: "Beyond our featured properties." })).toBeVisible();
-  await expect(page.locator(".additional-properties p:last-child")).toHaveText("PPC supports additional commercial pools, spas, communities, aquatic facilities, and large private estates throughout the Greater Las Vegas Area.");
+  await expect(page.locator(".additional-properties")).toHaveCount(0);
   await expect(page.locator(".final-contact-band h2")).toHaveText("Keep your pool and spa operation ready.");
   await expect(page.locator(".final-contact-band div > p:last-child")).toHaveText("Tell PPC about your property and the support you need.");
   await expect(page.locator("main img")).toHaveCount(7);
   expect(await page.locator("main img").evaluateAll((images) => images.every((image) => image.alt.trim() && image.naturalWidth === 1200 && image.naturalHeight === 675))).toBeTruthy();
 });
 
-test("property cards retain a cohesive responsive grid and unclipped names", async ({ page }) => {
+test("gallery tiles retain a cohesive responsive image grid without empty caption space", async ({ page }) => {
   const cases = [
     { width: 390, columns: 1 },
     { width: 768, columns: 2 },
-    { width: 1440, columns: 3 }
+    { width: 1440, columns: 4 }
   ];
   for (const { width, columns } of cases) {
     await page.setViewportSize({ width, height: 1000 });
@@ -409,7 +405,7 @@ test("property cards retain a cohesive responsive grid and unclipped names", asy
     const firstRowCount = (await cards.evaluateAll((elements, y) => elements.filter((element) => Math.abs(element.getBoundingClientRect().y - y) < 2).length, firstRowY));
     expect(firstRowCount).toBe(columns);
     expect(await cards.locator("img").evaluateAll((images) => images.every((image) => Math.abs(image.getBoundingClientRect().width / image.getBoundingClientRect().height - 16 / 9) < 0.02))).toBeTruthy();
-    expect(await cards.locator("figcaption").evaluateAll((captions) => captions.every((caption) => caption.scrollHeight <= caption.clientHeight && caption.scrollWidth <= caption.clientWidth))).toBeTruthy();
+    expect(await cards.evaluateAll((elements) => elements.every((element) => Math.abs(element.getBoundingClientRect().height - element.querySelector("img").getBoundingClientRect().height) <= 4.5))).toBeTruthy();
   }
 });
 
@@ -422,7 +418,7 @@ test("homepage hero uses the Red Rock property image without weakening LCP handl
   await expect(hero).toHaveAttribute("height", "675");
   await expect(hero).toHaveAttribute("fetchpriority", "high");
   await expect(hero).not.toHaveAttribute("loading", "lazy");
-  await expect(hero).toHaveAttribute("alt", "Red Rock resort pool with a central fountain, red loungers, and palm-lined grounds");
+  await expect(hero).toHaveAttribute("alt", "Large resort pool with a central fountain, red loungers, and palm-lined deck");
   expect(await hero.evaluate((image) => ({
     currentSrc: new URL(image.currentSrc).pathname,
     naturalWidth: image.naturalWidth,
@@ -647,8 +643,8 @@ test("all public pages have exact unique production metadata", async ({ page }) 
       imageAlt: "Mechanical room with large filtration vessels, circulation piping, valves, and controls"
     }],
     ["/properties.html", {
-      title: "Las Vegas Commercial Pool Properties | PPC LLC",
-      description: "Explore featured Las Vegas resorts, communities, and aquatic facilities served by Professional Pool Care LLC across the Greater Las Vegas Area.",
+      title: "Commercial Pool & Spa Gallery Las Vegas | PPC LLC",
+      description: "Explore PPC's commercial pool and spa gallery featuring resorts, communities, aquatic facilities, and large private estates across Greater Las Vegas.",
       canonical: `${productionOrigin}/properties.html`,
       image: `${productionOrigin}/images/resort-hotel-pool-deck.webp`,
       imageAlt: "Large commercial resort pool deck with hospitality seating"
@@ -736,6 +732,22 @@ test("public pages contain no expanded links, visible development language, em d
     expect(source).not.toContain("neraium.github.io");
     expect(source).not.toContain("localhost");
     expect(source).not.toContain("FORM_ENDPOINT");
+  }
+});
+
+test("public-facing copy, metadata, schema, and alt text disclose no customer names", async ({ page }) => {
+  for (const path of publicPages) {
+    await waitForPage(page, path);
+    const publicFacingContent = [
+      await page.locator("body").innerText(),
+      await page.title(),
+      ...(await page.locator("meta[content]").evaluateAll((elements) => elements.map((element) => element.getAttribute("content")))),
+      ...(await page.locator("script[type='application/ld+json']").allTextContents()),
+      ...(await page.locator("img[alt]").evaluateAll((images) => images.map((image) => image.alt)))
+    ].join("\n").toLowerCase();
+    for (const customerName of publicCustomerNames) {
+      expect(publicFacingContent, `${path} should not disclose ${customerName}`).not.toContain(customerName.toLowerCase());
+    }
   }
 });
 
