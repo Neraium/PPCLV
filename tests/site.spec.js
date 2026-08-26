@@ -369,9 +369,12 @@ test("Gallery page presents seven image-led work examples without customer names
   await expect(page.locator(".properties-page-hero .eyebrow")).toHaveText("OUR WORK");
   await expect(page.locator("h1")).toHaveText("Commercial pool and spa environments across Greater Las Vegas.");
   await expect(page.locator(".properties-page-hero .lead")).toHaveText("PPC supports resorts, communities, commercial aquatic facilities, and large private estates throughout the Greater Las Vegas Area.");
-  await expect(page.locator(".featured-properties .eyebrow")).toHaveText("GALLERY");
-  await expect(page.getByRole("heading", { level: 2, name: "Commercial Pool & Spa Gallery" })).toBeVisible();
-  await expect(page.locator(".properties-section-heading > p:last-child")).toHaveText("A selection of commercial pool, spa, resort, community, and aquatic environments supported by PPC throughout the Greater Las Vegas Area.");
+  const galleryHeading = page.locator("#gallery-examples-heading");
+  await expect(galleryHeading).toHaveText("EXAMPLES OF OUR WORK");
+  await expect(page.locator(".featured-properties")).toHaveAttribute("aria-labelledby", "gallery-examples-heading");
+  await expect(page.getByRole("heading", { name: "Commercial Pool & Spa Gallery" })).toHaveCount(0);
+  await expect(page.locator(".featured-properties")).not.toContainText("A selection of commercial pool, spa, resort, community, and aquatic environments supported by PPC throughout the Greater Las Vegas Area.");
+  await expect(page.locator(".properties-section-heading > *")).toHaveCount(1);
   const cards = page.locator(".featured-property-card");
   await expect(cards).toHaveCount(7);
   await expect(cards.locator("figcaption")).toHaveCount(0);
