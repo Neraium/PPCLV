@@ -443,6 +443,20 @@ test("homepage hero uses the Red Rock property image without weakening LCP handl
 
 test("services are organized into the nine approved offerings with one scope note", async ({ page }) => {
   await waitForPage(page, "/services.html");
+  await expect(page.locator(".service-page-hero h1")).toHaveText("Commercial pool and spa services for Greater Las Vegas.");
+  await expect(page.locator(".service-page-hero .lead")).toHaveText("PPC serves resorts, hospitality properties, communities, commercial aquatic facilities, and large private estates throughout the Greater Las Vegas Area.");
+  await expect(page.locator(".service-page-hero .hero-side-note")).toHaveText("Qualified operational coverage, documented service, equipment support, and responsive coordination for commercial aquatic facilities, all through one service relationship.");
+  const propertyTypes = page.locator(".service-property-types");
+  await expect(propertyTypes.getByRole("heading", { name: "Properties We Serve" })).toBeVisible();
+  await expect(propertyTypes.locator(".service-property-types-heading p")).toHaveText("Commercial aquatic service tailored to the operating needs of each property.");
+  await expect(propertyTypes.locator("li")).toHaveText([
+    "Hotels & Resorts",
+    "HOAs & Communities",
+    "Apartments & Multifamily",
+    "Gyms & Clubs",
+    "Commercial Aquatic Facilities",
+    "Large Private Estates"
+  ]);
   await expect(page.locator(".service-group")).toHaveCount(3);
   await expect(page.locator(".service-items section")).toHaveCount(9);
   await expect(page.locator(".service-items h3")).toHaveText([
@@ -466,12 +480,18 @@ test("services are organized into the nine approved offerings with one scope not
   await expect(page.locator("#urgent-support img")).toHaveAttribute("src", "images/temp-property-reference/temp-commercial-pool-operator-water-testing.jpg");
   await expect(page.locator("#urgent-support img")).toHaveAttribute("alt", "Operator checking water beside an indoor public pool with a test case");
   await expect(page.locator("#emergency-service-bio-cleanup p")).toHaveText("PPC responds to urgent water-quality, circulation, equipment, and biological contamination concerns with appropriate water care, filtration attention, recovery coordination, and clear communication, subject to service availability.");
-  await expect(page.locator("#certified-pool-operator-services p")).toContainText("Certified Pool Operator (CPO) coverage");
+  await expect(page.locator("#chemical-feed-automation-support p")).toHaveText("PPC reviews chemical feeders, controllers, and automation interfaces, including settings, delivery, and equipment condition, with clear reporting on concerns and next steps.");
+  await expect(page.locator("#certified-pool-operator-services p")).toHaveText("PPC provides Certified Pool Operator (CPO) coverage for facilities that need qualified operational oversight. Service may include routine documentation, water-quality management, chemistry and equipment observations, operational checks, service logs, inspection-readiness assistance, and on-site coverage where required by the facility.");
   await expect(page.locator("#inspection-readiness-support p")).toHaveText("Maintenance, equipment observations, and documentation help owners and operators prepare for applicable health and safety reviews.");
   await expect(page.locator(".scope-note")).toHaveText("PPC supports maintenance and inspection readiness. Property owners and operators remain responsible for applicable regulatory requirements.");
   await expect(page.locator("#large-private-estates")).toContainText("large private estates");
   await expect(page.locator("#pool-deck-cleaning p")).toHaveText("Commercial pool deck power washing uses cleaning solutions selected for compatibility with pool areas, deck surfaces, and surrounding décor. Surface material and condition affect compatibility and results; complete stain removal is not guaranteed.");
   await expect(page.locator("#pool-deck-cleaning p")).not.toContainText("pool-, deck-, and décor-safe");
+  await expect(page.locator(".final-contact-band h2")).toHaveText("Tell PPC what your property needs.");
+  await expect(page.locator(".final-contact-band div > p:last-child")).toHaveText("Tell us about your property, aquatic facilities, and service needs. PPC will review the details and help determine the appropriate service scope.");
+  await expect(page.locator(".final-contact-band").getByRole("link", { name: "Request Service" })).toHaveAttribute("href", "contact.html#quote");
+  await expect(page.locator(".final-contact-band").getByRole("link", { name: "Read Service FAQ" })).toHaveAttribute("href", "faq.html");
+  await expect(page.locator("main")).not.toContainText(/24\/7|guaranteed response|guaranteed inspection/i);
 });
 
 test("contact form is simple, accessible, and posts to the Worker endpoint", async ({ page }) => {
