@@ -22,7 +22,7 @@ const textExtensions = new Set([".html", ".css", ".js", ".mjs", ".xml", ".txt"])
 const temporaryDirectoryPattern = /(?:^|["'(/=\s])(?:\.\/|\/)?images\/temp-property-reference\//i;
 const temporaryFilenamePattern = /(?:^|["'(/=\s])temp-[a-z0-9][a-z0-9._-]*/i;
 
-export function scanTextForTemporaryReferences(text) {
+export function scanTextForLaunchBlockingReferences(text) {
   return temporaryDirectoryPattern.test(text) || temporaryFilenamePattern.test(text);
 }
 
@@ -37,14 +37,14 @@ async function walk(directory) {
   return files;
 }
 
-export async function findTemporaryImageReferences() {
+export async function findLaunchBlockingImageReferences() {
   const failures = [];
   for (const source of publicSourceFiles) {
     const path = join(root, source);
     const text = await readFile(path, "utf8");
-    if (!scanTextForTemporaryReferences(text)) continue;
+    if (!scanTextForLaunchBlockingReferences(text)) continue;
     text.split(/\r?\n/).forEach((line, index) => {
-      if (scanTextForTemporaryReferences(line)) failures.push(`${source}:${index + 1}`);
+      if (scanTextForLaunchBlockingReferences(line)) failures.push(`${source}:${index + 1}`);
     });
   }
 
@@ -63,21 +63,21 @@ export async function findTemporaryImageReferences() {
     }
     if (!textExtensions.has(extname(path).toLowerCase())) continue;
     const text = await readFile(path, "utf8");
-    if (scanTextForTemporaryReferences(text)) failures.push(builtPath);
+    if (scanTextForLaunchBlockingReferences(text)) failures.push(builtPath);
   }
   return [...new Set(failures)].sort();
 }
 
 const isCommandLine = process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1]);
 if (isCommandLine) {
-  const failures = await findTemporaryImageReferences();
+  const failures = await findLaunchBlockingImageReferences();
   if (failures.length) {
     console.error("PRODUCTION READINESS: FAIL");
-    console.error("TEMPORARY WEB-SOURCED REFERENCE IMAGES — NOT CLEARED FOR PUBLIC LAUNCH.");
-    console.error("Replace every temporary property image reference before deployment:");
+    console.error("Legacy temporary image references remain in public output.");
+    console.error("Move every approved image to its production path before deployment:");
     failures.forEach((failure) => console.error(`- ${failure}`));
     process.exitCode = 1;
   } else {
-    console.log("PRODUCTION READINESS: PASS — no temporary property image references found.");
+    console.log("PRODUCTION READINESS: PASS — approved production imagery is in use and no legacy temporary references remain.");
   }
 }

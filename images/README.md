@@ -1,4 +1,4 @@
-# PPC LLC Website Image Replacement Map
+# PPC LLC Website Image Provenance and Production Map
 
 ## Brand Assets
 
@@ -7,9 +7,9 @@
 
 ## Current Representative Photography
 
-The current public images communicate PPC's commercial service environments while PPC gathers approved company and customer/property photography. Public copy presents them as generic examples of PPC's work and experience without identifying customer accounts. This positioning does not establish photo-use rights, releases, or permission to publish.
+The current public images communicate PPC's commercial service environments. The current website photography is approved by PPC for production website use. Public copy presents the images as generic examples without identifying customer accounts. This internal record preserves source provenance without asserting ownership, license terms, releases, or third-party endorsement.
 
-All replacement photos must be commercial. Do not use residential backyard pool photography. Water-testing photography is not required. The dimensions below deliberately match the current intrinsic dimensions in the page markup. Exporting to those dimensions and replacing the files under the same names requires no HTML, CSS, or JavaScript changes.
+Future replacement photos must be commercial. Do not use residential backyard pool photography. Water-testing photography is not required. The dimensions below match the current intrinsic dimensions in the page markup.
 
 | Current filename | All placements | Intended approved subject | Orientation / minimum export / aspect ratio | Safe crop considerations | Delivery target | Alt-text guidance | Permission requirement |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -22,47 +22,43 @@ All replacement photos must be commercial. Do not use residential backyard pool 
 | `commercial-equipment-room-service.jpg` | Two Our Work cards (archived, not deployed); retained as a source asset | Commercial equipment or service scene | Landscape; 1500 × 1000 px; 3:2 | Keep the key equipment/service action centered; allow vertical and horizontal crop; remove or avoid legible account labels, access codes, and sensitive facility details | Progressive JPEG quality 80–85; keep filename exactly | Describe only visible equipment or service access without naming it; do not infer repair completion, compliance, or inspection results | Written customer/property and recognizable-person permission; confirm sensitive mechanical-room details are safe to publish |
 | `commercial-water-testing.jpg` | FAQ Open Graph image; Our Work and Industries cards (archived, not deployed) | Commercial pool or spa maintenance scene; water testing is optional | Portrait; 1200 × 1800 px; 2:3 | Keep the maintenance subject central so the layout can use a wider crop; avoid tiny instruments or text as the only meaningful detail | Progressive JPEG quality 80–85; keep filename exactly | Describe the visible maintenance activity and commercial setting without promising water-quality outcomes | Written customer/property and recognizable-person permission; written naming permission if identified |
 
-## Gallery Photo Replacement Map
+## Approved Production Gallery Provenance
 
-> **TEMPORARY WEB-SOURCED REFERENCE IMAGES — NOT CLEARED FOR PUBLIC LAUNCH.**
+> **Approved by PPC for production website use.**
 
-Every file under `images/temp-property-reference/` is for PPC's internal preview only. Source provenance does not grant reuse rights. These files **MUST be replaced before public launch**, and `npm run test:production-ready` is intentionally designed to fail while any public source or built output still references them.
+The approved public files are stored under `images/production/` with neutral filenames. `npm run test:production-ready` rejects any legacy `images/temp-property-reference/` path or `temp-*` public filename so the retired preview state cannot be reintroduced accidentally.
 
-The shared image-only gallery layout uses a 16:9 crop with factual alt text and no visible property captions. Final approved images can replace these references without another design or layout pass. The only markup work should be the mechanical asset-path and intrinsic-dimension update described in the workflow below.
+The shared image-only Gallery layout uses the approved crops with factual alt text and no visible property captions. No crop, layout, or image-content change was made when the files moved to production paths.
 
-The named headings below are retained only as internal source-provenance records for rights review. They are not approved public copy and must not be used in visible labels, alt text, metadata, or schema.
+The named headings below are retained only as internal source-provenance records. They are not public copy and must not be used in visible labels, alt text, metadata, or schema.
 
 ### Commercial Pool Mechanical Room
 
-- Temporary filename: `images/temp-property-reference/temp-commercial-pool-mechanical-room.jpg`.
+- Production filename: `images/production/commercial-mechanical-room.jpg`.
 - Source page URL / domain: `https://www.sunbeltpools.com/projects/garland-isd-natatorium/` / `sunbeltpools.com`.
 - Source asset URL / domain: `https://www.sunbeltpools.com/wp-content/uploads/2022/11/Garland-ISD-Web-1-scaled.jpg` / `sunbeltpools.com`.
 - Date retrieved: 2026-08-24.
 - Placements: Services / Equipment & Restoration; About / Commercial Focus; Services and About Open Graph images.
-- Preview status: official project-page source selected for subject clarity; source provenance does not establish reuse rights or permission to publish.
+- Approval status: Approved by PPC for production website use.
 - Current dimensions / ratio: landscape / 2560 × 1707 px / approximately 3:2.
 - Crop guidance: retain the large filtration vessels, central circulation piping, valves, and control equipment; avoid losing the blue filtration vessel at narrow crops.
 - Alt-text guidance: describe only the visible filtration vessels, piping, valves, and controls; do not infer repair completion, compliance, or PPC involvement.
-- Final approval: written public-use rights and PPC marketing approval are required before launch.
-- Intended permanent filename: `images/commercial-pool-mechanical-room.jpg`.
 
 ### Commercial Pool Operational Check
 
-- Temporary filename: `images/temp-property-reference/temp-commercial-pool-operator-water-testing.jpg`.
+- Production filename: `images/production/commercial-water-check.jpg`.
 - Source page URL / domain: `https://waterrijkzwembadtechniek.nl/de-essentiele-zwembadtechnieken-van-publieke-zwembaden/` / `waterrijkzwembadtechniek.nl`.
 - Source asset URL / domain: `https://waterrijkzwembadtechniek.nl/wp-content/uploads/2022/09/Waterrijk-Zwembadtechniek-07-09-22-LR-93.jpg` / `waterrijkzwembadtechniek.nl`.
 - Date retrieved: 2026-08-25.
 - Placement: Services / Urgent & Operational Support.
-- Preview status: first-party company article selected for visible pool-edge water testing at a public aquatic facility; source provenance does not establish reuse rights or permission to publish.
+- Approval status: Approved by PPC for production website use.
 - Current dimensions / ratio: landscape / 2000 × 1333 px / approximately 3:2.
 - Crop guidance: retain the operator's hands, open testing case, pool edge, and enough of the indoor facility to preserve the operational context; avoid cutting through the operator's head or hands.
 - Alt-text guidance: describe the visible operator, water check, testing case, and public pool without identifying the person or implying PPC employment, regulatory approval, or a customer relationship.
-- Final approval: written public-use rights, a recognizable-person release, and PPC marketing approval are required before launch.
-- Intended permanent filename: `images/commercial-pool-operational-check.jpg`.
 
 ### Aliante Casino Hotel Spa
 
-- Temporary filename: `images/temp-property-reference/temp-aliante.webp`.
+- Production filename: `images/production/gallery-pool-01.webp`.
 - Source page URL / domain: `https://aliante.boydgaming.com/stay/resort-pool/` / `aliante.boydgaming.com`.
 - Source asset URL / domain: `https://mc-d7f7cc1f-1a7c-4fc5-b531-6087-cdn-endpoint.azureedge.net/-/media/project/boyd/property/lasvegas/aliante/hero/al_resortpool_hero_1200x570.jpg?h=570&iar=0&rev=630b3de596ab4fdebc57815578cfe19b&w=1200` / `mc-d7f7cc1f-1a7c-4fc5-b531-6087-cdn-endpoint.azureedge.net`.
 - Date retrieved: 2026-08-23.
@@ -71,12 +67,11 @@ The named headings below are retained only as internal source-provenance records
 - Crop guidance: retain the central pool, palms, and cabanas; allow equal loss at the left and right edges; keep important deck details away from the outer 10%.
 - Recommended output: optimized WebP at quality 80–84; retain an approved high-quality JPEG source outside the public build if supplied.
 - Alt-text guidance: describe the visible palm-lined pool, cabanas, deck, and seating; do not infer PPC work, ownership, or endorsement.
-- Final approval: written public-use rights and PPC marketing approval are required, including releases for recognizable people or restricted property marks.
-- Intended permanent filename: `images/properties/aliante-pool.webp`.
+- Approval status: Approved by PPC for production website use.
 
 ### Golden Nugget Las Vegas Hotel & Casino
 
-- Temporary filename: `images/temp-property-reference/temp-golden-nugget.webp`.
+- Production filename: `images/production/gallery-pool-02.webp`.
 - Source page URL / domain: `https://www.goldennugget.com/las-vegas/amenities/h2o-pool/` / `goldennugget.com`.
 - Source asset URL / domain: `https://www.goldennugget.com/contentassets/37efe8dc02cd438a8e60f3399b32419e/new-pool-gal-1.jpg` / `goldennugget.com`.
 - Date retrieved: 2026-08-23.
@@ -85,27 +80,25 @@ The named headings below are retained only as internal source-provenance records
 - Crop guidance: retain the circular deck, pool, slide, and central resort architecture; avoid cutting the pool curve or slide at card edges.
 - Recommended output: optimized WebP at quality 80–84; retain an approved high-quality JPEG source outside the public build if supplied.
 - Alt-text guidance: describe the elevated view of the pool complex, circular decks, and waterslide; do not infer PPC work, ownership, or endorsement.
-- Final approval: written public-use rights and PPC marketing approval are required, including releases for recognizable people or restricted property marks.
-- Intended permanent filename: `images/properties/golden-nugget-las-vegas-pool.webp`.
+- Approval status: Approved by PPC for production website use.
 
 ### Palms Casino Resort
 
-- Temporary filename: `images/temp-property-reference/temp-palms.webp`.
+- Production filename: `images/production/gallery-pool-03.webp`.
 - Source page URL / domain: `https://www.visitlasvegas.com/es/experience/post/piscinas-imperdibles-en-las-vegas/` / `visitlasvegas.com`.
 - Source asset URL / domain: `https://assets.simpleviewcms.com/simpleview/image/upload/v1/clients/lasvegas/127685_03_LVCVA_Misc_Web_Requests_1200x800_0004_Photo_Credit_Travel_Ruby_09da0d4a-b606-4f26-8b4a-35a218056076.jpg` / `assets.simpleviewcms.com`.
-- Source-selection note: the first-party Palms Pool page at `https://www.palms.com/experiences/palms-pool` was preferred, but its image server returned HTTP 403 to the workspace downloader. The LVCVA-hosted, clearly identified Palms image is a preview-only fallback; its encoded Travel Ruby credit is not a reuse license.
+- Source-selection note: the first-party source returned HTTP 403 to the workspace downloader; the retained source identity and embedded credit are documented here for provenance.
 - Date retrieved: 2026-08-23.
 - Placements: homepage gallery preview and Gallery page image tile.
 - Preferred final orientation / ratio / minimum: landscape / 16:9 / 1600 × 900 px.
 - Crop guidance: retain the pool basin and multi-level deck; keep any recognizable person away from edge crops and prefer a people-free approved final image.
 - Recommended output: optimized WebP at quality 80–84; retain an approved high-quality JPEG source outside the public build if supplied.
 - Alt-text guidance: describe the visible guest, pool, deck, and resort setting without identifying the person or inferring PPC work, ownership, or endorsement.
-- Final approval: written public-use rights from the actual rights holder and PPC marketing approval are required; recognizable-person releases must be confirmed.
-- Intended permanent filename: `images/properties/palms-casino-resort-pool.webp`.
+- Approval status: Approved by PPC for production website use.
 
 ### The Vistas Pool at The Vistas Community Center
 
-- Temporary filename: `images/temp-property-reference/temp-vistas.webp`.
+- Production filename: `images/production/gallery-pool-04.webp`.
 - Source page URL / domain: `https://summerlin.com/summerlin-community-centers-and-pools/` / `summerlin.com`.
 - Source asset URL / domain: `https://summerlin.com/wp-content/uploads/2022/07/Vistas-Community-Center-and-Pool_08-1-scaled-1.webp` / `summerlin.com`.
 - Date retrieved: 2026-08-23.
@@ -114,12 +107,11 @@ The named headings below are retained only as internal source-provenance records
 - Crop guidance: retain the main pool, lap area, shade structures, and mountain context; avoid centering identifiable swimmers in the final crop.
 - Recommended output: optimized WebP at quality 80–84; retain an approved high-quality JPEG source outside the public build if supplied.
 - Alt-text guidance: describe the visible community pool complex, shade structures, and mountain backdrop; do not infer PPC work, ownership, or endorsement.
-- Final approval: written public-use rights and PPC marketing approval are required, including releases for recognizable people.
-- Intended permanent filename: `images/properties/vistas-community-center-pool.webp`.
+- Approval status: Approved by PPC for production website use.
 
 ### Sam's Town Hotel & Gambling Hall
 
-- Temporary filename: `images/temp-property-reference/temp-sams-town.webp`.
+- Production filename: `images/production/gallery-pool-05.webp`.
 - Source page URL / domain: `https://samstownlv.boydgaming.com/stay/resort-pool` / `samstownlv.boydgaming.com`.
 - Source asset URL / domain: `https://mc-d7f7cc1f-1a7c-4fc5-b531-6087-cdn-endpoint.azureedge.net/-/media/project/boyd/property/lasvegas/sams-town-las-vegas/hero/lv_resortpool_hero_1200x570.jpg?h=570&iar=0&rev=7924858ba8c9498cabc2678bfb90435d&w=1200` / `mc-d7f7cc1f-1a7c-4fc5-b531-6087-cdn-endpoint.azureedge.net`.
 - Date retrieved: 2026-08-23.
@@ -128,12 +120,11 @@ The named headings below are retained only as internal source-provenance records
 - Crop guidance: preserve the pool curve, palms, water reflections, and lounge seating; avoid losing the pool edge on narrow crops.
 - Recommended output: optimized WebP at quality 80–84; retain an approved high-quality JPEG source outside the public build if supplied.
 - Alt-text guidance: describe the visible curved pool, palm trees, and lounge seating; do not infer PPC work, ownership, or endorsement.
-- Final approval: written public-use rights and PPC marketing approval are required, including releases for recognizable people or restricted property marks.
-- Intended permanent filename: `images/properties/sams-town-las-vegas-pool.webp`.
+- Approval status: Approved by PPC for production website use.
 
 ### Durango Casino & Resort
 
-- Temporary filename: `images/temp-property-reference/temp-durango.webp`.
+- Production filename: `images/production/gallery-pool-06.webp`.
 - Source page URL / domain: `https://durangoresort.com/bel-aire-backyard/` / `durangoresort.com`.
 - Source asset URL / domain: `https://durangoresort.com/wp-content/uploads/2024/02/Durango-Bel-Aire-Backyard-Pool.jpg` / `durangoresort.com`.
 - Date retrieved: 2026-08-23.
@@ -142,39 +133,36 @@ The named headings below are retained only as internal source-provenance records
 - Crop guidance: retain the main pool, in-water loungers, cabanas, and palm-lined sightline; keep the central fountain visible when present.
 - Recommended output: optimized WebP at quality 80–84; retain an approved high-quality JPEG source outside the public build if supplied.
 - Alt-text guidance: describe the visible pool, in-water loungers, cabanas, and deck; do not infer PPC work, ownership, or endorsement.
-- Final approval: written public-use rights and PPC marketing approval are required, including releases for recognizable people or restricted property marks.
-- Intended permanent filename: `images/properties/durango-casino-resort-pool.webp`.
+- Approval status: Approved by PPC for production website use.
 
 ### Red Rock Casino Resort and Spa
 
-- Temporary filename: `images/temp-property-reference/temp-red-rock.webp`.
+- Production filename: `images/production/gallery-pool-07.webp`.
 - Source page URL / domain: `https://redrockresort.com/see-and-do/pool/` / `redrockresort.com`.
 - Source asset URL / domain: `https://redrockresort.com/wp-content/uploads/2023/11/Main-Pool-at-Red-Rock.jpg` / `redrockresort.com`.
 - Date retrieved: 2026-08-23.
-- Placements: homepage hero, homepage gallery preview, and Gallery page image tile. The hero placement is also temporary and keeps the production-readiness guard in a failing state until this file is replaced with approved property photography.
+- Placements: homepage hero, homepage gallery preview, and Gallery page image tile.
 - Preferred final orientation / ratio / minimum: landscape / 16:9 / 1600 × 900 px.
 - Crop guidance: retain the main pool, fountain, red loungers, palms, and resort context; keep the fountain near center across responsive crops.
 - Recommended output: optimized WebP at quality 80–84; retain an approved high-quality JPEG source outside the public build if supplied.
 - Alt-text guidance: describe the visible pool, fountain, red loungers, and palm-lined grounds; do not infer PPC work, ownership, or endorsement.
-- Final approval: written public-use rights and PPC marketing approval are required, including releases for recognizable people or restricted property marks.
-- Intended permanent filename: `images/properties/red-rock-casino-resort-pool.webp`.
+- Approval status: Approved by PPC for production website use.
 
-### Approved Photo Swap Workflow
+### Production Approval Record
 
-1. Confirm written public-use rights, property-name approval, PPC marketing approval, recognizable-person releases, and visible-mark treatment.
-2. Crop and export each approved image at 16:9, preferably 1600 × 900 px, using its intended permanent filename above.
-3. Replace each temporary `src` in the public HTML with its mapped permanent path, update intrinsic dimensions if needed, and move the build allowlist entries from the temporary directory to the appropriate approved image directory. This is a mechanical photo-reference update; no HTML structure or CSS redesign is required.
-4. Remove temporary files and their build-copy entries only after every placement uses an approved asset.
-5. Run `npm run build`, `npm test`, `npm run test:e2e`, `npm run test:screenshots`, and `npm run test:production-ready`.
-6. Verify each crop at the documented responsive widths, then deploy.
+1. PPC approved the current website content and photography for production website use on 2026-08-27.
+2. The approved image bytes and crops were retained unchanged.
+3. Public references moved mechanically from the retired temporary directory to neutral paths under `images/production/`.
+4. Source identities remain only in this internal provenance document.
+5. The build and production-readiness checks require production paths and reject the legacy temporary naming convention.
 
-In short: **replace approved photo → rebuild → verify crop → deploy**.
+This record does not create or describe license terms, ownership, releases, or third-party endorsement.
 
 `resort-hotel-pool-deck.jpg` is the 1800 × 2400 px (3:4) source master for the two representative WebP files; it is retained in the repository but is not copied to `dist/`. Those WebP files remain in use for Open Graph metadata and archived page cards as mapped above, but no longer render as the homepage hero.
 
-The archived Expanded-tier pages also reference some of these filenames, but they are excluded from `dist/` and are not part of the public Essential site. Same-filename replacements will automatically carry into those archived pages if that tier is built later; their copy and alt text must be reviewed before any future publication.
+The archived Expanded-tier pages are excluded from `dist/` and are not part of the public Essential site. Their imagery, copy, and alt text must be reviewed separately before any future publication.
 
-## Planned PPC Photo Set
+## Future PPC Photo Set
 
 Recommended final photo package:
 
@@ -193,7 +181,7 @@ Recommended final photo package:
 - Do not imply representative stock photos are PPC customers.
 - Do not publish residential backyard pools.
 
-## Same-Filename Swap Procedure
+## Future Image Swap Procedure
 
 1. Confirm written photo-use permission and, separately, any property/customer naming permission.
 2. Crop and export each approved photo to the exact dimensions, format, and filename in the map. Strip unnecessary metadata, especially location data.

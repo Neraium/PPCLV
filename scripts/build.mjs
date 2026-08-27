@@ -31,16 +31,16 @@ const publicImages = [
   "commercial-water-testing.jpg"
 ];
 
-const temporaryPropertyImages = [
-  "temp-commercial-pool-mechanical-room.jpg",
-  "temp-commercial-pool-operator-water-testing.jpg",
-  "temp-aliante.webp",
-  "temp-golden-nugget.webp",
-  "temp-palms.webp",
-  "temp-vistas.webp",
-  "temp-sams-town.webp",
-  "temp-durango.webp",
-  "temp-red-rock.webp"
+const approvedProductionImages = [
+  "commercial-mechanical-room.jpg",
+  "commercial-water-check.jpg",
+  "gallery-pool-01.webp",
+  "gallery-pool-02.webp",
+  "gallery-pool-03.webp",
+  "gallery-pool-04.webp",
+  "gallery-pool-05.webp",
+  "gallery-pool-06.webp",
+  "gallery-pool-07.webp"
 ];
 
 await rm(output, { recursive: true, force: true });
@@ -54,11 +54,11 @@ await mkdir(new URL("images/", output));
 for (const image of publicImages) {
   await cp(new URL(`images/${image}`, root), new URL(`images/${image}`, output));
 }
-await mkdir(new URL("images/temp-property-reference/", output));
-for (const image of temporaryPropertyImages) {
+await mkdir(new URL("images/production/", output));
+for (const image of approvedProductionImages) {
   await cp(
-    new URL(`images/temp-property-reference/${image}`, root),
-    new URL(`images/temp-property-reference/${image}`, output)
+    new URL(`images/production/${image}`, root),
+    new URL(`images/production/${image}`, output)
   );
 }
 console.log("Built the Essential public site in dist/.");

@@ -126,10 +126,10 @@ test("homepage retains the required commercial journey", async ({ page }) => {
   await expect(properties.locator(".property-preview-card")).toHaveCount(4);
   await expect(properties.locator("figcaption")).toHaveCount(0);
   expect(await properties.locator("img").evaluateAll((images) => images.map((image) => image.getAttribute("src")))).toEqual([
-    "images/temp-property-reference/temp-golden-nugget.webp",
-    "images/temp-property-reference/temp-palms.webp",
-    "images/temp-property-reference/temp-red-rock.webp",
-    "images/temp-property-reference/temp-durango.webp"
+    "images/production/gallery-pool-02.webp",
+    "images/production/gallery-pool-03.webp",
+    "images/production/gallery-pool-07.webp",
+    "images/production/gallery-pool-06.webp"
   ]);
   await expect(properties.getByRole("link", { name: "View Gallery" })).toHaveAttribute("href", "properties.html");
   await expect(properties).not.toContainText("Station Casinos");
@@ -345,7 +345,7 @@ test("FAQ and estate discovery remain contextual and commercial-first", async ({
   await expect(page.getByRole("link", { name: "commercial pool and spa services" })).toHaveAttribute("href", "services.html");
   await expect(page.locator(".about-page-hero .lead")).toContainText("commercial aquatic facilities, resorts, hospitality properties, communities, and large private estates");
   await expect(page.locator(".image-split-section h2")).toHaveText("Built around the way commercial pools and spas actually operate.");
-  await expect(page.locator(".image-split-section img")).toHaveAttribute("src", "images/temp-property-reference/temp-commercial-pool-mechanical-room.jpg");
+  await expect(page.locator(".image-split-section img")).toHaveAttribute("src", "images/production/commercial-mechanical-room.jpg");
   await expect(page.locator(".image-split-section img")).toHaveAttribute("alt", "Mechanical room with large filtration vessels, circulation piping, valves, and controls");
   await expect(page.locator(".why-list span")).toHaveText([
     "Commercial service is coordinated around property access, guest or resident activity, and day-to-day operations.",
@@ -379,13 +379,13 @@ test("Gallery page presents seven image-led work examples without customer names
   await expect(cards).toHaveCount(7);
   await expect(cards.locator("figcaption")).toHaveCount(0);
   expect(await cards.locator("img").evaluateAll((images) => images.map((image) => image.getAttribute("src")))).toEqual([
-    "images/temp-property-reference/temp-aliante.webp",
-    "images/temp-property-reference/temp-golden-nugget.webp",
-    "images/temp-property-reference/temp-palms.webp",
-    "images/temp-property-reference/temp-vistas.webp",
-    "images/temp-property-reference/temp-sams-town.webp",
-    "images/temp-property-reference/temp-durango.webp",
-    "images/temp-property-reference/temp-red-rock.webp"
+    "images/production/gallery-pool-01.webp",
+    "images/production/gallery-pool-02.webp",
+    "images/production/gallery-pool-03.webp",
+    "images/production/gallery-pool-04.webp",
+    "images/production/gallery-pool-05.webp",
+    "images/production/gallery-pool-06.webp",
+    "images/production/gallery-pool-07.webp"
   ]);
   await expect(page.locator(".additional-properties")).toHaveCount(0);
   await expect(page.locator(".final-contact-band h2")).toHaveText("Keep your pool and spa operation ready.");
@@ -412,11 +412,11 @@ test("gallery tiles retain a cohesive responsive image grid without empty captio
   }
 });
 
-test("homepage hero uses the Red Rock property image without weakening LCP handling", async ({ page }) => {
+test("homepage hero uses the approved production image without weakening LCP handling", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await waitForPage(page, "/index.html");
   const hero = page.locator(".hero-image-panel img");
-  await expect(hero).toHaveAttribute("src", "images/temp-property-reference/temp-red-rock.webp");
+  await expect(hero).toHaveAttribute("src", "images/production/gallery-pool-07.webp");
   await expect(hero).toHaveAttribute("width", "1200");
   await expect(hero).toHaveAttribute("height", "675");
   await expect(hero).toHaveAttribute("fetchpriority", "high");
@@ -427,13 +427,13 @@ test("homepage hero uses the Red Rock property image without weakening LCP handl
     naturalWidth: image.naturalWidth,
     naturalHeight: image.naturalHeight
   }))).toEqual({
-    currentSrc: "/images/temp-property-reference/temp-red-rock.webp",
+    currentSrc: "/images/production/gallery-pool-07.webp",
     naturalWidth: 1200,
     naturalHeight: 675
   });
   const sources = await page.locator("main img").evaluateAll((images) => images.map((image) => image.getAttribute("src")));
   expect(new Set(sources.slice(1)).size).toBe(sources.length - 1);
-  expect(sources.filter((source) => source === "images/temp-property-reference/temp-red-rock.webp")).toHaveLength(2);
+  expect(sources.filter((source) => source === "images/production/gallery-pool-07.webp")).toHaveLength(2);
   const belowFoldLoading = await page.locator("main img:not(.hero-image-panel img)").evaluateAll((images) => images.map((image) => image.loading));
   expect(belowFoldLoading.every((value) => value === "lazy")).toBeTruthy();
   const altText = await page.locator("main img").evaluateAll((images) => images.map((image) => image.alt.trim()));
@@ -475,9 +475,9 @@ test("services are organized into the nine approved offerings with one scope not
   await expect(page.locator("#maintenance img")).toHaveAttribute("src", "images/commercial-surface-cleaning.jpg");
   await expect(page.locator("#maintenance img")).toHaveAttribute("alt", "Pool technician skimming a pool at a commercial property");
   await expect(page.locator("#equipment-restoration h2")).toHaveText("Equipment, automation, and surface care.");
-  await expect(page.locator("#equipment-restoration img")).toHaveAttribute("src", "images/temp-property-reference/temp-commercial-pool-mechanical-room.jpg");
+  await expect(page.locator("#equipment-restoration img")).toHaveAttribute("src", "images/production/commercial-mechanical-room.jpg");
   await expect(page.locator("#equipment-restoration img")).toHaveAttribute("alt", "Mechanical room with large filtration vessels, circulation piping, valves, and controls");
-  await expect(page.locator("#urgent-support img")).toHaveAttribute("src", "images/temp-property-reference/temp-commercial-pool-operator-water-testing.jpg");
+  await expect(page.locator("#urgent-support img")).toHaveAttribute("src", "images/production/commercial-water-check.jpg");
   await expect(page.locator("#urgent-support img")).toHaveAttribute("alt", "Operator checking water beside an indoor public pool with a test case");
   await expect(page.locator("#emergency-service-bio-cleanup p")).toHaveText("PPC responds to urgent water-quality, circulation, equipment, and biological contamination concerns with appropriate water care, filtration attention, recovery coordination, and clear communication, subject to service availability.");
   await expect(page.locator("#chemical-feed-automation-support p")).toHaveText("PPC reviews chemical feeders, controllers, and automation interfaces, including settings, delivery, and equipment condition, with clear reporting on concerns and next steps.");
@@ -662,7 +662,7 @@ test("all public pages have exact unique production metadata", async ({ page }) 
       title: "Commercial Pool & Spa Services Las Vegas | PPC LLC",
       description: "PPC commercial pool and spa maintenance, CPO service, equipment support, deck cleaning, emergency service, and large private estate care in Greater Las Vegas.",
       canonical: `${productionOrigin}/services.html`,
-      image: `${productionOrigin}/images/temp-property-reference/temp-commercial-pool-mechanical-room.jpg`,
+      image: `${productionOrigin}/images/production/commercial-mechanical-room.jpg`,
       imageAlt: "Mechanical room with large filtration vessels, circulation piping, valves, and controls"
     }],
     ["/properties.html", {
@@ -676,7 +676,7 @@ test("all public pages have exact unique production metadata", async ({ page }) 
       title: "About Professional Pool Care LLC | Las Vegas",
       description: "PPC has served commercial aquatic facilities, resorts, hospitality properties, communities, and large private estates across Greater Las Vegas since 2003.",
       canonical: `${productionOrigin}/about.html`,
-      image: `${productionOrigin}/images/temp-property-reference/temp-commercial-pool-mechanical-room.jpg`,
+      image: `${productionOrigin}/images/production/commercial-mechanical-room.jpg`,
       imageAlt: "Mechanical room with large filtration vessels, circulation piping, valves, and controls"
     }],
     ["/contact.html", {
@@ -1425,21 +1425,20 @@ test("production build excludes source-only and development artifacts", async ()
   }
 });
 
-test("production-readiness guard detects temporary property references and supports clean replacements", async () => {
+test("production-readiness guard rejects legacy temporary references and accepts approved production images", async () => {
   const guard = await import("../scripts/check-production-readiness.mjs");
   const guardSource = await readFile(join(process.cwd(), "scripts", "check-production-readiness.mjs"), "utf8");
   expect(guardSource).toContain('"faq.html"');
-  expect(guard.scanTextForTemporaryReferences('<img src="images/temp-property-reference/temp-example.webp">')).toBeTruthy();
-  expect(guard.scanTextForTemporaryReferences('<img src="images/properties/approved-example.webp">')).toBeFalsy();
-  const failures = await guard.findTemporaryImageReferences();
-  expect(failures).toEqual(expect.arrayContaining([expect.stringMatching(/^index\.html:/), expect.stringMatching(/^properties\.html:/), expect.stringMatching(/^services\.html:/), expect.stringMatching(/^about\.html:/)]));
+  expect(guard.scanTextForLaunchBlockingReferences('<img src="images/temp-property-reference/temp-example.webp">')).toBeTruthy();
+  expect(guard.scanTextForLaunchBlockingReferences('<img src="images/production/approved-example.webp">')).toBeFalsy();
+  const failures = await guard.findLaunchBlockingImageReferences();
+  expect(failures).toEqual([]);
   const command = spawnSync(process.execPath, ["scripts/check-production-readiness.mjs"], {
     cwd: process.cwd(),
     encoding: "utf8"
   });
-  expect(command.status).toBe(1);
-  expect(command.stderr).toContain("PRODUCTION READINESS: FAIL");
-  expect(command.stderr).toContain("NOT CLEARED FOR PUBLIC LAUNCH");
+  expect(command.status).toBe(0);
+  expect(command.stdout).toContain("PRODUCTION READINESS: PASS");
 });
 
 test("Worker configuration preserves static assets, the form route, and only Zoho delivery settings", async () => {

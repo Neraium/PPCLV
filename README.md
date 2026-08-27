@@ -92,7 +92,7 @@ One-time production setup:
 2. In the matching regional Zoho API Console, create a Self Client. Generate a temporary code with `ZohoMail.accounts.READ`, exchange it for tokens, call the matching regional `GET /api/accounts`, and record the `accountId` whose `primaryEmailAddress` is `Adria@ProfessionalPoolCare.com`. Revoke the temporary account-read refresh token afterward.
 3. In the same Self Client, generate a new authorization code with only `ZohoMail.messages.CREATE`. Exchange it before it expires and retain its `refresh_token`. Do not retain the one-hour access token.
 4. From an authenticated terminal, run `npx wrangler secret put` once for each required secret name above. If the mailbox is not in the US data center, also set `ZOHO_DATA_CENTER` as a Worker variable in Cloudflare Workers & Pages > ppclv > Settings > Variables and Secrets.
-5. After approved property photos are installed and the production-readiness guard passes, deploy with `npm run deploy`, submit one real contact request, and confirm it appears in the Zoho mailbox and its existing Gmail forwarding destination. `npm run deploy` rebuilds, runs the mandatory temporary-image guard, and only then invokes Wrangler. If terminal authentication is unavailable, push the verified production-ready commit to `origin/main`; the configured Cloudflare Git deployment will build and deploy from `main` without an interactive Wrangler login.
+5. After the production-readiness guard passes, deploy with `npm run deploy`, submit one real contact request, and confirm it appears in the Zoho mailbox and its existing Gmail forwarding destination. `npm run deploy` rebuilds, checks for legacy temporary-image references, and only then invokes Wrangler. If terminal authentication is unavailable, push the verified production-ready commit to `origin/main`; the configured Cloudflare Git deployment will build and deploy from `main` without an interactive Wrangler login.
 
 The implementation sends escaped, readable HTML and includes the validated visitor email as a safe mail link when available. Zoho's official send-message API does not document a per-message Reply-To field, so the Worker deliberately does not depend on one.
 
@@ -118,22 +118,20 @@ No active FAQPage schema, industry-specific landing-page architecture, expanded 
 
 ## Photography
 
-The current site presents its photography as generic examples of PPC service environments without publicly identifying customer accounts. The homepage hero, homepage work-gallery preview, and Gallery page still use seven isolated, property-specific web-sourced images for **temporary internal preview only**. These assets are stored only under `images/temp-property-reference/`, are not cleared for public use, and **MUST be replaced before public launch**. Removing visible names does not resolve image-rights or release requirements.
+The current website content and photography are approved by PPC for production use. Approved public images are stored under `images/production/` with neutral filenames. The site presents them as generic examples of PPC service environments without publicly identifying customer accounts.
 
-See `images/README.md` for the exact source URL/domain, retrieval date, placements, crop guidance, output recommendation, rights requirement, and intended permanent filename for every gallery reference. Source identities remain in that internal documentation only for provenance and rights review. The production-readiness check intentionally fails while any temporary reference remains:
+See `images/README.md` for internal source provenance, retrieval dates, production filenames, placements, and crop/alt-text guidance. Source identities remain internal and are not public customer/property labels. The production-readiness check rejects any legacy temporary path or filename:
 
 ```sh
 npm run test:production-ready
 ```
 
-Final approved property photos can be installed without another layout or design pass. The replacement is limited to the mapped asset files, `src` paths/intrinsic dimensions, and build allowlist entries, followed by crop verification.
+Future image changes can be installed without another layout or design pass when dimensions and subject placement remain compatible.
 
 Gallery safeguards:
 
 - Do not display individual customer or property names in public gallery copy, captions, alt text, metadata, or schema.
-- Use website/customer-provided photos publicly only with written permission.
-- Treat every web-sourced property reference in this branch as provenance-only internal-preview material, not as evidence of reuse rights.
-- The seven staged gallery references and their final photos require PPC marketing approval and confirmed public-use rights before launch.
+- Keep the current production approval recorded factually as: “Approved by PPC for production website use.”
 - Source identities may remain in internal rights documentation but must not be copied into public content.
 - Do not imply PPC owns customer properties.
 - Do not imply representative stock photos are PPC customers.
@@ -174,18 +172,16 @@ git diff --check
 npm run deploy -- --dry-run
 ```
 
-The build uses an explicit allowlist for the five marketing pages, two utility pages, shared assets, crawler files, and the Cloudflare `_headers` file. Source archives, tests, reports, internal screenshots, and project files are not published. During internal review it also copies the seven isolated temporary property references; the production-readiness check blocks launch until those paths and filenames are gone.
+The build uses an explicit allowlist for the five marketing pages, two utility pages, shared assets, crawler files, the approved production imagery, and the Cloudflare `_headers` file. Source archives, tests, reports, internal screenshots, and project files are not published. The production-readiness check continues to reject legacy temporary image paths and filenames.
 
 ## FINAL PPC LAUNCH CHECKLIST
 
 PHOTOS:
 
-- Receive approved PPC/customer commercial images.
-- Replace representative images according to `images/README.md`.
-- Replace every image under `images/temp-property-reference/` with its mapped approved permanent asset and update the mechanical image references.
-- Optimize images and responsive derivatives.
-- Verify alt text.
-- Verify written naming and photo-use permissions.
+- Current website photography is approved by PPC for production website use.
+- Approved imagery uses neutral production filenames under `images/production/`.
+- Public Gallery copy, captions, alt text, metadata, and schema do not identify individual customer/property names.
+- Internal provenance remains documented in `images/README.md`.
 - Require `npm run test:production-ready` to pass before deployment.
 
 External launch actions:
@@ -205,7 +201,6 @@ External launch actions:
 
 ### A. MUST FIX BEFORE PUBLIC LAUNCH
 
-- Replace the representative photography with approved commercial PPC/customer/property photos using `images/README.md`, including all seven temporary property references and the paired hero derivatives; the production-readiness guard must pass.
 - Configure and confirm the four exact Worker secrets, deploy the final `main` build, and complete the real Zoho delivery/forwarding check described above.
 - Remove the Cloudflare Access preview restriction, then verify anonymous apex-domain access, the `www` redirect, and HTTPS from outside the authenticated preview session.
 
@@ -220,3 +215,13 @@ External launch actions:
 - Add testimonials, customer/property logos, and case studies only with written permission.
 - Consider service-area landing pages, structured inquiry routing, and a lightweight content-maintenance workflow after launch.
 - Add independent uptime and contact-form delivery monitoring after the production delivery path is established.
+
+## FINAL HANDOFF
+
+- Production URL: `https://professionalpoolcare.com`
+- Repository: `https://github.com/Neraium/PPCLV`
+- Build command: `npm run build`
+- Deployment: Cloudflare Worker/static assets, with production updates from `main`
+- Contact form endpoint: `/contact-request`
+- Image provenance: `images/README.md`
+- Gallery route: `properties.html`
