@@ -148,6 +148,87 @@ The named headings below are retained only as internal source-provenance records
 - Alt-text guidance: describe the visible pool, fountain, red loungers, and palm-lined grounds; do not infer PPC work, ownership, or endorsement.
 - Approval status: Approved by PPC for production website use.
 
+## Licensed Non-Gallery Replacements
+
+The approved Gallery files, order, crops, alt text, and copy remain unchanged. The seven files below are used only in the specified non-Gallery visible placements. Each provider page identifies the photo as free to use, and each output was cropped/resized and optimized as WebP without adding claims of PPC work, property ownership, or endorsement.
+
+### Home Hero Resort Pool
+
+- Filename: `images/production/home-hero-resort-pool.webp`.
+- Source URL: `https://www.pexels.com/photo/swimming-pool-in-tropical-resort-6460876/`.
+- Provider: Pexels.
+- License basis: [Pexels License](https://www.pexels.com/license/) — permits free website and commercial use and modification without required attribution; endorsement may not be implied.
+- Placement: Home hero only.
+- Date retrieved: 2026-08-28.
+- Dimensions: downloaded source 2400 × 1598 px; production output 1920 × 1080 px (16:9 WebP).
+- Alt-text guidance: “Wide resort pool with palm trees and surrounding lounge deck.” Do not name the property or imply PPC work, ownership, or endorsement.
+
+### Home Community Pool Preview
+
+- Filename: `images/production/home-gallery-community-pool.webp`.
+- Source URL: `https://www.pexels.com/photo/huge-swimming-pool-in-a-luxury-apartment-complex-16461488/`.
+- Provider: Pexels.
+- License basis: [Pexels License](https://www.pexels.com/license/) — permits free website and commercial use and modification without required attribution; endorsement may not be implied.
+- Placement: Home / Our Work tile 1 only.
+- Date retrieved: 2026-08-28.
+- Dimensions: original source 4672 × 7008 px; production output 1600 × 900 px (16:9 WebP).
+- Alt-text guidance: “High-rise community pool with a shared deck and lounge seating.” Do not name the property or imply PPC work or endorsement.
+
+### Home Lap Pool Preview
+
+- Filename: `images/production/home-gallery-lap-pool.webp`.
+- Source URL: `https://unsplash.com/photos/outdoor-swimming-pool-with-lanes-and-diving-blocks-LVn0HMq1Pcg`.
+- Provider: Unsplash.
+- License basis: [Unsplash License](https://unsplash.com/license) — permits free commercial use and modification without required permission or attribution, excluding unmodified resale and competing image services.
+- Placement: Home / Our Work tile 2 only.
+- Date retrieved: 2026-08-28.
+- Dimensions: original source 4284 × 5712 px; production output 1600 × 900 px (16:9 WebP).
+- Alt-text guidance: “Outdoor aquatic facility with marked lap lanes and diving blocks.” Do not name the facility or infer PPC work or operational status.
+
+### Home Commercial Spa Preview
+
+- Filename: `images/production/home-gallery-commercial-spa.webp`.
+- Source URL: `https://unsplash.com/photos/indoor-hot-tub-with-mountain-view-through-glass-walls-uE7vZHFqQNE`.
+- Provider: Unsplash.
+- License basis: [Unsplash License](https://unsplash.com/license) — permits free commercial use and modification without required permission or attribution, excluding unmodified resale and competing image services.
+- Placement: Home / Our Work tile 3 only.
+- Date retrieved: 2026-08-28.
+- Dimensions: original source 4078 × 6117 px; production output 1600 × 900 px (16:9 WebP).
+- Alt-text guidance: “Indoor spa pool with large windows and surrounding seating.” Do not name the property or infer PPC work, ownership, or endorsement.
+
+### Home Hotel Pool Preview
+
+- Filename: `images/production/home-gallery-hotel-pool.webp`.
+- Source URL: `https://www.pexels.com/photo/swimming-pool-in-a-hotel-14022373/`.
+- Provider: Pexels.
+- License basis: [Pexels License](https://www.pexels.com/license/) — permits free website and commercial use and modification without required attribution; endorsement may not be implied.
+- Placement: Home / Our Work tile 4 only.
+- Date retrieved: 2026-08-28.
+- Dimensions: original source 7721 × 5150 px; production output 1600 × 900 px (16:9 WebP).
+- Alt-text guidance: “Hotel courtyard pool with surrounding deck and seating.” Do not name the property or infer PPC work, ownership, or endorsement.
+
+### Home Commercial Maintenance
+
+- Filename: `images/production/home-commercial-maintenance.webp`.
+- Source URL: `https://unsplash.com/photos/man-cleaning-a-swimming-pool-with-a-long-pole-z183EqFxuTw`.
+- Provider: Unsplash.
+- License basis: [Unsplash License](https://unsplash.com/license) — permits free commercial use and modification without required permission or attribution, excluding unmodified resale and competing image services.
+- Placement: Home / Commercial Focus only.
+- Date retrieved: 2026-08-28.
+- Dimensions: downloaded source 2000 × 3000 px; production output 1200 × 1800 px (2:3 WebP).
+- Alt-text guidance: “Pool service worker using a long pole at an outdoor community pool.” Do not identify the person or imply PPC employment, a customer relationship, or a maintenance outcome.
+
+### About Commercial Equipment
+
+- Filename: `images/production/about-commercial-equipment.webp`.
+- Source URL: `https://unsplash.com/photos/closeup-photo-of-machine-fFRtvdWqyLk`.
+- Provider: Unsplash.
+- License basis: [Unsplash License](https://unsplash.com/license) — permits free commercial use and modification without required permission or attribution, excluding unmodified resale and competing image services.
+- Placement: About / Commercial Focus visible image only.
+- Date retrieved: 2026-08-28.
+- Dimensions: original source 6000 × 4000 px; production output 1600 × 1067 px (approximately 3:2 WebP).
+- Alt-text guidance: “Industrial piping and mechanical equipment in a utility room.” Do not describe the room as pool-specific or imply PPC work, ownership, compliance, or endorsement.
+
 ### Production Approval Record
 
 1. PPC approved the current website content and photography for production website use on 2026-08-27.
