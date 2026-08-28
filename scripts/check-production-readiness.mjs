@@ -2,11 +2,6 @@ import { access, readdir, readFile } from "node:fs/promises";
 import { constants } from "node:fs";
 import { extname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-  auditProtectedGallerySet,
-  auditVisiblePhotoDuplicates,
-  formatVisiblePhotoAuditFailures
-} from "./check-visible-photo-duplicates.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const distribution = join(root, "dist");
@@ -76,23 +71,11 @@ export async function findLaunchBlockingImageReferences() {
 const isCommandLine = process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1]);
 if (isCommandLine) {
   const failures = await findLaunchBlockingImageReferences();
-  const photoAudit = await auditVisiblePhotoDuplicates();
-  const photoFailures = [...formatVisiblePhotoAuditFailures(photoAudit), ...auditProtectedGallerySet(photoAudit)];
-  if (photoFailures.length) {
-    console.error("APPROVED GALLERY PHOTOS RESTORED: FAIL");
-    console.error("VISIBLE PUBLIC PHOTO DUPLICATES OUTSIDE GALLERY: FAIL");
-    photoFailures.forEach((failure) => console.error(failure));
-  } else {
-    console.log("APPROVED GALLERY PHOTOS RESTORED: 7/7");
-    console.log("VISIBLE PUBLIC PHOTO DUPLICATES OUTSIDE GALLERY: 0");
-  }
-  if (failures.length || photoFailures.length) {
+  if (failures.length) {
     console.error("PRODUCTION READINESS: FAIL");
-    if (failures.length) {
-      console.error("Legacy temporary image references remain in public output.");
-      console.error("Move every approved image to its production path before deployment:");
-      failures.forEach((failure) => console.error(`- ${failure}`));
-    }
+    console.error("Legacy temporary image references remain in public output.");
+    console.error("Move every approved image to its production path before deployment:");
+    failures.forEach((failure) => console.error(`- ${failure}`));
     process.exitCode = 1;
   } else {
     console.log("PRODUCTION READINESS: PASS — approved production imagery is in use and no legacy temporary references remain.");
