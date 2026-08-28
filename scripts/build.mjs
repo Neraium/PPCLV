@@ -42,7 +42,7 @@ const approvedProductionImages = [
   "gallery-pool-05.webp",
   "gallery-pool-06.webp",
   "gallery-pool-07.webp",
-  "gallery-pool-08.webp",
+  "home-hero-resort-pool.webp",
   "home-commercial-maintenance.webp",
   "home-gallery-commercial-spa.webp",
   "home-gallery-community-pool.webp",

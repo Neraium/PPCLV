@@ -28,7 +28,7 @@ Future replacement photos must be commercial. Do not use residential backyard po
 
 The approved public files are stored under `images/production/` with neutral filenames. `npm run test:production-ready` rejects any legacy `images/temp-property-reference/` path or `temp-*` public filename so the retired preview state cannot be reintroduced accidentally.
 
-The shared image-only Gallery layout uses the approved crops with factual alt text and no visible property captions. No crop, layout, or image-content change was made when the files moved to production paths.
+The shared image-only Gallery layout uses the approved crops with factual alt text and no visible property captions. The protected, client-approved Gallery set is exactly `gallery-pool-01.webp` through `gallery-pool-07.webp`, in numeric order. Each file appears once on the Gallery page and nowhere else in visible public content; their approved Gallery placements, crops, filenames, and image bytes remain unchanged.
 
 The named headings below are retained only as internal source-provenance records. They are not public copy and must not be used in visible labels, alt text, metadata, or schema.
 
@@ -141,7 +141,7 @@ The named headings below are retained only as internal source-provenance records
 - Source page URL / domain: `https://redrockresort.com/see-and-do/pool/` / `redrockresort.com`.
 - Source asset URL / domain: `https://redrockresort.com/wp-content/uploads/2023/11/Main-Pool-at-Red-Rock.jpg` / `redrockresort.com`.
 - Date retrieved: 2026-08-23.
-- Placement: homepage hero.
+- Placement: Gallery page image tile.
 - Preferred final orientation / ratio / minimum: landscape / 16:9 / 1600 × 900 px.
 - Crop guidance: retain the main pool, fountain, red loungers, palms, and resort context; keep the fountain near center across responsive crops.
 - Recommended output: optimized WebP at quality 80–84; retain an approved high-quality JPEG source outside the public build if supplied.
@@ -151,6 +151,20 @@ The named headings below are retained only as internal source-provenance records
 ## Licensed Production Replacements
 
 The following stock photographs were retrieved from provider-hosted source files and transformed only by cropping, resizing, metadata removal, and WebP optimization. Provider licenses are the source basis for public use; this record does not claim ownership, model or property releases, customer relationships, or endorsement.
+
+### Home Hero Resort Pool
+
+- Production filename: `images/production/home-hero-resort-pool.webp`.
+- Source page URL: `https://www.pexels.com/photo/swimming-pool-in-tropical-resort-6460876/`.
+- Source provider: Pexels.
+- Source/download URL: `https://images.pexels.com/photos/6460876/pexels-photo-6460876.jpeg?auto=compress&cs=tinysrgb&w=2400`.
+- Date retrieved: 2026-08-28.
+- Placement: Home hero.
+- Original downloaded dimensions: landscape / 2400 × 1598 px.
+- Output dimensions: landscape / 1920 × 1080 px / 16:9 WebP.
+- Crop guidance: retain the broad resort pool, palm-lined facility context, and surrounding lounge deck; use the centered 16:9 crop so the pool remains legible at narrow and wide hero sizes.
+- Alt-text guidance: “Wide resort pool with palm trees and surrounding lounge deck.” Do not name the property or imply PPC work, ownership, or endorsement.
+- License/source basis: sourced under the [Pexels license](https://www.pexels.com/license/), which permits free commercial website use and modification without required attribution; do not imply endorsement. No separate model or property release is claimed here.
 
 ### Home Community Pool Preview
 
@@ -235,20 +249,6 @@ The following stock photographs were retrieved from provider-hosted source files
 - Crop guidance: preserve the central utility-room aisle and the surrounding insulated piping, valves, flanges, and mechanical equipment; allow modest edge loss in the existing image frame.
 - Alt-text guidance: “Industrial piping and mechanical equipment in a utility room.” Do not describe the room as pool-specific or imply PPC work, ownership, compliance, or endorsement.
 - License/source basis: sourced under the [Unsplash license](https://unsplash.com/license), which permits free commercial website use and modification without required permission or attribution, subject to its restrictions on unmodified resale and competing collections. No separate model or property release or endorsement is claimed here.
-
-### Gallery Commercial Pool
-
-- Production filename: `images/production/gallery-pool-08.webp`.
-- Source page URL: `https://www.pexels.com/photo/pool-in-hotel-20007351/`.
-- Source provider: Pexels.
-- Source/download URL: `https://images.pexels.com/photos/20007351/pexels-photo-20007351.jpeg?cs=srgb&dl=pexels-itsbymina-20007351.jpg&fm=jpg`.
-- Date retrieved: 2026-08-28.
-- Placement: Gallery page image tile.
-- Original dimensions: landscape / 5945 × 3793 px.
-- Output dimensions: landscape / 1600 × 900 px / 16:9 WebP.
-- Crop guidance: use the full source width and a 5945 × 3344 px crop beginning 250 px from the top; retain the rectangular pool basin, depth markings, access rails, and surrounding deck.
-- Alt-text guidance: “Rectangular commercial pool with depth markings and surrounding deck.” Do not name the property or infer PPC work, ownership, or endorsement.
-- License/source basis: sourced under the [Pexels license](https://www.pexels.com/license/), which permits free commercial website use and modification without required attribution; do not imply endorsement. No separate model or property release is claimed here.
 
 ### Prior Production Migration Record
 

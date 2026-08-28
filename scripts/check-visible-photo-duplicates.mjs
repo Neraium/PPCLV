@@ -16,6 +16,16 @@ export const publicHtmlPages = [
   "terms.html"
 ];
 
+export const protectedGalleryImagePaths = [
+  "images/production/gallery-pool-01.webp",
+  "images/production/gallery-pool-02.webp",
+  "images/production/gallery-pool-03.webp",
+  "images/production/gallery-pool-04.webp",
+  "images/production/gallery-pool-05.webp",
+  "images/production/gallery-pool-06.webp",
+  "images/production/gallery-pool-07.webp"
+];
+
 // The site logo is the only intentionally repeated visible <img> branding asset.
 const excludedVisibleImagePaths = new Set(["images/logo.webp"]);
 
@@ -111,15 +121,39 @@ export function formatVisiblePhotoAuditFailures(audit) {
   return lines;
 }
 
+export function auditProtectedGallerySet(audit) {
+  const failures = [];
+  const galleryPlacements = audit.placements.filter((placement) => placement.page === "properties.html");
+  const galleryPaths = galleryPlacements.map((placement) => placement.path);
+
+  if (JSON.stringify(galleryPaths) !== JSON.stringify(protectedGalleryImagePaths)) {
+    failures.push(`PROTECTED GALLERY ORDER expected ${protectedGalleryImagePaths.join(", ")} but found ${galleryPaths.join(", ")}`);
+  }
+
+  for (const path of protectedGalleryImagePaths) {
+    const galleryCount = galleryPaths.filter((galleryPath) => galleryPath === path).length;
+    if (galleryCount !== 1) failures.push(`PROTECTED GALLERY COUNT ${path}: expected 1, found ${galleryCount}`);
+
+    const outsidePlacements = audit.placements.filter((placement) => placement.page !== "properties.html" && placement.path === path);
+    for (const placement of outsidePlacements) {
+      failures.push(`PROTECTED GALLERY REUSE ${placement.page}:${placement.line} -> ${placement.path}`);
+    }
+  }
+
+  return failures;
+}
+
 const isCommandLine = process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1]);
 if (isCommandLine) {
   const audit = await auditVisiblePhotoDuplicates();
-  const failures = formatVisiblePhotoAuditFailures(audit);
+  const failures = [...formatVisiblePhotoAuditFailures(audit), ...auditProtectedGallerySet(audit)];
   if (failures.length) {
-    console.error("VISIBLE PUBLIC PHOTO DUPLICATES: FAIL");
+    console.error("APPROVED GALLERY PHOTOS RESTORED: FAIL");
+    console.error("VISIBLE PUBLIC PHOTO DUPLICATES OUTSIDE GALLERY: FAIL");
     failures.forEach((failure) => console.error(failure));
     process.exitCode = 1;
   } else {
-    console.log("VISIBLE PUBLIC PHOTO DUPLICATES: 0");
+    console.log("APPROVED GALLERY PHOTOS RESTORED: 7/7");
+    console.log("VISIBLE PUBLIC PHOTO DUPLICATES OUTSIDE GALLERY: 0");
   }
 }
