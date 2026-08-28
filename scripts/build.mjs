@@ -34,13 +34,20 @@ const publicImages = [
 const approvedProductionImages = [
   "commercial-mechanical-room.jpg",
   "commercial-water-check.jpg",
+  "about-commercial-equipment.webp",
   "gallery-pool-01.webp",
   "gallery-pool-02.webp",
   "gallery-pool-03.webp",
   "gallery-pool-04.webp",
   "gallery-pool-05.webp",
   "gallery-pool-06.webp",
-  "gallery-pool-07.webp"
+  "gallery-pool-07.webp",
+  "gallery-pool-08.webp",
+  "home-commercial-maintenance.webp",
+  "home-gallery-commercial-spa.webp",
+  "home-gallery-community-pool.webp",
+  "home-gallery-hotel-pool.webp",
+  "home-gallery-lap-pool.webp"
 ];
 
 await rm(output, { recursive: true, force: true });

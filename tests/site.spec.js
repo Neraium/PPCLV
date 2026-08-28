@@ -1,6 +1,7 @@
 const { test, expect } = require("@playwright/test");
 const { spawnSync } = require("node:child_process");
-const { readdir, readFile } = require("node:fs/promises");
+const { mkdir, mkdtemp, readdir, readFile, rm, writeFile } = require("node:fs/promises");
+const { tmpdir } = require("node:os");
 const { join } = require("node:path");
 
 const productionOrigin = "https://professionalpoolcare.com";
@@ -126,13 +127,48 @@ test("homepage retains the required commercial journey", async ({ page }) => {
   await expect(properties.locator(".property-preview-card")).toHaveCount(4);
   await expect(properties.locator("figcaption")).toHaveCount(0);
   expect(await properties.locator("img").evaluateAll((images) => images.map((image) => image.getAttribute("src")))).toEqual([
-    "images/production/gallery-pool-02.webp",
-    "images/production/gallery-pool-03.webp",
-    "images/production/gallery-pool-07.webp",
-    "images/production/gallery-pool-06.webp"
+    "images/production/home-gallery-community-pool.webp",
+    "images/production/home-gallery-lap-pool.webp",
+    "images/production/home-gallery-commercial-spa.webp",
+    "images/production/home-gallery-hotel-pool.webp"
   ]);
   await expect(properties.getByRole("link", { name: "View Gallery" })).toHaveAttribute("href", "properties.html");
   await expect(properties).not.toContainText("Station Casinos");
+});
+
+test("visible public photography is unique by resolved path and file hash", async () => {
+  const { auditVisiblePhotoDuplicates, formatVisiblePhotoAuditFailures } = await import("../scripts/check-visible-photo-duplicates.mjs");
+  const audit = await auditVisiblePhotoDuplicates();
+  expect(formatVisiblePhotoAuditFailures(audit)).toEqual([]);
+  expect(audit.placements).toHaveLength(17);
+});
+
+test("visible-photo audit rejects repeated paths and identical bytes under different filenames", async () => {
+  const { auditVisiblePhotoDuplicates } = await import("../scripts/check-visible-photo-duplicates.mjs");
+  const fixtureRoot = await mkdtemp(join(tmpdir(), "ppclv-photo-audit-"));
+  try {
+    await mkdir(join(fixtureRoot, "images"));
+    const sharedBytes = Buffer.from("synthetic-photo-bytes");
+    await writeFile(join(fixtureRoot, "images", "first.webp"), sharedBytes);
+    await writeFile(join(fixtureRoot, "images", "second.webp"), sharedBytes);
+    await writeFile(join(fixtureRoot, "first.html"), '<img src="images/first.webp" alt="First">');
+    await writeFile(join(fixtureRoot, "second.html"), '<img src="images/second.webp" alt="Second">');
+
+    const matchingBytes = await auditVisiblePhotoDuplicates({
+      rootDirectory: fixtureRoot,
+      pages: ["first.html", "second.html"]
+    });
+    expect(matchingBytes.duplicates.map(({ type }) => type)).toContain("hash");
+
+    await writeFile(join(fixtureRoot, "second.html"), '<img src="images/first.webp" alt="Repeated">');
+    const repeatedPath = await auditVisiblePhotoDuplicates({
+      rootDirectory: fixtureRoot,
+      pages: ["first.html", "second.html"]
+    });
+    expect(repeatedPath.duplicates.map(({ type }) => type)).toContain("path");
+  } finally {
+    await rm(fixtureRoot, { recursive: true, force: true });
+  }
 });
 
 test("homepage service cards share one neutral default treatment and reveal emphasis only on interaction", async ({ page }) => {
@@ -345,8 +381,8 @@ test("FAQ and estate discovery remain contextual and commercial-first", async ({
   await expect(page.getByRole("link", { name: "commercial pool and spa services" })).toHaveAttribute("href", "services.html");
   await expect(page.locator(".about-page-hero .lead")).toContainText("commercial aquatic facilities, resorts, hospitality properties, communities, and large private estates");
   await expect(page.locator(".image-split-section h2")).toHaveText("Built around the way commercial pools and spas actually operate.");
-  await expect(page.locator(".image-split-section img")).toHaveAttribute("src", "images/production/commercial-mechanical-room.jpg");
-  await expect(page.locator(".image-split-section img")).toHaveAttribute("alt", "Mechanical room with large filtration vessels, circulation piping, valves, and controls");
+  await expect(page.locator(".image-split-section img")).toHaveAttribute("src", "images/production/about-commercial-equipment.webp");
+  await expect(page.locator(".image-split-section img")).toHaveAttribute("alt", "Industrial piping and mechanical equipment in a utility room");
   await expect(page.locator(".why-list span")).toHaveText([
     "Commercial service is coordinated around property access, guest or resident activity, and day-to-day operations.",
     "Routine attention supports water quality, equipment condition, presentation, and useful service records.",
@@ -385,13 +421,13 @@ test("Gallery page presents seven image-led work examples without customer names
     "images/production/gallery-pool-04.webp",
     "images/production/gallery-pool-05.webp",
     "images/production/gallery-pool-06.webp",
-    "images/production/gallery-pool-07.webp"
+    "images/production/gallery-pool-08.webp"
   ]);
   await expect(page.locator(".additional-properties")).toHaveCount(0);
   await expect(page.locator(".final-contact-band h2")).toHaveText("Keep your pool and spa operation ready.");
   await expect(page.locator(".final-contact-band div > p:last-child")).toHaveText("Tell PPC about your property and the support you need.");
   await expect(page.locator("main img")).toHaveCount(7);
-  expect(await page.locator("main img").evaluateAll((images) => images.every((image) => image.alt.trim() && image.naturalWidth === 1200 && image.naturalHeight === 675))).toBeTruthy();
+  expect(await page.locator("main img").evaluateAll((images) => images.every((image) => image.alt.trim() && Math.abs(image.naturalWidth / image.naturalHeight - 16 / 9) < 0.01))).toBeTruthy();
 });
 
 test("gallery tiles retain a cohesive responsive image grid without empty caption space", async ({ page }) => {
@@ -432,8 +468,8 @@ test("homepage hero uses the approved production image without weakening LCP han
     naturalHeight: 675
   });
   const sources = await page.locator("main img").evaluateAll((images) => images.map((image) => image.getAttribute("src")));
-  expect(new Set(sources.slice(1)).size).toBe(sources.length - 1);
-  expect(sources.filter((source) => source === "images/production/gallery-pool-07.webp")).toHaveLength(2);
+  expect(new Set(sources).size).toBe(sources.length);
+  expect(sources.filter((source) => source === "images/production/gallery-pool-07.webp")).toHaveLength(1);
   const belowFoldLoading = await page.locator("main img:not(.hero-image-panel img)").evaluateAll((images) => images.map((image) => image.loading));
   expect(belowFoldLoading.every((value) => value === "lazy")).toBeTruthy();
   const altText = await page.locator("main img").evaluateAll((images) => images.map((image) => image.alt.trim()));
@@ -676,8 +712,8 @@ test("all public pages have exact unique production metadata", async ({ page }) 
       title: "About Professional Pool Care LLC | Las Vegas",
       description: "PPC has served commercial aquatic facilities, resorts, hospitality properties, communities, and large private estates across Greater Las Vegas since 2003.",
       canonical: `${productionOrigin}/about.html`,
-      image: `${productionOrigin}/images/production/commercial-mechanical-room.jpg`,
-      imageAlt: "Mechanical room with large filtration vessels, circulation piping, valves, and controls"
+      image: `${productionOrigin}/images/production/about-commercial-equipment.webp`,
+      imageAlt: "Industrial piping and mechanical equipment in a utility room"
     }],
     ["/contact.html", {
       title: "Request Pool & Spa Service in Las Vegas | PPC LLC",
