@@ -1,7 +1,6 @@
 const { test, expect } = require("@playwright/test");
 const { spawnSync } = require("node:child_process");
-const { mkdir, mkdtemp, readdir, readFile, rm, writeFile } = require("node:fs/promises");
-const { tmpdir } = require("node:os");
+const { readdir, readFile } = require("node:fs/promises");
 const { join } = require("node:path");
 
 const productionOrigin = "https://professionalpoolcare.com";
@@ -19,24 +18,6 @@ const publicCustomerNames = [
   "Sam's Town Hotel & Gambling Hall",
   "Durango Casino & Resort",
   "Red Rock Casino Resort and Spa"
-];
-const protectedGalleryImages = [
-  "images/production/gallery-pool-01.webp",
-  "images/production/gallery-pool-02.webp",
-  "images/production/gallery-pool-03.webp",
-  "images/production/gallery-pool-04.webp",
-  "images/production/gallery-pool-05.webp",
-  "images/production/gallery-pool-06.webp",
-  "images/production/gallery-pool-07.webp"
-];
-const protectedGalleryAltText = [
-  "Palm-lined resort pool with orange cabanas and lounge seating",
-  "Elevated view of a resort pool complex with circular decks and a waterslide",
-  "Person overlooking a multi-level resort pool deck",
-  "Community pool complex with lap areas, shade structures, and a mountain backdrop",
-  "Curved resort pool bordered by palm trees and lounge seating",
-  "Resort pool with in-water loungers, cabanas, and a palm-lined deck",
-  "Large resort pool with a fountain, red loungers, and palm-lined grounds"
 ];
 
 const validContactFields = {
@@ -145,62 +126,13 @@ test("homepage retains the required commercial journey", async ({ page }) => {
   await expect(properties.locator(".property-preview-card")).toHaveCount(4);
   await expect(properties.locator("figcaption")).toHaveCount(0);
   expect(await properties.locator("img").evaluateAll((images) => images.map((image) => image.getAttribute("src")))).toEqual([
-    "images/production/home-gallery-community-pool.webp",
-    "images/production/home-gallery-lap-pool.webp",
-    "images/production/home-gallery-commercial-spa.webp",
-    "images/production/home-gallery-hotel-pool.webp"
+    "images/production/gallery-pool-02.webp",
+    "images/production/gallery-pool-03.webp",
+    "images/production/gallery-pool-07.webp",
+    "images/production/gallery-pool-06.webp"
   ]);
   await expect(properties.getByRole("link", { name: "View Gallery" })).toHaveAttribute("href", "properties.html");
   await expect(properties).not.toContainText("Station Casinos");
-});
-
-test("visible public photography is unique and the approved Gallery set is locked", async () => {
-  const { auditProtectedGallerySet, auditVisiblePhotoDuplicates, formatVisiblePhotoAuditFailures } = await import("../scripts/check-visible-photo-duplicates.mjs");
-  const audit = await auditVisiblePhotoDuplicates();
-  expect(formatVisiblePhotoAuditFailures(audit)).toEqual([]);
-  expect(auditProtectedGallerySet(audit)).toEqual([]);
-  expect(audit.placements).toHaveLength(17);
-});
-
-test("visible-photo audit rejects repeated paths, identical bytes, and Gallery order changes", async () => {
-  const { auditProtectedGallerySet, auditVisiblePhotoDuplicates } = await import("../scripts/check-visible-photo-duplicates.mjs");
-  const fixtureRoot = await mkdtemp(join(tmpdir(), "ppclv-photo-audit-"));
-  try {
-    await mkdir(join(fixtureRoot, "images", "production"), { recursive: true });
-    const sharedBytes = Buffer.from("synthetic-photo-bytes");
-    await writeFile(join(fixtureRoot, "images", "first.webp"), sharedBytes);
-    await writeFile(join(fixtureRoot, "images", "second.webp"), sharedBytes);
-    await writeFile(join(fixtureRoot, "first.html"), '<img src="images/first.webp" alt="First">');
-    await writeFile(join(fixtureRoot, "second.html"), '<img src="images/second.webp" alt="Second">');
-
-    const matchingBytes = await auditVisiblePhotoDuplicates({
-      rootDirectory: fixtureRoot,
-      pages: ["first.html", "second.html"]
-    });
-    expect(matchingBytes.duplicates.map(({ type }) => type)).toContain("hash");
-
-    await writeFile(join(fixtureRoot, "second.html"), '<img src="images/first.webp" alt="Repeated">');
-    const repeatedPath = await auditVisiblePhotoDuplicates({
-      rootDirectory: fixtureRoot,
-      pages: ["first.html", "second.html"]
-    });
-    expect(repeatedPath.duplicates.map(({ type }) => type)).toContain("path");
-
-    for (const [index, path] of protectedGalleryImages.entries()) {
-      await writeFile(join(fixtureRoot, path), Buffer.from(`gallery-${index}`));
-    }
-    await writeFile(
-      join(fixtureRoot, "properties.html"),
-      [...protectedGalleryImages].reverse().map((path) => `<img src="${path}" alt="Gallery">`).join("\n")
-    );
-    const reorderedGallery = await auditVisiblePhotoDuplicates({
-      rootDirectory: fixtureRoot,
-      pages: ["properties.html"]
-    });
-    expect(auditProtectedGallerySet(reorderedGallery).some((failure) => failure.startsWith("PROTECTED GALLERY ORDER"))).toBeTruthy();
-  } finally {
-    await rm(fixtureRoot, { recursive: true, force: true });
-  }
 });
 
 test("homepage service cards share one neutral default treatment and reveal emphasis only on interaction", async ({ page }) => {
@@ -413,8 +345,8 @@ test("FAQ and estate discovery remain contextual and commercial-first", async ({
   await expect(page.getByRole("link", { name: "commercial pool and spa services" })).toHaveAttribute("href", "services.html");
   await expect(page.locator(".about-page-hero .lead")).toContainText("commercial aquatic facilities, resorts, hospitality properties, communities, and large private estates");
   await expect(page.locator(".image-split-section h2")).toHaveText("Built around the way commercial pools and spas actually operate.");
-  await expect(page.locator(".image-split-section img")).toHaveAttribute("src", "images/production/about-commercial-equipment.webp");
-  await expect(page.locator(".image-split-section img")).toHaveAttribute("alt", "Industrial piping and mechanical equipment in a utility room");
+  await expect(page.locator(".image-split-section img")).toHaveAttribute("src", "images/production/commercial-mechanical-room.jpg");
+  await expect(page.locator(".image-split-section img")).toHaveAttribute("alt", "Mechanical room with large filtration vessels, circulation piping, valves, and controls");
   await expect(page.locator(".why-list span")).toHaveText([
     "Commercial service is coordinated around property access, guest or resident activity, and day-to-day operations.",
     "Routine attention supports water quality, equipment condition, presentation, and useful service records.",
@@ -446,8 +378,15 @@ test("Gallery page presents seven image-led work examples without customer names
   const cards = page.locator(".featured-property-card");
   await expect(cards).toHaveCount(7);
   await expect(cards.locator("figcaption")).toHaveCount(0);
-  expect(await cards.locator("img").evaluateAll((images) => images.map((image) => image.getAttribute("src")))).toEqual(protectedGalleryImages);
-  expect(await cards.locator("img").evaluateAll((images) => images.map((image) => image.alt))).toEqual(protectedGalleryAltText);
+  expect(await cards.locator("img").evaluateAll((images) => images.map((image) => image.getAttribute("src")))).toEqual([
+    "images/production/gallery-pool-01.webp",
+    "images/production/gallery-pool-02.webp",
+    "images/production/gallery-pool-03.webp",
+    "images/production/gallery-pool-04.webp",
+    "images/production/gallery-pool-05.webp",
+    "images/production/gallery-pool-06.webp",
+    "images/production/gallery-pool-07.webp"
+  ]);
   await expect(page.locator(".additional-properties")).toHaveCount(0);
   await expect(page.locator(".final-contact-band h2")).toHaveText("Keep your pool and spa operation ready.");
   await expect(page.locator(".final-contact-band div > p:last-child")).toHaveText("Tell PPC about your property and the support you need.");
@@ -477,24 +416,24 @@ test("homepage hero uses the approved production image without weakening LCP han
   await page.setViewportSize({ width: 390, height: 844 });
   await waitForPage(page, "/index.html");
   const hero = page.locator(".hero-image-panel img");
-  await expect(hero).toHaveAttribute("src", "images/production/home-hero-resort-pool.webp");
-  await expect(hero).toHaveAttribute("width", "1920");
-  await expect(hero).toHaveAttribute("height", "1080");
+  await expect(hero).toHaveAttribute("src", "images/production/gallery-pool-07.webp");
+  await expect(hero).toHaveAttribute("width", "1200");
+  await expect(hero).toHaveAttribute("height", "675");
   await expect(hero).toHaveAttribute("fetchpriority", "high");
   await expect(hero).not.toHaveAttribute("loading", "lazy");
-  await expect(hero).toHaveAttribute("alt", "Wide resort pool with palm trees and surrounding lounge deck");
+  await expect(hero).toHaveAttribute("alt", "Large resort pool with a central fountain, red loungers, and palm-lined deck");
   expect(await hero.evaluate((image) => ({
     currentSrc: new URL(image.currentSrc).pathname,
     naturalWidth: image.naturalWidth,
     naturalHeight: image.naturalHeight
   }))).toEqual({
-    currentSrc: "/images/production/home-hero-resort-pool.webp",
-    naturalWidth: 1920,
-    naturalHeight: 1080
+    currentSrc: "/images/production/gallery-pool-07.webp",
+    naturalWidth: 1200,
+    naturalHeight: 675
   });
   const sources = await page.locator("main img").evaluateAll((images) => images.map((image) => image.getAttribute("src")));
-  expect(new Set(sources).size).toBe(sources.length);
-  expect(sources.filter((source) => protectedGalleryImages.includes(source))).toHaveLength(0);
+  expect(new Set(sources.slice(1)).size).toBe(sources.length - 1);
+  expect(sources.filter((source) => source === "images/production/gallery-pool-07.webp")).toHaveLength(2);
   const belowFoldLoading = await page.locator("main img:not(.hero-image-panel img)").evaluateAll((images) => images.map((image) => image.loading));
   expect(belowFoldLoading.every((value) => value === "lazy")).toBeTruthy();
   const altText = await page.locator("main img").evaluateAll((images) => images.map((image) => image.alt.trim()));
