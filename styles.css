@@ -383,7 +383,7 @@ p { margin-bottom: 16px; }
 }
 
 .credibility-image::after { position: absolute; right: 0; bottom: 0; width: 42%; height: 4px; content: ""; background: var(--gold-400); }
-.credibility-image img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: center 46%; }
+.credibility-image img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: center 50%; }
 .credibility-copy { max-width: 580px; }
 .credibility-copy h2 { color: var(--white); }
 .credibility-copy .eyebrow { color: var(--gold-on-dark); }
